@@ -47,5 +47,11 @@ public class MainActivity extends IntroActivity {
                 .background(android.R.color.white)
                 .fragment(R.layout.intro_4)
                 .build());
+
+        addSlide( new com.heinrichreimersoftware.materialintro.slide.FragmentSlide.Builder()
+                .background(android.R.color.white)
+                .fragment(R.layout.intro_cadastro)
+                .canGoForward(false)
+                .build());
     }
 }
