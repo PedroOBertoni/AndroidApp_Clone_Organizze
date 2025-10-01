@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace "com.aula.firebaseapp"
+    namespace "com.aula.organizze"
     compileSdk 36
 
     defaultConfig {
-        applicationId "com.aula.firebaseapp"
+        applicationId "com.aula.organizze"
         minSdk 24
         targetSdk 36
         versionCode 1
