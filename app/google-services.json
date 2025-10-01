@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "939941302297",
+    "project_id": "organizzeclone-c629b",
+    "storage_bucket": "organizzeclone-c629b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:939941302297:android:df9a3282f27593750b5a88",
+        "android_client_info": {
+          "package_name": "com.aula.organizze"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDu6Bvq6s0JfckRc_I_xSHkAgmKnLN5_2g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
