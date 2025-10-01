@@ -1,10 +1,7 @@
-# Forçar Java como linguagem principal
 *.java linguist-language=Java
+*.html linguist-language=Java
+*.xml linguist-language=Java
 
-# Forçar XML ser contado corretamente
-*.xml linguist-language=XML
-
-# Ignorar arquivos de build e configs para estatísticas
 *.gradle linguist-vendored
 *.json linguist-vendored
 *.md linguist-vendored
