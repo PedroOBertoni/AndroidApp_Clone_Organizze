@@ -48,7 +48,7 @@
         android:layout_marginBottom="40dp"
         android:text="Simples, fácil de usar e grátis"
         android:textAlignment="center"
-        android:textColor="@color/darker_gray"
+        android:textColor="@color/darkerGray"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

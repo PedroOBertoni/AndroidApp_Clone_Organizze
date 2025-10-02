@@ -64,4 +64,8 @@ public class MainActivity extends IntroActivity {
     public void btCadastrar(View view){
         startActivity(new Intent(this, CadastroActivity.class));
     }
+
+    public void btTermosDeUso(View view){
+        startActivity(new Intent(this, CadastroActivity.class));
+    }
 }

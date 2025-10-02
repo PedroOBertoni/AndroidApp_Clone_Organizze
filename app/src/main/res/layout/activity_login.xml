@@ -7,80 +7,207 @@
     android:layout_height="match_parent"
     tools:context=".activity.LoginActivity">
 
-    <Button
-        android:id="@+id/button6"
-        android:layout_width="322dp"
-        android:layout_height="60dp"
-        android:layout_marginBottom="40dp"
-        android:fontFamily="@font/inter_bold"
-        android:onClick="btEntrar"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:text="ENTRAR"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout5" />
+    <FrameLayout
+        android:id="@+id/headerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="?android:attr/colorBackground"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/logoOrganizze"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitCenter"
+            android:src="@drawable/logo_organizze" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/textView16"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
         android:fontFamily="@font/inter_bold"
-        android:text="Acesse sua conta"
+        android:text="Bem vindo novamente!"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="28sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout4"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerContainer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/textView18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/inter"
+        android:text="Acesse sua conta para começar \n a controlar sua grana"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/textView16"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/textView19"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="2dp"
+        android:fontFamily="@font/inter"
+        android:text="Email"
+        android:textColor="@color/textPrimary"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/textInputLayout4"
+        app:layout_constraintStart_toStartOf="@+id/textInputLayout4"
+        app:layout_constraintTop_toBottomOf="@id/textView18" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout4"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout5"
+        app:layout_constraintBottom_toTopOf="@+id/textView20"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView16">
+        app:layout_constraintTop_toBottomOf="@id/textView19">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_email_24dp"
-            android:drawablePadding="5dp"
             android:fontFamily="@font/inter"
-            android:hint="Email"
+            android:hint="Digite seu email"
             android:inputType="text|textEmailAddress" />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/textView20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="2dp"
+        android:fontFamily="@font/inter"
+        android:text="Senha"
+        android:textColor="@color/textPrimary"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/textInputLayout5"
+        app:layout_constraintStart_toStartOf="@+id/textInputLayout5"
+        app:layout_constraintTop_toBottomOf="@id/textInputLayout4" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout5"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/button6"
+        android:layout_height="55dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        app:endIconMode="password_toggle"
+        app:layout_constraintBottom_toTopOf="@+id/textView21"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout4">
+        app:layout_constraintTop_toBottomOf="@id/textView20">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_lock_24dp"
-            android:drawablePadding="5dp"
             android:fontFamily="@font/inter"
-            android:hint="Senha"
+            android:hint="Digite a senha"
             android:inputType="text|textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/textView21"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/inter_bold"
+        android:text="Esqueci minha senha"
+        android:textColor="@color/colorPrimaryDark"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/button6"
+        app:layout_constraintStart_toStartOf="@+id/textInputLayout5"
+        app:layout_constraintTop_toBottomOf="@id/textInputLayout5" />
+
+    <Button
+        android:id="@+id/button6"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/button_background"
+        android:fontFamily="@font/inter_bold"
+        android:text="Acessar sua conta"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView21" />
+
+    <TextView
+        android:id="@+id/textView25"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/inter"
+        android:text="Ao criar sua conta você concorda com"
+        android:textColor="@color/textSecundary"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button6" />
+
+    <TextView
+        android:id="@+id/textView27"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter"
+        android:text="nossos"
+        android:textColor="@color/textSecundary"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/textView25"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/textView26"
+        app:layout_constraintHorizontal_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/textView26"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:fontFamily="@font/inter"
+        android:text="Termos de uso"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="14sp"
+        app:layout_constraintTop_toTopOf="@id/textView27"
+        app:layout_constraintStart_toEndOf="@id/textView27"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/textView28"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/inter_bold"
+        android:onClick="btCadastrar"
+        android:text="Criar conta"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView26" />
+
+    <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+        <solid android:color="@color/colorPrimary" />
+        <corners android:radius="8dp" /> <!-- Cantos menos arredondados -->
+        <padding android:left="12dp" android:top="8dp" android:right="12dp" android:bottom="8dp"/>
+    </shape>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
