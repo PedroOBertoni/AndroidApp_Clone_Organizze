@@ -30,30 +30,19 @@ public class MainActivity extends IntroActivity {
         setButtonBackVisible(false);
         setButtonNextVisible(false);
 
-        addSlide( new com.heinrichreimersoftware.materialintro.slide.FragmentSlide.Builder()
+        addSlide(new com.heinrichreimersoftware.materialintro.slide.FragmentSlide.Builder()
                 .background(android.R.color.white)
                 .fragment(R.layout.intro_1)
                 .build());
 
-        addSlide( new com.heinrichreimersoftware.materialintro.slide.FragmentSlide.Builder()
+        addSlide(new com.heinrichreimersoftware.materialintro.slide.FragmentSlide.Builder()
                 .background(android.R.color.white)
                 .fragment(R.layout.intro_2)
                 .build());
 
-        addSlide( new com.heinrichreimersoftware.materialintro.slide.FragmentSlide.Builder()
+        addSlide(new com.heinrichreimersoftware.materialintro.slide.FragmentSlide.Builder()
                 .background(android.R.color.white)
                 .fragment(R.layout.intro_3)
-                .build());
-
-        addSlide( new com.heinrichreimersoftware.materialintro.slide.FragmentSlide.Builder()
-                .background(android.R.color.white)
-                .fragment(R.layout.intro_4)
-                .build());
-
-        addSlide( new com.heinrichreimersoftware.materialintro.slide.FragmentSlide.Builder()
-                .background(android.R.color.white)
-                .fragment(R.layout.intro_cadastro)
-                .canGoForward(false)
                 .build());
     }
 
@@ -62,10 +51,6 @@ public class MainActivity extends IntroActivity {
     }
 
     public void btCadastrar(View view){
-        startActivity(new Intent(this, CadastroActivity.class));
-    }
-
-    public void btTermosDeUso(View view){
         startActivity(new Intent(this, CadastroActivity.class));
     }
 }

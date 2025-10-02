@@ -1,5 +1,6 @@
 package com.aula.organizze.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -22,5 +23,13 @@ public class CadastroActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    public void btTermosDeUso(View view){
+        startActivity(new Intent(this, CadastroActivity.class));
+    }
+
+    public void btEntrar(View view){
+        startActivity(new Intent(this, LoginActivity.class));
     }
 }
