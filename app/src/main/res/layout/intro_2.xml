@@ -3,13 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/headerBackground">
 
     <FrameLayout
         android:id="@+id/headerContainer"
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        android:background="?android:attr/colorBackground"
+        android:background="@color/headerBackground"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
@@ -42,7 +43,7 @@
         android:layout_marginEnd="16dp"
         android:text="Acesse também pelo \n computador"
         android:textAlignment="center"
-        android:textColor="@color/black"
+        android:textColor="@color/textPrimary"
         android:textSize="28sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -90,6 +91,7 @@
         android:layout_marginTop="16dp"
         android:fontFamily="@font/inter"
         android:text="Já tem uma conta?"
+        android:textColor="@color/darkerGray"
         android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@+id/textRedirect"
         app:layout_constraintHorizontal_bias="0.5"

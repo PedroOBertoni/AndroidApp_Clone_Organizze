@@ -3,11 +3,12 @@
 
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorPrimary</item>
 
-        <item name="android:colorBackground">@color/backgroundDark</item>
+        <item name="android:colorBackground">@color/headerBackground</item>
 
-        <item name="android:textColorPrimary">@color/textPrimaryDark</item>
-        <item name="android:textColorSecondary">@color/textSecundaryDark</item>
+        <item name="android:textColorPrimary">@color/textPrimary</item>
+        <item name="android:textColorSecondary">@color/darkerGray</item>
 
         <item name="colorError">@color/error</item>
     </style>

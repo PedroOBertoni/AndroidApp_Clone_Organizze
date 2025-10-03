@@ -19,17 +19,12 @@ public class MainActivity extends IntroActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.intro_1);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
+        // esconde botões padrão
         setButtonBackVisible(false);
         setButtonNextVisible(false);
 
+        // adiciona slides
         addSlide(new com.heinrichreimersoftware.materialintro.slide.FragmentSlide.Builder()
                 .background(android.R.color.white)
                 .fragment(R.layout.intro_1)
@@ -43,6 +38,7 @@ public class MainActivity extends IntroActivity {
         addSlide(new com.heinrichreimersoftware.materialintro.slide.FragmentSlide.Builder()
                 .background(android.R.color.white)
                 .fragment(R.layout.intro_3)
+                .canGoForward(false)
                 .build());
     }
 

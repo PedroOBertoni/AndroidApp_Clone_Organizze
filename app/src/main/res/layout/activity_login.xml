@@ -5,13 +5,14 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/headerBackground"
     tools:context=".activity.LoginActivity">
 
     <FrameLayout
         android:id="@+id/headerContainer"
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        android:background="?android:attr/colorBackground"
+        android:background="@color/headerBackground"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
@@ -31,12 +32,12 @@
         android:fontFamily="@font/inter_bold"
         android:text="Bem vindo novamente!"
         android:textAlignment="center"
-        android:textColor="@color/black"
+        android:textColor="@color/textPrimary"
         android:textSize="28sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/headerContainer"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/headerContainer" />
 
     <TextView
         android:id="@+id/textView18"
@@ -46,10 +47,11 @@
         android:fontFamily="@font/inter"
         android:text="Acesse sua conta para começar \n a controlar sua grana"
         android:textAlignment="center"
+        android:textColor="@color/darkerGray"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/textView16"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/textView16" />
 
     <TextView
         android:id="@+id/textView19"
@@ -157,7 +159,7 @@
         android:layout_marginTop="24dp"
         android:fontFamily="@font/inter"
         android:text="Ao criar sua conta você concorda com"
-        android:textColor="@color/textSecundary"
+        android:textColor="@color/darkerGray"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -169,12 +171,12 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/inter"
         android:text="nossos"
-        android:textColor="@color/textSecundary"
+        android:textColor="@color/darkerGray"
         android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@id/textView25"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/textView26"
-        app:layout_constraintHorizontal_chainStyle="packed" />
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView25" />
 
     <TextView
         android:id="@+id/textView26"
