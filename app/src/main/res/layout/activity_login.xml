@@ -86,7 +86,8 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
             android:hint="Digite seu email"
-            android:inputType="text|textEmailAddress" />
+            android:inputType="text|textEmailAddress"
+            android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
@@ -121,7 +122,8 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
             android:hint="Digite a senha"
-            android:inputType="text|textPassword" />
+            android:inputType="text|textPassword"
+            android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
@@ -207,11 +209,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView26" />
-
-    <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-        <solid android:color="@color/colorPrimary" />
-        <corners android:radius="8dp" /> <!-- Cantos menos arredondados -->
-        <padding android:left="12dp" android:top="8dp" android:right="12dp" android:bottom="8dp"/>
-    </shape>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

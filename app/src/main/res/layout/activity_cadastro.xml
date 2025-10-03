@@ -130,7 +130,8 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
             android:hint="Crie uma senha"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -151,7 +152,8 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
             android:hint="Digite seu email"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
@@ -198,7 +200,8 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
             android:hint="Digite seu nome"
-            android:inputType="text" />
+            android:inputType="text"
+            android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
