@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/image3"
+            android:id="@+id/imageLogo"
             android:layout_width="wrap_content"
             android:layout_height="28dp"
             android:layout_gravity="center"
@@ -26,7 +26,7 @@
     </FrameLayout>
 
     <TextView
-        android:id="@+id/textView16"
+        android:id="@+id/textTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/inter_bold"
@@ -40,7 +40,7 @@
         app:layout_constraintTop_toBottomOf="@id/headerContainer" />
 
     <TextView
-        android:id="@+id/textView18"
+        android:id="@+id/textDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -51,10 +51,10 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView16" />
+        app:layout_constraintTop_toBottomOf="@id/textTitle" />
 
     <TextView
-        android:id="@+id/textView19"
+        android:id="@+id/textEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -64,12 +64,12 @@
         android:textColor="@color/textPrimary"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout4"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout4"
-        app:layout_constraintTop_toBottomOf="@id/textView18" />
+        app:layout_constraintBottom_toTopOf="@+id/textInputLayoutEmail"
+        app:layout_constraintStart_toStartOf="@+id/textInputLayoutEmail"
+        app:layout_constraintTop_toBottomOf="@id/textDescription" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout4"
+        android:id="@+id/textInputLayoutEmail"
         android:layout_width="0dp"
         android:layout_height="55dp"
         android:layout_marginStart="24dp"
@@ -78,9 +78,10 @@
         app:layout_constraintBottom_toTopOf="@+id/textView20"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView19">
+        app:layout_constraintTop_toBottomOf="@id/textEmail">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
@@ -101,7 +102,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/textInputLayout5"
         app:layout_constraintStart_toStartOf="@+id/textInputLayout5"
-        app:layout_constraintTop_toBottomOf="@id/textInputLayout4" />
+        app:layout_constraintTop_toBottomOf="@id/textInputLayoutEmail" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout5"
@@ -147,6 +148,7 @@
         android:background="@drawable/button_background"
         android:fontFamily="@font/inter_bold"
         android:text="Acessar sua conta"
+        android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

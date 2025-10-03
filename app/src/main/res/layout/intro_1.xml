@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/image3"
+            android:id="@+id/imageLogo"
             android:layout_width="wrap_content"
             android:layout_height="28dp"
             android:layout_gravity="center"
@@ -52,13 +52,13 @@
 
     <TextView
         android:id="@+id/textDescription"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="32dp"
         android:fontFamily="@font/inter"
-        android:text="Sinta a satisfação de ter o controle de suas\nfinanças e descomplique de vez a sua vida"
+        android:text="Sinta a satisfação de ter o controle de suas finanças e descomplique de vez a sua vida"
         android:textAlignment="center"
         android:textColor="@color/darkerGray"
         android:textSize="18sp"

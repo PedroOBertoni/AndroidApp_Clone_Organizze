@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/image3"
+            android:id="@+id/imageLogo"
             android:layout_width="wrap_content"
             android:layout_height="28dp"
             android:layout_gravity="center"
@@ -41,7 +41,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="Acesse também pelo \n computador"
+        android:text="Um futuro mais seguro\npara você"
         android:textAlignment="center"
         android:textColor="@color/textPrimary"
         android:textSize="28sp"
@@ -52,13 +52,13 @@
 
     <TextView
         android:id="@+id/textDescription"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="32dp"
         android:fontFamily="@font/inter"
-        android:text="Tenha a praticidade de acessar seus gastos\nquando quiser, no celular ou computador."
+        android:text="Tendo previsibilidade financeira você garante uma vida muito mais tranquila e segura"
         android:textAlignment="center"
         android:textColor="@color/darkerGray"
         android:textSize="18sp"
