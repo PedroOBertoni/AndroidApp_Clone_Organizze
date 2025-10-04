@@ -81,7 +81,7 @@
         app:layout_constraintTop_toBottomOf="@id/textEmail">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextEmail"
+            android:id="@+id/editEmailLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
@@ -118,6 +118,7 @@
         app:layout_constraintTop_toBottomOf="@id/textView20">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/EditSenhaLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
@@ -188,12 +189,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="3dp"
         android:fontFamily="@font/inter"
+        android:onClick="redirectTermosDeUso"
         android:text="Termos de uso"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="14sp"
-        app:layout_constraintTop_toTopOf="@id/textView27"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/textView27"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/textView27" />
 
     <TextView
         android:id="@+id/textView28"
@@ -201,7 +203,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:fontFamily="@font/inter_bold"
-        android:onClick="btCadastrar"
+        android:onClick="redirectCadastrar"
         android:text="Criar conta"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="16sp"

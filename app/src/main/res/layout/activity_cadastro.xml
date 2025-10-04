@@ -84,15 +84,15 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginTop="24dp"
+        android:clickable="true"
+        android:focusable="true"
         android:fontFamily="@font/inter_bold"
-        android:onClick="btEntrar"
+        android:onClick="redirectEntrar"
         android:text="Fazer login"
         android:textAlignment="center"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:clickable="true"
-        android:focusable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/textView7"
@@ -126,6 +126,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout2">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editSenhaCadastro"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
@@ -148,6 +149,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editEmailCadastro"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
@@ -196,6 +198,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView12">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editNomeCadastro"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
@@ -254,7 +257,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="3dp"
         android:fontFamily="@font/inter"
-        android:onClick="btTermosDeUso"
+        android:onClick="redirectTermosDeUso"
         android:text="Termos de uso"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="14sp"

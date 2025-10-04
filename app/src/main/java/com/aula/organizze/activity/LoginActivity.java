@@ -26,11 +26,11 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void btTermosDeUso(View view){
+    public void redirectTermosDeUso(View view){
         startActivity(new Intent(this, CadastroActivity.class));
     }
 
-    public void btCadastrar(View view){
+    public void redirectCadastrar(View view){
         startActivity(new Intent(this, CadastroActivity.class));
     }
 }
