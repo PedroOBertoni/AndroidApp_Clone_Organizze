@@ -18,6 +18,9 @@ import com.aula.organizze.R;
 import com.aula.organizze.config.ConfigFirebase;
 import com.aula.organizze.model.Usuario;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 
 public class CadastroActivity extends AppCompatActivity {
 
@@ -39,9 +42,12 @@ public class CadastroActivity extends AppCompatActivity {
         });
 
         // Recuperar componentes da interface pelo ID
+        // EditText
         campoNome = findViewById(R.id.editNomeCadastro);
         campoEmail = findViewById(R.id.editEmailCadastro);
         campoSenha = findViewById(R.id.editSenhaCadastro);
+
+        // Button
         buttonCadastrar = findViewById(R.id.buttonCadastrar);
 
         // Capturando apenas o texto dos campos
@@ -61,15 +67,16 @@ public class CadastroActivity extends AppCompatActivity {
 
     public void validarCadastroUsuario(String nome, String email, String senha){
 
-        if(!nome.isEmpty()){
-            if(!email.isEmpty()){
-                if(!senha.isEmpty()){
+        if( !nome.isEmpty() ){ // Nome não pode estar vazio
+            if( !email.isEmpty() ){ // Email não pode estar vazio
+                if( !senha.isEmpty() || senha.length() >= 6 ){ // Senha deve ter no mínimo 6 caracteres
+
                     // Se estiver tudo preenchido, instanciar o objeto usuário e chamar o método para cadastrar
                     cadastrarUsuario();
 
                 }else{
                     Toast.makeText(CadastroActivity.this,
-                            "Preencha a senha corretamente!",
+                            "Preencha a senha, mínimo 6 caracteres!",
                             Toast.LENGTH_SHORT).show();
 
                 }
@@ -109,10 +116,30 @@ public class CadastroActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 finish();
-                
-            }else{
+
+            }else{ // Aqui iremos tratar as exceções
+                String excecao = "";
+
+                try{
+                    throw task.getException(); // Lançar a exceção para tratar
+
+                } catch( FirebaseAuthWeakPasswordException e ){ // Senha fraca
+                    excecao = "Digite uma senha mais forte!";
+
+                } catch( FirebaseAuthInvalidCredentialsException e ){ // Email inválido
+                    excecao = "Por favor, digite um email válido!";
+
+                } catch ( FirebaseAuthUserCollisionException e ){ // Email já cadastrado
+                    excecao = "Esta conta já foi cadastrada!";
+
+                } catch ( Exception e ){
+                    excecao = "Erro ao cadastrar usuário: " + e.getMessage();
+                    e.printStackTrace();
+
+                }
+
                 Toast.makeText(CadastroActivity.this,
-                        "Erro ao cadastrar usuário!",
+                        excecao,
                         Toast.LENGTH_SHORT).show();
 
             }
