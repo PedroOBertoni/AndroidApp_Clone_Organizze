@@ -3,6 +3,7 @@ package com.aula.organizze.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,11 +13,14 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import android.os.Handler;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.aula.organizze.R;
 import com.aula.organizze.config.ConfigFirebase;
 import com.aula.organizze.model.Usuario;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
@@ -24,8 +28,12 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 
 public class CadastroActivity extends AppCompatActivity {
 
+    // componentes da interface
     private EditText campoNome, campoEmail, campoSenha;
+    private TextInputLayout layoutNome, layoutEmail, layoutSenha;
     private Button buttonCadastrar;
+
+    // objeto para autenticação do Firebase
     private FirebaseAuth autenticacao;
     private Usuario usuario;
 
@@ -47,103 +55,106 @@ public class CadastroActivity extends AppCompatActivity {
         campoEmail = findViewById(R.id.editEmailCadastro);
         campoSenha = findViewById(R.id.editSenhaCadastro);
 
+        // TextInputLayout
+        layoutNome = findViewById(R.id.layoutNomeCadastro);
+        layoutEmail = findViewById(R.id.layoutEmailCadastro);
+        layoutSenha = findViewById(R.id.layoutSenhaCadastro);
+
         // Button
         buttonCadastrar = findViewById(R.id.buttonCadastrar);
 
-        // Capturando apenas o texto dos campos
-        String textoNome = campoNome.getText().toString();
-        String textoEmail = campoEmail.getText().toString();
-        String textoSenha = campoSenha.getText().toString();
+        buttonCadastrar.setOnClickListener(v -> {
+            // Captura os textos no momento do clique
+            String textoNome = campoNome.getText().toString().trim();
+            String textoEmail = campoEmail.getText().toString().trim();
+            String textoSenha = campoSenha.getText().toString().trim();
 
-        buttonCadastrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validarCadastroUsuario(textoNome, textoEmail, textoSenha);
-                cadastrarUsuario();
-            }
-
+            validarCadastroUsuario(textoNome, textoEmail, textoSenha);
         });
     }
 
-    public void validarCadastroUsuario(String nome, String email, String senha){
+    public void validarCadastroUsuario(String nome, String email, String senha) {
 
-        if( !nome.isEmpty() ){ // Nome não pode estar vazio
-            if( !email.isEmpty() ){ // Email não pode estar vazio
-                if( !senha.isEmpty() || senha.length() >= 6 ){ // Senha deve ter no mínimo 6 caracteres
+        // Limpa erros anteriores
+        layoutNome.setError(null);
+        layoutEmail.setError(null);
+        layoutSenha.setError(null);
 
-                    // Se estiver tudo preenchido, instanciar o objeto usuário e chamar o método para cadastrar
-                    cadastrarUsuario();
+        boolean valido = true;
 
-                }else{
-                    Toast.makeText(CadastroActivity.this,
-                            "Preencha a senha, mínimo 6 caracteres!",
-                            Toast.LENGTH_SHORT).show();
-
-                }
-            }else{
-                Toast.makeText(CadastroActivity.this,
-                        "Preencha o email!",
-                        Toast.LENGTH_SHORT).show();
-
-            }
-        }else{
-            Toast.makeText(CadastroActivity.this,
-                    "Preencha o nome!",
-                    Toast.LENGTH_SHORT).show();
-
+        if (nome.isEmpty()) {
+            layoutNome.setError("Preencha o nome!");
+            valido = false;
         }
 
+        if (email.isEmpty()) {
+            layoutEmail.setError("Preencha o e-mail!");
+            valido = false;
+        }
+
+        if (senha.isEmpty()) {
+            layoutSenha.setError("Preencha a senha!");
+            valido = false;
+        } else if (senha.length() < 6) {
+            layoutSenha.setError("A senha deve ter no mínimo 6 caracteres!");
+            valido = false;
+        }
+
+        if (valido) {
+            cadastrarUsuario(email, senha, nome);
+        }
     }
 
-    public void cadastrarUsuario(){
-        // Instanciar o objeto usuário
+    public void cadastrarUsuario(String email, String senha, String nome) {
         usuario = new Usuario();
+        usuario.setNome(nome);
+        usuario.setEmail(email);
+        usuario.setSenha(senha);
 
-        // Recuperar os dados dos campos e atribuir ao objeto usuário
-        usuario.setNome(campoNome.getText().toString());
-        usuario.setEmail(campoEmail.getText().toString());
-        usuario.setSenha(campoSenha.getText().toString());
-
-        // Cadastrar usuário no Firebase
         autenticacao = ConfigFirebase.getFirebaseAutenticacao();
-        autenticacao.createUserWithEmailAndPassword(
-                usuario.getEmail(), usuario.getSenha()
+        autenticacao.createUserWithEmailAndPassword(email, senha)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        Snackbar.make(findViewById(android.R.id.content),
+                                "Usuário cadastrado com sucesso!",
+                                Snackbar.LENGTH_LONG).show();
 
-        ).addOnCompleteListener(this, task -> {;
-            if(task.isSuccessful()){
-                Toast.makeText(CadastroActivity.this,
-                        "Usuário cadastrado com sucesso!",
-                        Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                finish();
+                        // Espera o Snackbar aparecer antes de mudar de tela
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            finish();
+                        }, 1500);
 
-            }else{ // Aqui iremos tratar as exceções
-                String excecao = "";
+                    } else {
+                        String excecao;
 
-                try{
-                    throw task.getException(); // Lançar a exceção para tratar
+                        try {
+                            throw task.getException();
 
-                } catch( FirebaseAuthWeakPasswordException e ){ // Senha fraca
-                    excecao = "Digite uma senha mais forte!";
+                        } catch (FirebaseAuthWeakPasswordException e) {
+                            excecao = "Digite uma senha mais forte!";
+                            layoutSenha.setError(excecao);
 
-                } catch( FirebaseAuthInvalidCredentialsException e ){ // Email inválido
-                    excecao = "Por favor, digite um email válido!";
+                        } catch (FirebaseAuthInvalidCredentialsException e) {
+                            excecao = "Por favor, digite um e-mail válido!";
+                            layoutEmail.setError(excecao);
 
-                } catch ( FirebaseAuthUserCollisionException e ){ // Email já cadastrado
-                    excecao = "Esta conta já foi cadastrada!";
+                        } catch (FirebaseAuthUserCollisionException e) {
+                            excecao = "Esta conta já foi cadastrada!";
+                            layoutEmail.setError(excecao);
 
-                } catch ( Exception e ){
-                    excecao = "Erro ao cadastrar usuário: " + e.getMessage();
-                    e.printStackTrace();
+                        } catch (Exception e) {
+                            excecao = "Erro ao cadastrar: " + e.getMessage();
+                            e.printStackTrace();
 
-                }
+                        }
 
-                Toast.makeText(CadastroActivity.this,
-                        excecao,
-                        Toast.LENGTH_SHORT).show();
-
-            }
-        });
+                        // Mostra erro geral com Snackbar
+                        Snackbar.make(findViewById(android.R.id.content),
+                                excecao,
+                                Snackbar.LENGTH_LONG).show();
+                    }
+                });
     }
 
     public void redirectTermosDeUso(View view){
