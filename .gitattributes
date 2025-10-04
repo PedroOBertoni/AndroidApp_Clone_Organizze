@@ -1,4 +1,6 @@
 *.java linguist-language=Java
+*.html linguist-language=Java
+*.xml linguist-language=Java
 
 *.gradle linguist-vendored
 *.json linguist-vendored
