@@ -5,12 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.activity.EdgeToEdge;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import com.heinrichreimersoftware.materialintro.app.IntroActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
+import com.heinrichreimersoftware.materialintro.app.IntroActivity;
 import com.aula.organizze.R;
 
 public class MainActivity extends IntroActivity {
@@ -26,17 +23,17 @@ public class MainActivity extends IntroActivity {
 
         // adiciona slides
         addSlide(new com.heinrichreimersoftware.materialintro.slide.FragmentSlide.Builder()
-                .background(android.R.color.white)
+                .background(R.color.headerBackground)
                 .fragment(R.layout.intro_1)
                 .build());
 
         addSlide(new com.heinrichreimersoftware.materialintro.slide.FragmentSlide.Builder()
-                .background(android.R.color.white)
+                .background(R.color.headerBackground)
                 .fragment(R.layout.intro_2)
                 .build());
 
         addSlide(new com.heinrichreimersoftware.materialintro.slide.FragmentSlide.Builder()
-                .background(android.R.color.white)
+                .background(R.color.headerBackground)
                 .fragment(R.layout.intro_3)
                 .canGoForward(false)
                 .build());
