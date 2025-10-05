@@ -1,7 +1,46 @@
+# ===========================
+# Arquivo: .gitattributes
+# ===========================
+# Normaliza finais de linha (bom para evitar conflitos entre Windows/Linux)
+* text=auto eol=lf
+
+# ---------------------------
+# Linguist: Forçar identificação correta
+# ---------------------------
+
+# Força que arquivos Java sejam reconhecidos como Java (por padrão já é)
 *.java linguist-language=Java
-*.html linguist-language=Java
+
+# Garante que arquivos XML sejam tratados como parte do código Java/Android,
+# não como HTML (isso ajuda na contagem de linguagem do GitHub)
 *.xml linguist-language=Java
 
-*.gradle linguist-vendored
-*.json linguist-vendored
-*.md linguist-vendored
+# Caso você tenha arquivos de layout ou recursos Android
+# que não devem contar como código (opcional):
+app/src/main/res/** linguist-detectable=false
+
+# ---------------------------
+# Outras linguagens auxiliares (ajuste conforme seu projeto)
+# ---------------------------
+
+# Ignora arquivos de build e configs automáticas
+*.gradle linguist-generated=true
+*.iml linguist-generated=true
+.gradle/** linguist-generated=true
+.idea/** linguist-generated=true
+build/** linguist-generated=true
+out/** linguist-generated=true
+
+# Ignora arquivos de tradução, manifestos e JSONs de configuração
+*.json linguist-generated=true
+*.yml linguist-generated=true
+*.yaml linguist-generated=true
+*.properties linguist-generated=true
+*.md linguist-documentation=true
+
+# ---------------------------
+# Extras (caso use layouts customizados)
+# ---------------------------
+
+# Se tiver XMLs que você quer mesmo contar como XML, coloque antes:
+# res/layout/*.xml linguist-language=XML
