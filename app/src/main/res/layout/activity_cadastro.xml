@@ -25,22 +25,6 @@
             android:src="@drawable/logo_organizze" />
     </FrameLayout>
 
-    <Button
-        android:id="@+id/buttonCadastrar"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/button_background"
-        android:fontFamily="@font/inter_bold"
-        android:text="CRIAR UMA CONTA"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layoutSenhaCadastro" />
-
     <TextView
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
@@ -112,12 +96,11 @@
         android:layout_width="0dp"
         android:layout_height="55dp"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="50dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="24dp"
         app:boxBackgroundMode="outline"
         app:boxStrokeErrorColor="@color/error"
         app:endIconMode="password_toggle"
-        app:layout_constraintBottom_toTopOf="@+id/buttonCadastrar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -139,7 +122,7 @@
         android:layout_height="55dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="50dp"
         app:boxBackgroundMode="outline"
         app:boxStrokeErrorColor="@color/error"
         app:layout_constraintBottom_toTopOf="@+id/layoutSenhaCadastro"
@@ -192,7 +175,7 @@
         android:layout_height="55dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="50dp"
         app:layout_constraintBottom_toTopOf="@+id/layoutEmailCadastro"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -226,7 +209,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
-    <!-- Container de termos -->
     <TextView
         android:id="@+id/textView13"
         android:layout_width="wrap_content"
@@ -238,7 +220,7 @@
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonCadastrar" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonCadastra" />
 
     <TextView
         android:id="@+id/textView15"
@@ -268,6 +250,23 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/textView15"
         app:layout_constraintTop_toTopOf="@+id/textView15" />
+
+    <Button
+        android:id="@+id/buttonCadastra"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/button_background"
+        android:fontFamily="@font/inter_bold"
+        android:text="Criar uma conta"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/textView13"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layoutSenhaCadastro" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

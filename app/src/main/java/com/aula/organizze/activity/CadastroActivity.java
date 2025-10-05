@@ -31,7 +31,7 @@ public class CadastroActivity extends AppCompatActivity {
     // componentes da interface
     private EditText campoNome, campoEmail, campoSenha;
     private TextInputLayout layoutNome, layoutEmail, layoutSenha;
-    private Button buttonCadastrar;
+    private Button buttonCadastra;
 
     // objeto para autenticação do Firebase
     private FirebaseAuth autenticacao;
@@ -43,11 +43,6 @@ public class CadastroActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_cadastro);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.buttonCadastrar), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
         // Recuperar componentes da interface pelo ID
         // EditText
@@ -61,9 +56,9 @@ public class CadastroActivity extends AppCompatActivity {
         layoutSenha = findViewById(R.id.layoutSenhaCadastro);
 
         // Button
-        buttonCadastrar = findViewById(R.id.buttonCadastrar);
+        buttonCadastra = findViewById(R.id.buttonCadastra);
 
-        buttonCadastrar.setOnClickListener(v -> {
+        buttonCadastra.setOnClickListener(v -> {
             // Captura os textos no momento do clique
             String textoNome = campoNome.getText().toString().trim();
             String textoEmail = campoEmail.getText().toString().trim();
