@@ -90,6 +90,7 @@ public class CadastroActivity extends AppCompatActivity {
         if (senha.isEmpty()) {
             layoutSenha.setError("Preencha a senha!");
             valido = false;
+
         } else if (senha.length() < 6) {
             layoutSenha.setError("A senha deve ter no mínimo 6 caracteres!");
             valido = false;
@@ -109,7 +110,7 @@ public class CadastroActivity extends AppCompatActivity {
         autenticacao = ConfigFirebase.getFirebaseAutenticacao();
         autenticacao.createUserWithEmailAndPassword(email, senha)
                 .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
+                    if ( task.isSuccessful() ) {
                         Snackbar.make(findViewById(android.R.id.content),
                                 "Usuário cadastrado com sucesso!",
                                 Snackbar.LENGTH_LONG).show();

@@ -64,12 +64,12 @@
         android:textColor="@color/textPrimary"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayoutEmail"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayoutEmail"
+        app:layout_constraintBottom_toTopOf="@+id/layoutEmailLogin"
+        app:layout_constraintStart_toStartOf="@+id/layoutEmailLogin"
         app:layout_constraintTop_toBottomOf="@id/textDescription" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayoutEmail"
+        android:id="@+id/layoutEmailLogin"
         android:layout_width="0dp"
         android:layout_height="55dp"
         android:layout_marginStart="24dp"
@@ -101,12 +101,12 @@
         android:textColor="@color/textPrimary"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout5"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout5"
-        app:layout_constraintTop_toBottomOf="@id/textInputLayoutEmail" />
+        app:layout_constraintBottom_toTopOf="@+id/layoutSenhaLogin"
+        app:layout_constraintStart_toStartOf="@+id/layoutSenhaLogin"
+        app:layout_constraintTop_toBottomOf="@id/layoutEmailLogin" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout5"
+        android:id="@+id/layoutSenhaLogin"
         android:layout_width="0dp"
         android:layout_height="55dp"
         android:layout_marginStart="24dp"
@@ -118,7 +118,7 @@
         app:layout_constraintTop_toBottomOf="@id/textView20">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/EditSenhaLogin"
+            android:id="@+id/editSenhaLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
@@ -137,12 +137,12 @@
         android:text="Esqueci minha senha"
         android:textColor="@color/colorPrimaryDark"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/buttonEntrar"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout5"
-        app:layout_constraintTop_toBottomOf="@id/textInputLayout5" />
+        app:layout_constraintBottom_toTopOf="@+id/buttonEntra"
+        app:layout_constraintStart_toStartOf="@+id/layoutSenhaLogin"
+        app:layout_constraintTop_toBottomOf="@id/layoutSenhaLogin" />
 
     <Button
-        android:id="@+id/buttonEntrar"
+        android:id="@+id/buttonEntra"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -168,7 +168,7 @@
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttonEntrar" />
+        app:layout_constraintTop_toBottomOf="@id/buttonEntra" />
 
     <TextView
         android:id="@+id/textView27"
