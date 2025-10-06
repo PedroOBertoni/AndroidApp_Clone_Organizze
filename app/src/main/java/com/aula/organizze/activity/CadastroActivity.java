@@ -64,11 +64,11 @@ public class CadastroActivity extends AppCompatActivity {
             String textoEmail = campoEmail.getText().toString().trim();
             String textoSenha = campoSenha.getText().toString().trim();
 
-            validarCadastroUsuario(textoNome, textoEmail, textoSenha);
+            validaPreenchimentoDosCampos(textoNome, textoEmail, textoSenha);
         });
     }
 
-    public void validarCadastroUsuario(String nome, String email, String senha) {
+    public void validaPreenchimentoDosCampos(String nome, String email, String senha) {
 
         // Limpa erros anteriores
         layoutNome.setError(null);
@@ -76,23 +76,48 @@ public class CadastroActivity extends AppCompatActivity {
         layoutSenha.setError(null);
 
         boolean valido = true;
+        String excecao;
 
         if (nome.isEmpty()) {
-            layoutNome.setError("Preencha o nome!");
+            excecao = "Preencha o nome!";
+            layoutNome.setError(excecao);
+
+            Snackbar.make(findViewById(android.R.id.content),
+                    excecao,
+                    Snackbar.LENGTH_LONG).show();
+
             valido = false;
         }
 
         if (email.isEmpty()) {
-            layoutEmail.setError("Preencha o e-mail!");
+            excecao = "Preencha o e-mail!";
+            layoutEmail.setError(excecao);
+
+            Snackbar.make(findViewById(android.R.id.content),
+                    excecao,
+                    Snackbar.LENGTH_LONG).show();
+
             valido = false;
         }
 
         if (senha.isEmpty()) {
-            layoutSenha.setError("Preencha a senha!");
+            excecao = "Preencha a senha!";
+            layoutSenha.setError(excecao);
+
+            Snackbar.make(findViewById(android.R.id.content),
+                    excecao,
+                    Snackbar.LENGTH_LONG).show();
+
             valido = false;
 
         } else if (senha.length() < 6) {
-            layoutSenha.setError("A senha deve ter no mínimo 6 caracteres!");
+            excecao = "A senha deve ter no mínimo 6 caracteres!";
+            layoutSenha.setError(excecao);
+
+            Snackbar.make(findViewById(android.R.id.content),
+                    excecao,
+                    Snackbar.LENGTH_LONG).show();
+
             valido = false;
         }
 
@@ -117,7 +142,7 @@ public class CadastroActivity extends AppCompatActivity {
 
                         // Espera o Snackbar aparecer antes de mudar de tela
                         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                             finish();
                         }, 1500);
 

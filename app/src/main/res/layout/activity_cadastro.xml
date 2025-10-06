@@ -261,6 +261,7 @@
         android:background="@drawable/button_background"
         android:fontFamily="@font/inter_bold"
         android:text="Criar uma conta"
+        android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/textView13"
         app:layout_constraintEnd_toEndOf="parent"

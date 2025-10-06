@@ -66,29 +66,48 @@ public class LoginActivity extends AppCompatActivity {
             String textoEmail = campoEmail.getText().toString().trim();
             String textoSenha = campoSenha.getText().toString().trim();
 
-            validarCadastroUsuario(textoEmail, textoSenha);
+            validaPreenchimentoDosCampos(textoEmail, textoSenha);
         });
     }
 
-    public void validarCadastroUsuario(String email, String senha) {
+    public void validaPreenchimentoDosCampos(String email, String senha) {
 
         // Limpa erros anteriores
         layoutEmail.setError(null);
         layoutSenha.setError(null);
 
         boolean valido = true;
+        String excecao;
 
         if (email.isEmpty()) {
-            layoutEmail.setError("Preencha o e-mail!");
+            excecao = "Preencha o e-mail!";
+            layoutEmail.setError(excecao);
+
+            Snackbar.make(findViewById(android.R.id.content),
+                    excecao,
+                    Snackbar.LENGTH_LONG).show();
+
             valido = false;
         }
 
         if (senha.isEmpty()) {
-            layoutSenha.setError("Preencha a senha!");
+            excecao = "Preencha a senha!";
+            layoutSenha.setError(excecao);
+
+            Snackbar.make(findViewById(android.R.id.content),
+                    excecao,
+                    Snackbar.LENGTH_LONG).show();
+
             valido = false;
 
         } else if (senha.length() < 6) {
-            layoutSenha.setError("A senha deve ter no mínimo 6 caracteres!");
+            excecao = "A senha deve ter no mínimo 6 caracteres!";
+            layoutSenha.setError(excecao);
+
+            Snackbar.make(findViewById(android.R.id.content),
+                    excecao,
+                    Snackbar.LENGTH_LONG).show();
+
             valido = false;
         }
 
@@ -132,7 +151,7 @@ public class LoginActivity extends AppCompatActivity {
                         layoutEmail.setError(excecao);
 
                     } catch (FirebaseAuthInvalidCredentialsException e) {
-                        excecao = "E-mail e senha não correspondem a um usuário cadastrado!";
+                        excecao = "E-mail e/ou senha não correspondem a um usuário cadastrado!";
                         layoutSenha.setError(excecao);
 
                     } catch (Exception e) {
