@@ -79,6 +79,7 @@
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:text="Criar uma conta"
+        android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
