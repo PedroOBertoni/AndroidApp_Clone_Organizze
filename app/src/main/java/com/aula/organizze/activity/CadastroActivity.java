@@ -137,7 +137,8 @@ public class CadastroActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if ( task.isSuccessful() ) {
 
-                        abrirTelaLogin();
+                        startActivity(new Intent(getApplicationContext(), PrincipalActivity.class));
+                        finish();
 
                     } else {
                         String excecao;
