@@ -136,15 +136,8 @@ public class CadastroActivity extends AppCompatActivity {
         autenticacao.createUserWithEmailAndPassword(email, senha)
                 .addOnCompleteListener(this, task -> {
                     if ( task.isSuccessful() ) {
-                        Snackbar.make(findViewById(android.R.id.content),
-                                "Usuário cadastrado com sucesso!",
-                                Snackbar.LENGTH_LONG).show();
 
-                        // Espera o Snackbar aparecer antes de mudar de tela
-                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                            finish();
-                        }, 1500);
+                        abrirTelaLogin();
 
                     } else {
                         String excecao;
@@ -180,9 +173,16 @@ public class CadastroActivity extends AppCompatActivity {
 
     public void redirectTermosDeUso(View view){
         startActivity(new Intent(this, CadastroActivity.class));
+        finish();
     }
 
     public void redirectEntrar(View view){
         startActivity(new Intent(this, LoginActivity.class));
+        finish();
+    }
+
+    public void abrirTelaLogin() {
+        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+        finish();
     }
 }

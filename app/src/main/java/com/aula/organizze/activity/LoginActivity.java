@@ -130,15 +130,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if ( task.isSuccessful() ){
-                    Snackbar.make(findViewById(android.R.id.content),
-                            "Login realizado com sucesso!",
-                            Snackbar.LENGTH_LONG).show();
 
-                    // Espera o Snackbar aparecer antes de mudar de tela
-                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                        finish();
-                    }, 1500);
+                    // Redireciona para a tela principal
+                    abrirTelaPrincipal();
 
                 } else {
                     String excecao;
@@ -171,9 +165,16 @@ public class LoginActivity extends AppCompatActivity {
 
     public void redirectTermosDeUso(View view){
         startActivity(new Intent(this, CadastroActivity.class));
+        finish();
     }
 
     public void redirectCadastrar(View view){
         startActivity(new Intent(this, CadastroActivity.class));
+        finish();
+    }
+
+    public void abrirTelaPrincipal() {
+        startActivity(new Intent(getApplicationContext(), PrincipalActivity.class));
+        finish();
     }
 }

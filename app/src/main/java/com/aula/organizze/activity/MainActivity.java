@@ -41,9 +41,11 @@ public class MainActivity extends IntroActivity {
 
     public void redirectEntrar(View view){
         startActivity(new Intent(this, LoginActivity.class));
+        finish();
     }
 
     public void redirectCadastrar(View view){
         startActivity(new Intent(this, CadastroActivity.class));
+        finish();
     }
 }
