@@ -11,6 +11,9 @@
     <color name="warning">#FFC107</color>
     <color name="error">#DC3545</color>
 
+    <color name="colorButtonReceita">#007BFF</color>
+    <color name="colorButtonDespesa">#DC3545</color>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

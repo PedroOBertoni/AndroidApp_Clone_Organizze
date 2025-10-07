@@ -21,13 +21,18 @@
 
     <include layout="@layout/content_principal" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
+    <com.leinardi.android.speeddial.SpeedDialView
+        android:id="@+id/speedDial"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="16dp"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        android:layout_margin="16dp"
+        app:sdMFabSize="normal"
+        style="@style/Widget.MaterialComponents.FloatingActionButton"
+        app:sdMainFabClosedSrc="@drawable/ic_add_24dp"
+        app:sdMainFabOpenedSrc="@drawable/ic_close_24dp"
+        android:elevation="5dp"
+        app:sdMainFabClosedIconColor="@color/white"
+        app:sdMainFabOpenedIconColor="@color/white"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
