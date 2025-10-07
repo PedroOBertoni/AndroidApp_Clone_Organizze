@@ -24,7 +24,7 @@ public class PrincipalActivity extends AppCompatActivity {
         speedDialView.addActionItem(
                 new SpeedDialActionItem.Builder(R.id.fab_despesa, R.drawable.ic_add_24dp)
                         .setLabel("Adicionar despesa")
-                        .setFabBackgroundColor(ContextCompat.getColor(this, R.color.colorButtonDespesa)) // ex: cor
+                        .setFabBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDespesa)) // ex: cor
                         .create()
         );
 
@@ -32,7 +32,7 @@ public class PrincipalActivity extends AppCompatActivity {
         speedDialView.addActionItem(
                 new SpeedDialActionItem.Builder(R.id.fab_receita, R.drawable.ic_add_24dp)
                         .setLabel("Adicionar receita")
-                        .setFabBackgroundColor(ContextCompat.getColor(this, R.color.colorButtonReceita)) // ex: cor
+                        .setFabBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryReceita)) // ex: cor
                         .create()
         );
 
@@ -42,14 +42,15 @@ public class PrincipalActivity extends AppCompatActivity {
             public boolean onActionSelected(SpeedDialActionItem actionItem) {
                 int id = actionItem.getId();
                 if (id == R.id.fab_despesa) {
-                    /* Abre a Activity/diálogo de adicionar despesa
-                    startActivity(new Intent(PrincipalActivity.this, AddDespesaActivity.class)); */
+                    /* Abre a Activity de adicionar despesa */
+                    startActivity(new Intent(PrincipalActivity.this, DespesasActivity.class));
 
                     // fecha o menu com animação e informa que já tratamos o fechamento
                     speedDialView.close();
                     return true; // true: impõe que já tratamos o fechamento (evita close sem animação)
                 } else if (id == R.id.fab_receita) {
-                    /* startActivity(new Intent(PrincipalActivity.this, AddReceitaActivity.class)); */
+                    /* Abre a Activity de adicionar receita */
+                    startActivity(new Intent(PrincipalActivity.this, ReceitasActivity.class));
                     speedDialView.close();
                     return true;
                 }
