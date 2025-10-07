@@ -7,9 +7,20 @@
     <color name="textPrimary">#F1F5F9</color>
     <color name="darkerGray">#6B6B6B</color>
 
+
     <color name="sucess">#4CAF50</color>
     <color name="warning">#FFC107</color>
     <color name="error">#DC3545</color>
+
+
+    <color name="colorPrimaryReceita">#007BFF</color>
+    <color name="colorPrimaryDarkReceita">#0056B3</color>
+    <color name="colorAccentReceita">#66B2FF</color>
+
+    <color name="colorPrimaryDespesa">#DC3545</color>
+    <color name="colorPrimaryDarkDespesa">#A71D2A</color>
+    <color name="colorAccentDespesa">#FF6F7D</color>
+
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
