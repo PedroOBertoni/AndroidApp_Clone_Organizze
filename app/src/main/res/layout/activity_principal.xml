@@ -27,7 +27,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        app:sdMFabSize="normal"
         style="@style/Widget.MaterialComponents.FloatingActionButton"
         app:sdMainFabClosedSrc="@drawable/ic_add_24dp"
         app:sdMainFabOpenedSrc="@drawable/ic_close_24dp"

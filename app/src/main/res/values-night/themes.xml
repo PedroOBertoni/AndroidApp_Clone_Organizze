@@ -14,12 +14,4 @@
         <item name="colorError">@color/error</item>
     </style>
 
-    <style name="Widget.MyApp.FloatingActionButton" parent="Widget.MaterialComponents.FloatingActionButton">
-        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.MyApp.FAB</item>
-    </style>
-
-    <style name="ShapeAppearance.MyApp.FAB" parent="">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">50%</item>
-    </style>
 </resources>
