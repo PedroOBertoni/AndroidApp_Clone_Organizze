@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.aula.organizze.R;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -141,10 +142,10 @@ public class DespesasActivity extends AppCompatActivity {
         // Clique no campo de categoria -> abre lista de opções
         editTextCategoria.setOnClickListener(v -> {
             String[] categorias = {"Assinaturas e Serviços", "Compras", "Alimentação", "Transporte", "Lazer", "Outros"};
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Selecione uma categoria");
-            builder.setItems(categorias, (dialog, which) -> editTextCategoria.setText(categorias[which]));
-            builder.show();
+            new MaterialAlertDialogBuilder(this, R.style.CustomAlertDialog)
+                    .setTitle("Selecione uma categoria")
+                    .setItems(categorias, (dialog, which) -> editTextCategoria.setText(categorias[which]))
+                    .show();
         });
 
         // Clique no botão confirmar -> mostra os dados (teste)

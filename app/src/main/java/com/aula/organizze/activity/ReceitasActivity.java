@@ -17,6 +17,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.aula.organizze.R;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -95,10 +96,10 @@ public class ReceitasActivity extends AppCompatActivity {
                 isUpdating = true;
 
                 // Pega apenas os dígitos do texto (remove "R$", espaços, pontuação etc)
-                String digits = s.toString().replaceAll("[^\\d]", "");
+                String digitos = s.toString().replaceAll("[^\\d]", "");
 
                 // Se não houver dígitos, considera 0
-                if (digits.isEmpty()) {
+                if (digitos.isEmpty()) {
                     digitacaoContinua("0");
                     isUpdating = false;
                     return;
@@ -106,7 +107,7 @@ public class ReceitasActivity extends AppCompatActivity {
 
                 try {
                     // Converte para centavos (long para evitar perda)
-                    long cents = Long.parseLong(digits);
+                    long cents = Long.parseLong(digitos);
 
                     // Converte para valor em reais (double apenas para formatação)
                     double valor = cents / 100.0;
@@ -144,10 +145,10 @@ public class ReceitasActivity extends AppCompatActivity {
         // Clique no campo de categoria -> abre lista de opções
         editTextCategoria.setOnClickListener(v -> {
             String[] categorias = {"Salário", "Freelancee e Serviços", "Investimentos", "Presentes", "Vendas", "Outros"};
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Selecione uma categoria");
-            builder.setItems(categorias, (dialog, which) -> editTextCategoria.setText(categorias[which]));
-            builder.show();
+            new MaterialAlertDialogBuilder(this, R.style.CustomAlertDialog)
+                    .setTitle("Selecione uma categoria")
+                    .setItems(categorias, (dialog, which) -> editTextCategoria.setText(categorias[which]))
+                    .show();
         });
 
         // Clique no botão confirmar -> mostra os dados (teste)

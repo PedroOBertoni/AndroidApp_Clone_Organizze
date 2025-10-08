@@ -64,8 +64,8 @@ public class MainActivity extends IntroActivity {
         // Verifica no firebase se o usuário está logado
         autenticacao = ConfigFirebase.getFirebaseAutenticacao();
 
-        /* Faz com que o usuário seja deslogado */
-        autenticacao.signOut();
+        /* Faz com que o usuário seja deslogado
+        autenticacao.signOut(); */
 
         if(autenticacao.getCurrentUser() != null){
             // Se o usuário estiver logado, abre a tela principal
