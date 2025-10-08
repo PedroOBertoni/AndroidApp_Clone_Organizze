@@ -1,5 +1,6 @@
 package com.aula.organizze.activity;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.Editable;
@@ -7,7 +8,6 @@ import android.text.TextWatcher;
 import android.text.InputType;
 import android.widget.Toast;
 import android.widget.EditText;
-import android.widget.DatePicker;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -24,6 +24,7 @@ import java.util.Locale;
 
 public class DespesasActivity extends AppCompatActivity {
 
+    // componentes da interface
     private TextInputEditText editTextTitulo, editTextDescricao, editTextCategoria, editTextData;
     private EditText editTextValor;
     private FloatingActionButton fabCalendario, fabConfirmar;
@@ -32,6 +33,7 @@ public class DespesasActivity extends AppCompatActivity {
     private boolean isUpdating = false;
     private final Locale locale = new Locale("pt", "BR");
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,13 +41,13 @@ public class DespesasActivity extends AppCompatActivity {
         setContentView(R.layout.activity_despesas);
 
         // Vincula os elementos do layout
-        editTextTitulo = findViewById(R.id.editTextTitulo);
-        editTextDescricao = findViewById(R.id.editTextDescricao);
-        editTextCategoria = findViewById(R.id.editTextCategoria);
-        editTextData = findViewById(R.id.editTextData);
-        fabCalendario = findViewById(R.id.fabCalendario);
-        fabConfirmar = findViewById(R.id.floatingActionButtonConfirmar);
-        editTextValor = findViewById(R.id.editTextValor);
+        editTextTitulo = findViewById(R.id.editTextTituloDespesa);
+        editTextDescricao = findViewById(R.id.editTextDescricaoDespesa);
+        editTextCategoria = findViewById(R.id.editTextCategoriaDespesa);
+        editTextData = findViewById(R.id.editTextDataDespesa);
+        fabCalendario = findViewById(R.id.fabCalendarioDespesa);
+        fabConfirmar = findViewById(R.id.floatingActionButtonConfirmarDespesa);
+        editTextValor = findViewById(R.id.editTextValorDespesa);
 
         // Impede mover o cursor manualmente, mas ainda permite digitar normalmente
         editTextValor.setOnTouchListener((v, event) -> {
@@ -69,7 +71,7 @@ public class DespesasActivity extends AppCompatActivity {
         editTextData.setText(sdf.format(calendar.getTime()));
 
         // Inicializa o campo com R$ 0,00
-        setCurrencyText("0");
+        digitacaoContinua("0");
 
         // TextWatcher que implementa o comportamento "digitar centavos e empurrar"
         editTextValor.addTextChangedListener(new TextWatcher() {
@@ -94,7 +96,7 @@ public class DespesasActivity extends AppCompatActivity {
 
                 // Se não houver dígitos, considera 0
                 if (digits.isEmpty()) {
-                    setCurrencyText("0");
+                    digitacaoContinua("0");
                     isUpdating = false;
                     return;
                 }
@@ -114,7 +116,7 @@ public class DespesasActivity extends AppCompatActivity {
                     editTextValor.setSelection(formatted.length());
                 } catch (NumberFormatException e) {
                     // Em caso raro de overflow/parsing
-                    setCurrencyText("0");
+                    digitacaoContinua("0");
                 }
 
                 isUpdating = false;
@@ -138,7 +140,7 @@ public class DespesasActivity extends AppCompatActivity {
 
         // Clique no campo de categoria -> abre lista de opções
         editTextCategoria.setOnClickListener(v -> {
-            String[] categorias = {"Assinaturas e Serviços", "Compras", "Transporte", "Lazer", "Outros"};
+            String[] categorias = {"Assinaturas e Serviços", "Compras", "Alimentação", "Transporte", "Lazer", "Outros"};
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Selecione uma categoria");
             builder.setItems(categorias, (dialog, which) -> editTextCategoria.setText(categorias[which]));
@@ -164,7 +166,7 @@ public class DespesasActivity extends AppCompatActivity {
     }
 
     // Helper para setar "R$ 0,00" ou qualquer centavos em string de dígitos (ex: "0" ou "12")
-    private void setCurrencyText(String digitsOnly) {
+    private void digitacaoContinua(String digitsOnly) {
         try {
             long cents = Long.parseLong(digitsOnly);
             double valor = cents / 100.0;

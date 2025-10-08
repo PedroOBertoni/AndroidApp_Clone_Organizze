@@ -9,7 +9,7 @@
     tools:context=".activity.DespesasActivity">
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/linearLayoutDespesa"
         android:layout_width="0dp"
         android:layout_height="150dp"
         android:background="@color/colorPrimaryDespesa"
@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <EditText
-            android:id="@+id/editTextValor"
+            android:id="@+id/editTextValorDespesa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/transparent"
@@ -35,7 +35,7 @@
     </LinearLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputTitulo"
+        android:id="@+id/textInputTituloDespesa"
         android:layout_width="0dp"
         android:layout_height="55dp"
         android:layout_marginStart="24dp"
@@ -43,10 +43,10 @@
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayoutDespesa">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextTitulo"
+            android:id="@+id/editTextTituloDespesa"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fontFamily="@font/inter"
@@ -55,7 +55,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputDescricao"
+        android:id="@+id/textInputDescricaoDespesa"
         android:layout_width="0dp"
         android:layout_height="55dp"
         android:layout_marginStart="24dp"
@@ -63,10 +63,10 @@
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputTitulo">
+        app:layout_constraintTop_toBottomOf="@+id/textInputTituloDespesa">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextDescricao"
+            android:id="@+id/editTextDescricaoDespesa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
@@ -75,7 +75,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputCategoria"
+        android:id="@+id/textInputCategoriaDespesa"
         android:layout_width="0dp"
         android:layout_height="55dp"
         android:layout_marginStart="24dp"
@@ -83,10 +83,10 @@
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputDescricao">
+        app:layout_constraintTop_toBottomOf="@+id/textInputDescricaoDespesa">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextCategoria"
+            android:id="@+id/editTextCategoriaDespesa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusable="false"
@@ -96,33 +96,33 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabCalendario"
+        android:id="@+id/fabCalendarioDespesa"
         android:layout_width="55dp"
         android:layout_height="55dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
         app:backgroundTint="@color/colorAccentDespesa"
-        app:layout_constraintEnd_toStartOf="@+id/textInputData"
+        app:layout_constraintEnd_toStartOf="@+id/textInputDataDespesa"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputCategoria"
+        app:layout_constraintTop_toBottomOf="@+id/textInputCategoriaDespesa"
         app:maxImageSize="32dp"
         app:srcCompat="@drawable/ic_calendar_24dp"
         app:tint="@android:color/white" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputData"
+        android:id="@+id/textInputDataDespesa"
         android:layout_width="150dp"
         android:layout_height="55dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/fabCalendario"
-        app:layout_constraintTop_toBottomOf="@+id/textInputCategoria">
+        app:layout_constraintStart_toEndOf="@+id/fabCalendarioDespesa"
+        app:layout_constraintTop_toBottomOf="@+id/textInputCategoriaDespesa">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextData"
+            android:id="@+id/editTextDataDespesa"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fontFamily="@font/inter"
@@ -134,7 +134,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButtonConfirmar"
+        android:id="@+id/floatingActionButtonConfirmarDespesa"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="55dp"
