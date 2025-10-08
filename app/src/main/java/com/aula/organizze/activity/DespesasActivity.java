@@ -1,16 +1,36 @@
 package com.aula.organizze.activity;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.text.InputType;
+import android.widget.Toast;
+import android.widget.EditText;
+import android.widget.DatePicker;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.aula.organizze.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
+
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class DespesasActivity extends AppCompatActivity {
+
+    private TextInputEditText editTextTitulo, editTextDescricao, editTextCategoria, editTextData;
+    private EditText editTextValor;
+    private FloatingActionButton fabCalendario, fabConfirmar;
+
+    // flag para evitar loop no TextWatcher
+    private boolean isUpdating = false;
+    private final Locale locale = new Locale("pt", "BR");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,5 +38,142 @@ public class DespesasActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_despesas);
 
+        // Vincula os elementos do layout
+        editTextTitulo = findViewById(R.id.editTextTitulo);
+        editTextDescricao = findViewById(R.id.editTextDescricao);
+        editTextCategoria = findViewById(R.id.editTextCategoria);
+        editTextData = findViewById(R.id.editTextData);
+        fabCalendario = findViewById(R.id.fabCalendario);
+        fabConfirmar = findViewById(R.id.floatingActionButtonConfirmar);
+        editTextValor = findViewById(R.id.editTextValor);
+
+        // Impede mover o cursor manualmente, mas ainda permite digitar normalmente
+        editTextValor.setOnTouchListener((v, event) -> {
+            int length = editTextValor.getText().length();
+            editTextValor.setSelection(length);
+            v.performClick(); // mantém comportamento padrão (abre teclado)
+            return false; // permite foco e digitação
+        });
+
+        // Impede seleção de texto
+        editTextValor.setLongClickable(false);
+        editTextValor.setTextIsSelectable(false);
+
+
+        // Ajuste: garante teclado numérico (opcional, também configure no XML)
+        editTextValor.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+        // Define data atual como padrão
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        editTextData.setText(sdf.format(calendar.getTime()));
+
+        // Inicializa o campo com R$ 0,00
+        setCurrencyText("0");
+
+        // TextWatcher que implementa o comportamento "digitar centavos e empurrar"
+        editTextValor.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // não usado
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // não usado
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (isUpdating) return;
+
+                isUpdating = true;
+
+                // Pega apenas os dígitos do texto (remove "R$", espaços, pontuação etc)
+                String digits = s.toString().replaceAll("[^\\d]", "");
+
+                // Se não houver dígitos, considera 0
+                if (digits.isEmpty()) {
+                    setCurrencyText("0");
+                    isUpdating = false;
+                    return;
+                }
+
+                try {
+                    // Converte para centavos (long para evitar perda)
+                    long cents = Long.parseLong(digits);
+
+                    // Converte para valor em reais (double apenas para formatação)
+                    double valor = cents / 100.0;
+
+                    // Formata para moeda pt-BR (ex: R$ 1.234,56)
+                    String formatted = NumberFormat.getCurrencyInstance(locale).format(valor);
+
+                    // Atualiza o EditText com o texto formatado e move o cursor para o fim
+                    editTextValor.setText(formatted);
+                    editTextValor.setSelection(formatted.length());
+                } catch (NumberFormatException e) {
+                    // Em caso raro de overflow/parsing
+                    setCurrencyText("0");
+                }
+
+                isUpdating = false;
+            }
+        });
+
+        // Clique no FAB do calendário -> abre seletor de data
+        fabCalendario.setOnClickListener(v -> {
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog datePicker = new DatePickerDialog(this,
+                    (view, selectedYear, selectedMonth, selectedDay) -> {
+                        calendar.set(selectedYear, selectedMonth, selectedDay);
+                        editTextData.setText(sdf.format(calendar.getTime()));
+                    },
+                    year, month, day);
+            datePicker.show();
+        });
+
+        // Clique no campo de categoria -> abre lista de opções
+        editTextCategoria.setOnClickListener(v -> {
+            String[] categorias = {"Assinaturas e Serviços", "Compras", "Transporte", "Lazer", "Outros"};
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Selecione uma categoria");
+            builder.setItems(categorias, (dialog, which) -> editTextCategoria.setText(categorias[which]));
+            builder.show();
+        });
+
+        // Clique no botão confirmar -> mostra os dados (teste)
+        fabConfirmar.setOnClickListener(v -> {
+            String titulo = editTextTitulo.getText().toString();
+            String descricao = editTextDescricao.getText().toString();
+            String categoria = editTextCategoria.getText().toString();
+            String data = editTextData.getText().toString();
+            String valor = editTextValor.getText().toString();
+
+            String resumo = "Título: " + titulo +
+                    "\nDescrição: " + descricao +
+                    "\nCategoria: " + categoria +
+                    "\nData: " + data +
+                    "\nValor: " + valor;
+
+            Toast.makeText(this, resumo, Toast.LENGTH_LONG).show();
+        });
+    }
+
+    // Helper para setar "R$ 0,00" ou qualquer centavos em string de dígitos (ex: "0" ou "12")
+    private void setCurrencyText(String digitsOnly) {
+        try {
+            long cents = Long.parseLong(digitsOnly);
+            double valor = cents / 100.0;
+            String formatted = NumberFormat.getCurrencyInstance(locale).format(valor);
+            editTextValor.setText(formatted);
+            editTextValor.setSelection(formatted.length());
+        } catch (NumberFormatException e) {
+            editTextValor.setText(NumberFormat.getCurrencyInstance(locale).format(0.0));
+            editTextValor.setSelection(editTextValor.getText().length());
+        }
     }
 }
