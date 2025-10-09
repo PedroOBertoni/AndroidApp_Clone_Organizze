@@ -139,6 +139,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="55dp"
         android:clickable="true"
+        android:onClick="salvarReceita"
         app:backgroundTint="@color/colorAccentReceita"
         app:fabCustomSize="80dp"
         app:layout_constraintBottom_toBottomOf="parent"

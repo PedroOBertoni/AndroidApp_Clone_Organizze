@@ -172,7 +172,8 @@ public class DespesasActivity extends AppCompatActivity {
         // Formatando o valor
         String valorRecuperado = editTextValor.getText().toString()
                 .replace("R$", "")
-                .replace(" ", "")
+                .replaceAll("\\s", "")
+                .replaceAll("\\.", "")
                 .replace(",", ".")
                 .replaceAll("[\\u00A0\\s]", "") // remove espaços normais e não quebráveis
                 .trim();

@@ -4,19 +4,18 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
-import android.widget.EditText;
+import android.text.InputType;
+import android.view.View;
 import android.widget.Toast;
+import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.aula.organizze.R;
+import com.aula.organizze.model.Movimentacao;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -36,6 +35,9 @@ public class ReceitasActivity extends AppCompatActivity {
     // flag para evitar loop no TextWatcher
     private boolean isUpdating = false;
     private final Locale locale = new Locale("pt", "BR");
+
+    // objeto movimentacao para salvar os dados
+    private Movimentacao movimentacao;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -96,10 +98,10 @@ public class ReceitasActivity extends AppCompatActivity {
                 isUpdating = true;
 
                 // Pega apenas os dígitos do texto (remove "R$", espaços, pontuação etc)
-                String digitos = s.toString().replaceAll("[^\\d]", "");
+                String digits = s.toString().replaceAll("[^\\d]", "");
 
                 // Se não houver dígitos, considera 0
-                if (digitos.isEmpty()) {
+                if (digits.isEmpty()) {
                     digitacaoContinua("0");
                     isUpdating = false;
                     return;
@@ -107,7 +109,7 @@ public class ReceitasActivity extends AppCompatActivity {
 
                 try {
                     // Converte para centavos (long para evitar perda)
-                    long cents = Long.parseLong(digitos);
+                    long cents = Long.parseLong(digits);
 
                     // Converte para valor em reais (double apenas para formatação)
                     double valor = cents / 100.0;
@@ -150,23 +152,6 @@ public class ReceitasActivity extends AppCompatActivity {
                     .setItems(categorias, (dialog, which) -> editTextCategoria.setText(categorias[which]))
                     .show();
         });
-
-        // Clique no botão confirmar -> mostra os dados (teste)
-        fabConfirmar.setOnClickListener(v -> {
-            String titulo = editTextTitulo.getText().toString();
-            String descricao = editTextDescricao.getText().toString();
-            String categoria = editTextCategoria.getText().toString();
-            String data = editTextData.getText().toString();
-            String valor = editTextValor.getText().toString();
-
-            String resumo = "Título: " + titulo +
-                    "\nDescrição: " + descricao +
-                    "\nCategoria: " + categoria +
-                    "\nData: " + data +
-                    "\nValor: " + valor;
-
-            Toast.makeText(this, resumo, Toast.LENGTH_LONG).show();
-        });
     }
 
     // Helper para setar "R$ 0,00" ou qualquer centavos em string de dígitos (ex: "0" ou "12")
@@ -181,5 +166,30 @@ public class ReceitasActivity extends AppCompatActivity {
             editTextValor.setText(NumberFormat.getCurrencyInstance(locale).format(0.0));
             editTextValor.setSelection(editTextValor.getText().length());
         }
+    }
+
+    public void salvarReceita(View view){
+        // Formatando o valor
+        String valorRecuperado = editTextValor.getText().toString()
+                .replace("R$", "")
+                .replaceAll("\\s", "")
+                .replaceAll("\\.", "")
+                .replace(",", ".")
+                .replaceAll("[\\u00A0\\s]", "") // remove espaços normais e não quebráveis
+                .trim();
+
+        // Instanciando a classe movimentacao
+        movimentacao = new Movimentacao();
+
+        // Aplicando os valores ao objeto movimentacao
+        movimentacao.setValor(Double.parseDouble(valorRecuperado));
+        movimentacao.setTitulo( editTextTitulo.getText().toString());
+        movimentacao.setDescricao( editTextDescricao.getText().toString());
+        movimentacao.setCategoria( editTextCategoria.getText().toString());
+        movimentacao.setData( editTextData.getText().toString());
+        movimentacao.setTipo( "R" );
+
+        // chamando método salvar da classe movimentacao
+        movimentacao.salvar();
     }
 }
