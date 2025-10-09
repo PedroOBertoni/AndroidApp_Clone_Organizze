@@ -14,8 +14,8 @@ public class Usuario {
 
     // Método para salvar o usuário no Realtime Database
     public void salvar() {
-        DatabaseReference ref = ConfigFirebase.getFirebaseDatabase();
-        ref.child("usuarios")
+        DatabaseReference refFirebase = ConfigFirebase.getFirebaseDatabase();
+        refFirebase.child("usuarios")
                 .child(this.idUsuario)
                 .setValue(this);
     }
