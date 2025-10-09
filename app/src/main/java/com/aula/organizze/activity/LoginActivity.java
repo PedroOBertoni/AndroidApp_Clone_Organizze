@@ -3,8 +3,6 @@ package com.aula.organizze.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,9 +10,6 @@ import android.widget.EditText;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.aula.organizze.R;
 import com.aula.organizze.config.ConfigFirebase;
@@ -27,8 +22,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -40,7 +33,6 @@ public class LoginActivity extends AppCompatActivity {
     // objeto para autenticação do Firebase
     private FirebaseAuth autenticacao;
     private Usuario usuario;
-
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -61,11 +53,13 @@ public class LoginActivity extends AppCompatActivity {
         // Button
         buttonEntra = findViewById(R.id.buttonEntra);
 
+        // Listener do botão de login
         buttonEntra.setOnClickListener(v -> {
             // Captura os textos no momento do clique
             String textoEmail = campoEmail.getText().toString().trim();
             String textoSenha = campoSenha.getText().toString().trim();
 
+            // Valida os campos antes de enviar
             validaPreenchimentoDosCampos(textoEmail, textoSenha);
         });
     }
@@ -111,30 +105,32 @@ public class LoginActivity extends AppCompatActivity {
             valido = false;
         }
 
+        // Caso tudo esteja válido, tenta autenticar o usuário
         if (valido) {
             validarLoginUsuario(email, senha);
         }
     }
 
     public void validarLoginUsuario(String email, String senha) {
-        usuario = new Usuario();
 
-        usuario.setEmail(email);
-        usuario.setSenha(senha);
-
+        // Obtém a instância do FirebaseAuth
         autenticacao = ConfigFirebase.getFirebaseAutenticacao();
+
+        // Tenta autenticar o usuário com e-mail e senha
         autenticacao.signInWithEmailAndPassword(
-                usuario.getEmail(),
-                usuario.getSenha()
+                email,
+                senha
         ).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if ( task.isSuccessful() ){
 
-                    // Redireciona para a tela principal
+                if (task.isSuccessful()) {
+
+                    // Login bem-sucedido: redireciona para a tela principal
                     abrirTelaPrincipal();
 
                 } else {
+                    // Tratamento de erros específicos do Firebase
                     String excecao;
 
                     try {
@@ -151,7 +147,6 @@ public class LoginActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         excecao = "Erro ao fazer login: " + e.getMessage();
                         e.printStackTrace();
-
                     }
 
                     // Mostra erro geral com Snackbar
@@ -163,16 +158,18 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void redirectTermosDeUso(View view){
+    // Redireciona para as páginas Termos de Uso, Cadastro e Tela Principal
+    public void redirectTermosDeUso(View view) {
         startActivity(new Intent(this, CadastroActivity.class));
         finish();
     }
 
-    public void redirectCadastrar(View view){
+    public void redirectCadastrar(View view) {
         startActivity(new Intent(this, CadastroActivity.class));
         finish();
     }
 
+    // Redireciona para tela principal após login bem-sucedido
     public void abrirTelaPrincipal() {
         startActivity(new Intent(getApplicationContext(), PrincipalActivity.class));
         finish();

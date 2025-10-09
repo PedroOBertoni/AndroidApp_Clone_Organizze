@@ -3,18 +3,12 @@ package com.aula.organizze.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import android.os.Handler;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.aula.organizze.R;
 import com.aula.organizze.config.ConfigFirebase;
@@ -130,13 +124,20 @@ public class CadastroActivity extends AppCompatActivity {
         usuario = new Usuario();
         usuario.setNome(nome);
         usuario.setEmail(email);
-        usuario.setSenha(senha);
 
         autenticacao = ConfigFirebase.getFirebaseAutenticacao();
         autenticacao.createUserWithEmailAndPassword(email, senha)
                 .addOnCompleteListener(this, task -> {
                     if ( task.isSuccessful() ) {
 
+                        // Criando o usuário por meio do UID do Firebase
+                        String idUsuario = task.getResult().getUser().getUid();
+                        usuario.setIdUsuario(idUsuario);
+
+                        // Salvando usuário por meio do método salvar() da classe Usuario
+                        usuario.salvar();
+
+                        // Finalizando a Activity de Cadastro e iniciando a Activity Principal
                         startActivity(new Intent(getApplicationContext(), PrincipalActivity.class));
                         finish();
 
@@ -172,6 +173,7 @@ public class CadastroActivity extends AppCompatActivity {
                 });
     }
 
+    // Redireciona para as páginas Termos de Uso e Login
     public void redirectTermosDeUso(View view){
         startActivity(new Intent(this, CadastroActivity.class));
         finish();
@@ -179,11 +181,6 @@ public class CadastroActivity extends AppCompatActivity {
 
     public void redirectEntrar(View view){
         startActivity(new Intent(this, LoginActivity.class));
-        finish();
-    }
-
-    public void abrirTelaLogin() {
-        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
         finish();
     }
 }

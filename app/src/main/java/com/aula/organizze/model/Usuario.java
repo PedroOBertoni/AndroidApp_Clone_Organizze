@@ -1,11 +1,33 @@
 package com.aula.organizze.model;
 
+import com.aula.organizze.config.ConfigFirebase;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Exclude;
+
 public class Usuario {
+    private String idUsuario;
     private String nome;
     private String email;
-    private  String senha;
 
     public Usuario() {
+    }
+
+    // Método para salvar o usuário no Realtime Database
+    public void salvar() {
+        DatabaseReference ref = ConfigFirebase.getFirebaseDatabase();
+        ref.child("usuarios")
+                .child(this.idUsuario)
+                .setValue(this);
+    }
+
+    // Getters e Setters
+    @Exclude // Estou excluindo esse atributo do firebase database, portanto não será salvo no firebase database
+    public String getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(String idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     public String getNome() {
@@ -22,13 +44,5 @@ public class Usuario {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
     }
 }
