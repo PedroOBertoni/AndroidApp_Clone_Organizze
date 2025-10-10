@@ -11,7 +11,7 @@
     <LinearLayout
         android:id="@+id/linearLayoutDespesa"
         android:layout_width="0dp"
-        android:layout_height="150dp"
+        android:layout_height="170dp"
         android:background="@color/colorPrimaryDespesa"
         android:gravity="center"
         android:orientation="vertical"
@@ -25,9 +25,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/transparent"
+            android:digits="0123456789"
             android:fontFamily="@font/inter_bold"
             android:inputType="number"
-            android:digits="0123456789"
             android:text="R$ 0,00"
             android:textAlignment="viewEnd"
             android:textColor="@color/white"
@@ -147,6 +147,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputDataDespesa"
         app:maxImageSize="40dp"
         app:srcCompat="@drawable/ic_check_24dp"
         app:tint="@android:color/white" />

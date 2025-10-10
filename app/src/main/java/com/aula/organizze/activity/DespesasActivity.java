@@ -7,6 +7,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.InputType;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 import android.widget.EditText;
 
@@ -55,6 +56,10 @@ public class DespesasActivity extends AppCompatActivity {
         fabCalendario = findViewById(R.id.fabCalendarioDespesa);
         fabConfirmar = findViewById(R.id.floatingActionButtonConfirmarDespesa);
         editTextValor = findViewById(R.id.editTextValorDespesa);
+
+        // Foca automaticamente no campo de valor e abre o teclado
+        editTextValor.requestFocus();
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 
         // Impede mover o cursor manualmente, mas ainda permite digitar normalmente
         editTextValor.setOnTouchListener((v, event) -> {

@@ -24,7 +24,8 @@ public class PrincipalActivity extends AppCompatActivity {
         speedDialView.addActionItem(
                 new SpeedDialActionItem.Builder(R.id.fab_despesa, R.drawable.ic_add_24dp)
                         .setLabel("Adicionar despesa")
-                        .setFabBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDespesa)) // ex: cor
+                        .setFabImageTintColor(ContextCompat.getColor(this, R.color.white))
+                        .setFabBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDespesa))
                         .create()
         );
 
@@ -32,7 +33,8 @@ public class PrincipalActivity extends AppCompatActivity {
         speedDialView.addActionItem(
                 new SpeedDialActionItem.Builder(R.id.fab_receita, R.drawable.ic_add_24dp)
                         .setLabel("Adicionar receita")
-                        .setFabBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryReceita)) // ex: cor
+                        .setFabImageTintColor(ContextCompat.getColor(this, R.color.white))
+                        .setFabBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryReceita))
                         .create()
         );
 
