@@ -1,102 +1,65 @@
 package com.aula.organizze.model;
 
-import com.aula.organizze.config.ConfigFirebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Movimentacao {
 
-    private double valor;
-    private String titulo;
-    private String descricao;
-    private String categoria;
     private String data;
-    private String tipo;
+    private String categoria;
+    private String descricao;
+    private Double valor;
+    private String titulo;
+    private String tipo; // "R" ou "D"
 
-    public Movimentacao() {
-    }
+    // Novos campos
+    private Integer quantParcelas; // null = não parcelado
+    private String frequencia;     // null = não fixo
 
-    // Método para salvar a movimentação no Realtime Database
-    public void salvar() {
-        // Recupera o ID do usuário logado
-        FirebaseAuth autenticacao = ConfigFirebase.getFirebaseAutenticacao();
-        String idUsuario = autenticacao.getCurrentUser().getUid();
+    // Construtor padrão (obrigatório para Firebase)
+    public Movimentacao() {}
 
-        // Formata a data para mês e ano (ex: "092025")
-        String mesAno = mesAnoDataEscolhida(getData());
+    // Métodos existentes (getters/setters de data, categoria, etc.)
 
-        // Referência do Firebase
-        DatabaseReference refFirebase = ConfigFirebase.getFirebaseDatabase();
+    public String getData() { return data; }
+    public void setData(String data) { this.data = data; }
 
-        // Caminho base: movimentacoes/{idUsuario}/{mesAno}
-        DatabaseReference movimentacaoRef = refFirebase
-                .child("movimentacoes")
-                .child(idUsuario)
-                .child(mesAno);
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
 
-        // Gera um ID único e salva a movimentação
-        String movimentacaoId = movimentacaoRef.push().getKey();
-        movimentacaoRef.child(movimentacaoId).setValue(this);
-    }
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
 
-    public static String mesAnoDataEscolhida(String dataEscolhida){
-        // separando a string dataEscolhida a cada "/"
-        String retornoData[] = dataEscolhida.split("/");
+    public Double getValor() { return valor; }
+    public void setValor(Double valor) { this.valor = valor; }
 
-        // pegando o mês e o ano
-        String mes = retornoData[1];
-        String ano = retornoData[2];
+    public String getTitulo() { return titulo; }
+    public void setTitulo(String titulo) { this.titulo = titulo; }
 
-        // concatenando mês e ano
-        String mesAno = mes + ano;
-        return mesAno;
-    }
+    public String getTipo() { return tipo; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
 
-    public double getValor() {
-        return valor;
-    }
+    // Novos getters/setters
+    public Integer getQuantParcelas() { return quantParcelas; }
+    public void setQuantParcelas(Integer quantParcelas) { this.quantParcelas = quantParcelas; }
 
-    public void setValor(double valor) {
-        this.valor = valor;
-    }
+    public String getFrequencia() { return frequencia; }
+    public void setFrequencia(String frequencia) { this.frequencia = frequencia; }
 
-    public String getTitulo() {
-        return titulo;
-    }
+    // Método salvar atualizado
+    public void salvar(String mesAno) {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String uid = auth.getCurrentUser().getUid();
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+        DatabaseReference firebase = FirebaseDatabase.getInstance().getReference();
+        firebase.child("movimentacoes")
+                .child(uid)
+                .child(mesAno)
+                .push()
+                .setValue(this);
     }
 }

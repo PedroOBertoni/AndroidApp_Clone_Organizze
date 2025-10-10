@@ -50,8 +50,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fontFamily="@font/inter"
-            android:inputType="textCapSentences"
             android:hint="Título"
+            android:inputType="textCapSentences"
             android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -71,8 +71,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
-            android:inputType="textCapSentences"
             android:hint="Descrição (opcional)"
+            android:inputType="textCapSentences"
             android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -135,19 +135,80 @@
             android:textStyle="bold" />
     </com.google.android.material.textfield.TextInputLayout>
 
+
+    <LinearLayout
+        android:id="@+id/linearModoReceita"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fabCalendarioReceita">
+
+        <Button
+            android:id="@+id/buttonFixoReceita"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="@color/colorAccentReceita"
+            android:text="Fixo"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/buttonParceladoReceita"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:backgroundTint="@color/colorAccentReceita"
+            android:text="Parcelado"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearParcelamentoInfoReceita"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearModoReceita">
+
+        <TextView
+            android:id="@+id/textParcelasInfoReceita"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <ImageButton
+            android:id="@+id/buttonRemoverParcelamentoReceita"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/circle_button_background"
+            android:src="@drawable/ic_close_24dp"
+            app:tint="@color/white" />
+    </LinearLayout>
+
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButtonConfirmarReceita"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="55dp"
         android:clickable="true"
-        android:onClick="salvarReceita"
-        app:backgroundTint="@color/colorAccentReceita"
+        app:backgroundTint="@color/colorPrimary"
         app:fabCustomSize="80dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputDataReceita"
+        app:layout_constraintTop_toBottomOf="@+id/linearParcelamentoInfoReceita"
         app:maxImageSize="40dp"
         app:srcCompat="@drawable/ic_check_24dp"
         app:tint="@android:color/white" />

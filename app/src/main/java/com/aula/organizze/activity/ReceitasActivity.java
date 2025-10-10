@@ -2,18 +2,25 @@ package com.aula.organizze.activity;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.InputType;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.NumberPicker;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.aula.organizze.R;
 import com.aula.organizze.model.Movimentacao;
@@ -29,16 +36,30 @@ import java.util.Locale;
 
 public class ReceitasActivity extends AppCompatActivity {
 
-    // componentes da interface
+    // Componentes da interface
     private TextInputEditText editTextTitulo, editTextDescricao, editTextCategoria, editTextData;
     private EditText editTextValor;
     private FloatingActionButton fabCalendario, fabConfirmar;
+    private Button buttonFixo, buttonParcelado;
+    private LinearLayout linearParcelamentoInfo;
+    private TextView textParcelasInfo;
+    private View buttonRemoverParcelamento;
 
-    // flag para evitar loop no TextWatcher
+    // Flag para evitar loop no TextWatcher
     private boolean isUpdating = false;
     private final Locale locale = new Locale("pt", "BR");
 
-    // objeto movimentacao para salvar os dados
+    // Estado dos modos
+    private boolean modoFixoAtivo = false;
+    private boolean modoParceladoAtivo = false;
+    private Integer quantParcelas = null; // null = não definido
+    private String frequencia = null;     // null = não definido
+
+    // Cores para estilo dos botões
+    private int corTextoInativo;
+    private int corTextoAtivo;
+
+    // Objeto movimentacao para salvar os dados
     private Movimentacao movimentacao;
 
     @SuppressLint("MissingInflatedId")
@@ -47,6 +68,10 @@ public class ReceitasActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_receitas);
+
+        // Inicializa cores
+        corTextoInativo = ContextCompat.getColor(this, R.color.textPrimary);
+        corTextoAtivo = ContextCompat.getColor(this, R.color.colorAccentReceita);
 
         // Vincula os elementos do layout
         editTextTitulo = findViewById(R.id.editTextTituloReceita);
@@ -57,15 +82,25 @@ public class ReceitasActivity extends AppCompatActivity {
         fabConfirmar = findViewById(R.id.floatingActionButtonConfirmarReceita);
         editTextValor = findViewById(R.id.editTextValorReceita);
 
+        buttonFixo = findViewById(R.id.buttonFixoReceita);
+        buttonParcelado = findViewById(R.id.buttonParceladoReceita);
+        linearParcelamentoInfo = findViewById(R.id.linearParcelamentoInfoReceita);
+        textParcelasInfo = findViewById(R.id.textParcelasInfoReceita);
+        buttonRemoverParcelamento = findViewById(R.id.buttonRemoverParcelamentoReceita);
+
+        // Estiliza botões iniciais como inativos
+        atualizarEstiloBotao(buttonFixo, false);
+        atualizarEstiloBotao(buttonParcelado, false);
+
         // Foca automaticamente no campo de valor e abre o teclado
         editTextValor.requestFocus();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 
         // Impede mover o cursor manualmente, mas ainda permite digitar normalmente
-        editTextValor.setOnTouchListener((v, event) -> {
+        editTextValor.setOnTouchListener((view, event) -> {
             int length = editTextValor.getText().length();
             editTextValor.setSelection(length);
-            v.performClick(); // mantém comportamento padrão (abre teclado)
+            view.performClick(); // mantém comportamento padrão (abre teclado)
             return false; // permite foco e digitação
         });
 
@@ -73,8 +108,7 @@ public class ReceitasActivity extends AppCompatActivity {
         editTextValor.setLongClickable(false);
         editTextValor.setTextIsSelectable(false);
 
-
-        // Ajuste: garante teclado numérico (opcional, também configure no XML)
+        // Garante teclado numérico
         editTextValor.setInputType(InputType.TYPE_CLASS_NUMBER);
 
         // Define data atual como padrão
@@ -135,32 +169,61 @@ public class ReceitasActivity extends AppCompatActivity {
             }
         });
 
+        /* OnClickListeners */
+
         // Clique no FAB do calendário -> abre seletor de data
-        fabCalendario.setOnClickListener(v -> {
-            int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH);
-            int day = calendar.get(Calendar.DAY_OF_MONTH);
+        fabCalendario.setOnClickListener(view -> {
+            Calendar cal = Calendar.getInstance();
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH);
+            int day = cal.get(Calendar.DAY_OF_MONTH);
 
             DatePickerDialog datePicker = new DatePickerDialog(this,
-                    (view, selectedYear, selectedMonth, selectedDay) -> {
-                        calendar.set(selectedYear, selectedMonth, selectedDay);
-                        editTextData.setText(sdf.format(calendar.getTime()));
+                    (v, selectedYear, selectedMonth, selectedDay) -> {
+                        cal.set(selectedYear, selectedMonth, selectedDay);
+                        editTextData.setText(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime()));
                     },
                     year, month, day);
             datePicker.show();
         });
 
         // Clique no campo de categoria -> abre lista de opções
-        editTextCategoria.setOnClickListener(v -> {
-            String[] categorias = {"Salário", "Freelancee e Serviços", "Investimentos", "Presentes", "Vendas", "Outros"};
+        editTextCategoria.setOnClickListener(view -> {
+            String[] categorias = {"Assinaturas e Serviços", "Compras", "Alimentação", "Transporte", "Lazer", "Outros"};
             new MaterialAlertDialogBuilder(this, R.style.RoundedDialogReceita)
                     .setTitle("Selecione uma categoria")
                     .setItems(categorias, (dialog, which) -> editTextCategoria.setText(categorias[which]))
                     .show();
         });
 
+        // Clique nos botões de modo
+        buttonFixo.setOnClickListener(view -> {
+            if (modoFixoAtivo) {
+                desativarModoFixo();
+            } else {
+                ativarModoFixo();
+            }
+        });
+
+        buttonParcelado.setOnClickListener(view -> {
+            if (modoParceladoAtivo) {
+                desativarModoParcelado();
+            } else {
+                ativarModoParcelado();
+            }
+        });
+
+        // Clique no botão de remover parcelamento/frequência
+        buttonRemoverParcelamento.setOnClickListener(view -> {
+            if (modoFixoAtivo) {
+                desativarModoFixo();
+            } else if (modoParceladoAtivo) {
+                desativarModoParcelado();
+            }
+        });
+
         // Clique no FAB confirma -> realiza validação e tenta salvar
-        fabConfirmar.setOnClickListener( view -> {
+        fabConfirmar.setOnClickListener(view -> {
             if (validarCampos(view)) {
                 // Todos os campos válidos → salva e limpa
                 salvarReceita(view);
@@ -169,6 +232,101 @@ public class ReceitasActivity extends AppCompatActivity {
                 Snackbar.make(view, "Receita adicionada com sucesso!", Snackbar.LENGTH_SHORT).show();
             }
         });
+    }
+
+    /* Atualiza o estilo visual do botão de modo (Fixo/Parcelado) e
+     * Adiciona borda colorAccentReceita quando ativo */
+
+    private void atualizarEstiloBotao(Button botao, boolean ativo) {
+        if (ativo) {
+            botao.setTextColor(corTextoAtivo);
+            GradientDrawable drawable = new GradientDrawable();
+            drawable.setColor(Color.TRANSPARENT);
+            drawable.setStroke(2, ContextCompat.getColor(this, R.color.colorAccentReceita));
+            drawable.setCornerRadius(8f);
+            botao.setBackground(drawable);
+        } else {
+            botao.setTextColor(corTextoInativo);
+            botao.setBackground(null); // remove borda
+        }
+    }
+
+    /* Ativa o modo Fixo: abre diálogo para escolher frequência */
+
+    private void ativarModoFixo() {
+        // Desativa modo parcelado se estiver ativo
+        if (modoParceladoAtivo) {
+            desativarModoParcelado();
+        }
+
+        String[] opcoesExibicao = {"Diário", "Semanal", "Quinzenal", "Mensal"};
+        String[] opcoesValor = {"diario", "semanal", "quinzenal", "mensal"};
+
+        new MaterialAlertDialogBuilder(this, R.style.RoundedDialogReceita)
+                .setTitle("Frequência da receita fixa")
+                .setItems(opcoesExibicao, (dialog, which) -> {
+                    frequencia = opcoesValor[which];
+                    modoFixoAtivo = true;
+                    modoParceladoAtivo = false;
+                    atualizarEstiloBotao(buttonFixo, true);
+                    atualizarEstiloBotao(buttonParcelado, false);
+                    atualizarInfoModo("Fixo: " + opcoesExibicao[which]);
+                })
+                .setNegativeButton("Cancelar", (dialog, which) -> {
+                    // Não ativa nenhum modo
+                })
+                .show();
+    }
+
+    /* Ativa o modo Parcelado: abre NumberPicker (2 a 24 parcelas) */
+    private void ativarModoParcelado() {
+        // Desativa modo fixo se estiver ativo
+        if (modoFixoAtivo) {
+            desativarModoFixo();
+        }
+
+        NumberPicker numberPicker = new NumberPicker(this);
+        numberPicker.setMinValue(2);
+        numberPicker.setMaxValue(24);
+        numberPicker.setValue(quantParcelas != null ? quantParcelas : 2);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Número de parcelas")
+                .setView(numberPicker)
+                .setPositiveButton("OK", (dialog, which) -> {
+                    quantParcelas = numberPicker.getValue();
+                    modoParceladoAtivo = true;
+                    modoFixoAtivo = false;
+                    atualizarEstiloBotao(buttonFixo, false);
+                    atualizarEstiloBotao(buttonParcelado, true);
+                    atualizarInfoModo("Parcelado: " + quantParcelas + "x");
+                })
+                .setNegativeButton("Cancelar", (dialog, which) -> {
+                    // Não ativa nenhum modo
+                })
+                .show();
+    }
+
+    /* Desativa o modo Fixo */
+    private void desativarModoFixo() {
+        modoFixoAtivo = false;
+        frequencia = null;
+        atualizarEstiloBotao(buttonFixo, false);
+        linearParcelamentoInfo.setVisibility(View.GONE);
+    }
+
+    /* Desativa o modo Parcelado */
+    private void desativarModoParcelado() {
+        modoParceladoAtivo = false;
+        quantParcelas = null;
+        atualizarEstiloBotao(buttonParcelado, false);
+        linearParcelamentoInfo.setVisibility(View.GONE);
+    }
+
+    /* Atualiza o texto e visibilidade do layout de informações do modo ativo */
+    private void atualizarInfoModo(String texto) {
+        textParcelasInfo.setText(texto);
+        linearParcelamentoInfo.setVisibility(View.VISIBLE);
     }
 
     // Helper para setar "R$ 0,00" ou qualquer centavos em string de dígitos (ex: "0" ou "12")
@@ -185,24 +343,25 @@ public class ReceitasActivity extends AppCompatActivity {
         }
     }
 
+    /* Converte o texto formatado do campo de valor para Double */
     private Double formatandoValor(EditText editTextValor) {
         String valor = editTextValor.getText().toString()
                 .replace("R$", "")
                 .replaceAll("\\s", "")
                 .replaceAll("\\.", "")
                 .replace(",", ".")
-                .replaceAll("[\\u00A0\\s]", "") // remove espaços normais e não quebráveis
+                .replaceAll("[\\u00A0\\s]", "")
                 .trim();
 
-        return Double.parseDouble(valor);
+        return valor.isEmpty() ? 0.0 : Double.parseDouble(valor);
     }
 
+    /* Valida os campos antes de salvar */
     private boolean validarCampos(View view) {
         String titulo = editTextTitulo.getText().toString().trim();
         String categoria = editTextCategoria.getText().toString().trim();
         String data = editTextData.getText().toString().trim();
 
-        // Verifica se o valor não é menor ou igual a zero
         boolean valorInvalido = formatandoValor(editTextValor) <= 0;
 
         if (titulo.isEmpty()) {
@@ -222,10 +381,20 @@ public class ReceitasActivity extends AppCompatActivity {
             return false;
         }
 
-        // Todos os campos válidos
+        // Se algum modo estiver ativo, garantir que os dados foram definidos
+        if (modoFixoAtivo && frequencia == null) {
+            Snackbar.make(view, "Selecione uma frequência para a receita fixa.", Snackbar.LENGTH_SHORT).show();
+            return false;
+        }
+        if (modoParceladoAtivo && quantParcelas == null) {
+            Snackbar.make(view, "Informe o número de parcelas.", Snackbar.LENGTH_SHORT).show();
+            return false;
+        }
+
         return true;
     }
 
+    /* Salva a receita no Firebase, organizada por mês/ano (ex: 202504) */
     public void salvarReceita(View view) {
         // Formatando o valor
         Double valorRecuperado = formatandoValor(editTextValor);
@@ -239,12 +408,34 @@ public class ReceitasActivity extends AppCompatActivity {
         movimentacao.setDescricao(editTextDescricao.getText().toString());
         movimentacao.setCategoria(editTextCategoria.getText().toString());
         movimentacao.setData(editTextData.getText().toString());
-        movimentacao.setTipo("D");
+        movimentacao.setTipo("R");
 
-        // chamando método salvar da classe movimentacao
-        movimentacao.salvar();
+        // Salvar campos adicionais se aplicável
+        if (modoFixoAtivo) {
+            movimentacao.setFrequencia(frequencia);
+        } else if (modoParceladoAtivo) {
+            movimentacao.setQuantParcelas(quantParcelas);
+        }
+
+        // Extrair mês/ano da data (formato dd/MM/yyyy → yyyyMM)
+        String data = editTextData.getText().toString();
+        String mesAno;
+        String[] partes = data.split("/");
+        if (partes.length == 3) {
+            String mes = partes[1];
+            String ano = partes[2];
+            mesAno = ano + mes; // ex: "202504"
+        } else {
+            // fallback para data atual
+            Calendar c = Calendar.getInstance();
+            mesAno = String.valueOf(c.get(Calendar.YEAR)) + String.format("%02d", c.get(Calendar.MONTH) + 1);
+        }
+
+        // chamando método salvar da classe movimentacao com mesAno
+        movimentacao.salvar(mesAno);
     }
 
+    /* Limpa todos os campos após salvar */
     private void limparCampos() {
         // Limpa texto dos campos principais
         editTextTitulo.setText("");
@@ -258,6 +449,15 @@ public class ReceitasActivity extends AppCompatActivity {
 
         // Reinicia o campo de valor com R$ 0,00
         digitacaoContinua("0");
+
+        // Reinicia modos
+        modoFixoAtivo = false;
+        modoParceladoAtivo = false;
+        frequencia = null;
+        quantParcelas = null;
+        linearParcelamentoInfo.setVisibility(View.GONE);
+        atualizarEstiloBotao(buttonFixo, false);
+        atualizarEstiloBotao(buttonParcelado, false);
 
         // Coloca o foco no primeiro campo
         editTextTitulo.requestFocus();
