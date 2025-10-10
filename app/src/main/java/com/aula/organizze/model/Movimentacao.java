@@ -17,19 +17,26 @@ public class Movimentacao {
     }
 
     // Método para salvar a movimentação no Realtime Database
-    public void salvar(){
-        // Recupera id do usuário logado
+    public void salvar() {
+        // Recupera o ID do usuário logado
         FirebaseAuth autenticacao = ConfigFirebase.getFirebaseAutenticacao();
         String idUsuario = autenticacao.getCurrentUser().getUid();
 
-        // Formata a data para mês e ano
-        String mesAno = mesAnoDataEscolhida( getData() );
+        // Formata a data para mês e ano (ex: "092025")
+        String mesAno = mesAnoDataEscolhida(getData());
 
+        // Referência do Firebase
         DatabaseReference refFirebase = ConfigFirebase.getFirebaseDatabase();
-        refFirebase.child("movimentacoes")
+
+        // Caminho base: movimentacoes/{idUsuario}/{mesAno}
+        DatabaseReference movimentacaoRef = refFirebase
+                .child("movimentacoes")
                 .child(idUsuario)
-                .child(mesAno)
-                .setValue(this);
+                .child(mesAno);
+
+        // Gera um ID único e salva a movimentação
+        String movimentacaoId = movimentacaoRef.push().getKey();
+        movimentacaoRef.child(movimentacaoId).setValue(this);
     }
 
     public static String mesAnoDataEscolhida(String dataEscolhida){

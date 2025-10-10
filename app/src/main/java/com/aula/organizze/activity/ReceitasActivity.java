@@ -147,7 +147,7 @@ public class ReceitasActivity extends AppCompatActivity {
         // Clique no campo de categoria -> abre lista de opções
         editTextCategoria.setOnClickListener(v -> {
             String[] categorias = {"Salário", "Freelancee e Serviços", "Investimentos", "Presentes", "Vendas", "Outros"};
-            new MaterialAlertDialogBuilder(this, R.style.CustomAlertDialog)
+            new MaterialAlertDialogBuilder(this, R.style.RoundedDialogReceita)
                     .setTitle("Selecione uma categoria")
                     .setItems(categorias, (dialog, which) -> editTextCategoria.setText(categorias[which]))
                     .show();

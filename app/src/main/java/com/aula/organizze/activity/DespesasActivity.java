@@ -147,7 +147,7 @@ public class DespesasActivity extends AppCompatActivity {
         // Clique no campo de categoria -> abre lista de opções
         editTextCategoria.setOnClickListener(v -> {
             String[] categorias = {"Assinaturas e Serviços", "Compras", "Alimentação", "Transporte", "Lazer", "Outros"};
-            new MaterialAlertDialogBuilder(this, R.style.CustomAlertDialog)
+            new MaterialAlertDialogBuilder(this, R.style.RoundedDialogDespesa)
                     .setTitle("Selecione uma categoria")
                     .setItems(categorias, (dialog, which) -> editTextCategoria.setText(categorias[which]))
                     .show();

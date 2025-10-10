@@ -16,6 +16,7 @@ public class ConfigFirebase {
         if(bancoFirebase == null){
             bancoFirebase = FirebaseDatabase.getInstance().getReference();
         }
+
         return bancoFirebase;
     }
 

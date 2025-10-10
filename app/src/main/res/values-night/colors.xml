@@ -16,6 +16,7 @@
     <color name="colorPrimaryReceita">#007BFF</color>
     <color name="colorPrimaryDarkReceita">#0056B3</color>
     <color name="colorAccentReceita">#66B2FF</color>
+    <color name="colorBackgroundDialog">#F5F5F5</color>
 
     <color name="colorPrimaryDespesa">#DC3545</color>
     <color name="colorPrimaryDarkDespesa">#A71D2A</color>

@@ -29,23 +29,17 @@
         <item name="colorAccent">@color/colorAccentReceita</item>
     </style>
 
-    <style name="CustomAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
-        <item name="android:textColorPrimary">@color/textPrimary</item>
-        <item name="android:textColorSecondary">@color/darkerGray</item>
-        <item name="android:textStyle">bold</item>
-
-        <item name="android:elevation">8dp</item>
-
-        <item name="shapeAppearanceMediumComponent">@style/RoundedDialog</item>
-    </style>
-
-    <style name="RoundedDialog" parent="">
+    <style name="RoundedDialogBase" parent="ShapeAppearance.MaterialComponents.MediumComponent">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">16dp</item>
     </style>
 
-    <style name="ShapeAppearanceOverlay.RoundedPicker" parent="">
-        <item name="cornerFamily">rounded</item>
+    <style name="RoundedDialogReceita" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="android:background">@drawable/bg_dialog_receita</item>
+    </style>
+
+    <style name="RoundedDialogDespesa" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="android:background">@drawable/bg_dialog_despesa</item>
     </style>
 
     <style name="Theme.Organizze" parent="Base.Theme.Organizze" />
