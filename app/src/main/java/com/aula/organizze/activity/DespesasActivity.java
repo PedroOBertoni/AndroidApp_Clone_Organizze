@@ -18,6 +18,7 @@ import com.aula.organizze.R;
 import com.aula.organizze.model.Movimentacao;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.text.NumberFormat;
@@ -66,7 +67,6 @@ public class DespesasActivity extends AppCompatActivity {
         // Impede seleção de texto
         editTextValor.setLongClickable(false);
         editTextValor.setTextIsSelectable(false);
-
 
         // Ajuste: garante teclado numérico (opcional, também configure no XML)
         editTextValor.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -129,6 +129,8 @@ public class DespesasActivity extends AppCompatActivity {
             }
         });
 
+        /* OnClickListeners */
+
         // Clique no FAB do calendário -> abre seletor de data
         fabCalendario.setOnClickListener(v -> {
             int year = calendar.get(Calendar.YEAR);
@@ -152,12 +154,23 @@ public class DespesasActivity extends AppCompatActivity {
                     .setItems(categorias, (dialog, which) -> editTextCategoria.setText(categorias[which]))
                     .show();
         });
+
+        // Clique no FAB confirma -> realiza validação e tenta salvar
+        fabConfirmar.setOnClickListener(view -> {
+            if (validarCampos(view)) {
+                // Todos os campos válidos → salva e limpa
+                salvarDespesa(view);
+                limparCampos();
+
+                Snackbar.make(view, "Despesa adicionada com sucesso!", Snackbar.LENGTH_SHORT).show();
+            }
+        });
     }
 
     // Helper para setar "R$ 0,00" ou qualquer centavos em string de dígitos (ex: "0" ou "12")
-    private void digitacaoContinua(String digitsOnly) {
+    private void digitacaoContinua(String digitosSomente) {
         try {
-            long cents = Long.parseLong(digitsOnly);
+            long cents = Long.parseLong(digitosSomente);
             double valor = cents / 100.0;
             String formatted = NumberFormat.getCurrencyInstance(locale).format(valor);
             editTextValor.setText(formatted);
@@ -168,9 +181,8 @@ public class DespesasActivity extends AppCompatActivity {
         }
     }
 
-    public void salvarDespesa(View view){
-        // Formatando o valor
-        String valorRecuperado = editTextValor.getText().toString()
+    private Double formatandoValor(EditText editTextValor) {
+        String valor = editTextValor.getText().toString()
                 .replace("R$", "")
                 .replaceAll("\\s", "")
                 .replaceAll("\\.", "")
@@ -178,11 +190,47 @@ public class DespesasActivity extends AppCompatActivity {
                 .replaceAll("[\\u00A0\\s]", "") // remove espaços normais e não quebráveis
                 .trim();
 
+        return Double.parseDouble(valor);
+    }
+
+    private boolean validarCampos(View view) {
+        String titulo = editTextTitulo.getText().toString().trim();
+        String categoria = editTextCategoria.getText().toString().trim();
+        String data = editTextData.getText().toString().trim();
+
+        // Verifica se o valor não é menor ou igual a zero
+        boolean valorInvalido = formatandoValor(editTextValor) <= 0;
+
+        if (titulo.isEmpty()) {
+            Snackbar.make(view, "Preencha o campo Título.", Snackbar.LENGTH_SHORT).show();
+            return false;
+        }
+        if (categoria.isEmpty()) {
+            Snackbar.make(view, "Selecione uma Categoria.", Snackbar.LENGTH_SHORT).show();
+            return false;
+        }
+        if (data.isEmpty()) {
+            Snackbar.make(view, "Informe uma Data.", Snackbar.LENGTH_SHORT).show();
+            return false;
+        }
+        if (valorInvalido) {
+            Snackbar.make(view, "Informe um Valor válido.", Snackbar.LENGTH_SHORT).show();
+            return false;
+        }
+
+        // Todos os campos válidos
+        return true;
+    }
+
+    public void salvarDespesa(View view){
+        // Formatando o valor
+        Double valorRecuperado = formatandoValor(editTextValor);
+
         // Instanciando a classe movimentacao
         movimentacao = new Movimentacao();
 
         // Aplicando os valores ao objeto movimentacao
-        movimentacao.setValor( Double.parseDouble(valorRecuperado));
+        movimentacao.setValor( valorRecuperado );
         movimentacao.setTitulo( editTextTitulo.getText().toString());
         movimentacao.setDescricao( editTextDescricao.getText().toString());
         movimentacao.setCategoria( editTextCategoria.getText().toString());
@@ -191,5 +239,23 @@ public class DespesasActivity extends AppCompatActivity {
 
         // chamando método salvar da classe movimentacao
         movimentacao.salvar();
+    }
+
+    private void limparCampos() {
+        // Limpa texto dos campos principais
+        editTextTitulo.setText("");
+        editTextDescricao.setText("");
+        editTextCategoria.setText("");
+
+        // Redefine a data para o dia atual
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        editTextData.setText(sdf.format(calendar.getTime()));
+
+        // Reinicia o campo de valor com R$ 0,00
+        digitacaoContinua("0");
+
+        // Coloca o foco no primeiro campo
+        editTextTitulo.requestFocus();
     }
 }
