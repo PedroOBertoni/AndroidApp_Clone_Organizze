@@ -16,15 +16,26 @@ public class Movimentacao {
     private String titulo;
     private String tipo; // "R" ou "D"
 
-    // Novos campos
     private Integer quantParcelas; // null = não parcelado
     private String frequencia;     // null = não fixo
 
-    // Construtor padrão (obrigatório para Firebase)
-    public Movimentacao() {}
+    public Movimentacao() {
+    }
 
-    // Métodos existentes (getters/setters de data, categoria, etc.)
+    // Método salvar atualizado
+    public void salvar(String mesAno) {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String uid = auth.getCurrentUser().getUid();
 
+        DatabaseReference firebase = FirebaseDatabase.getInstance().getReference();
+        firebase.child("movimentacoes")
+                .child(uid)
+                .child(mesAno)
+                .push()
+                .setValue(this);
+    }
+
+    // Getters e Setters
     public String getData() { return data; }
     public void setData(String data) { this.data = data; }
 
@@ -49,17 +60,4 @@ public class Movimentacao {
 
     public String getFrequencia() { return frequencia; }
     public void setFrequencia(String frequencia) { this.frequencia = frequencia; }
-
-    // Método salvar atualizado
-    public void salvar(String mesAno) {
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        String uid = auth.getCurrentUser().getUid();
-
-        DatabaseReference firebase = FirebaseDatabase.getInstance().getReference();
-        firebase.child("movimentacoes")
-                .child(uid)
-                .child(mesAno)
-                .push()
-                .setValue(this);
-    }
 }
