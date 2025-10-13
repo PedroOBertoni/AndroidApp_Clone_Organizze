@@ -4,38 +4,43 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Movimentacao {
 
-    private String data;
+    private String id;            // id único da movimentação (Firebase .push())
+    private String data;          // ex: "10/08/2025"
     private String categoria;
     private String descricao;
     private Double valor;
     private String titulo;
-    private String tipo; // "R" ou "D"
+    private String tipo;
+    private String status;
 
-    private Integer quantParcelas; // null = não parcelado
-    private String frequencia;     // null = não fixo
+    private Recorrencia recorrencia; // objeto que define se é fixa (mensal, diária, etc.)
+    private Parcelas parcelas;       // objeto que define as parcelas (se houver)
 
     public Movimentacao() {
     }
 
-    // Método salvar atualizado
-    public void salvar(String mesAno) {
+    // 🔹 Método para salvar no Firebase
+    public void salvar() {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         String uid = auth.getCurrentUser().getUid();
 
-        DatabaseReference firebase = FirebaseDatabase.getInstance().getReference();
-        firebase.child("movimentacoes")
-                .child(uid)
-                .child(mesAno)
-                .push()
-                .setValue(this);
+        DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference movimentacoesRef = firebaseRef.child("movimentacoes").child(uid);
+
+        // Gera um id único para esta movimentação
+        String idMov = movimentacoesRef.push().getKey();
+        this.id = idMov;
+
+        // Salva o objeto completo (sem separar por ano/mês)
+        movimentacoesRef.child(idMov).setValue(this);
     }
 
     // Getters e Setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
     public String getData() { return data; }
     public void setData(String data) { this.data = data; }
 
@@ -54,10 +59,12 @@ public class Movimentacao {
     public String getTipo() { return tipo; }
     public void setTipo(String tipo) { this.tipo = tipo; }
 
-    // Novos getters/setters
-    public Integer getQuantParcelas() { return quantParcelas; }
-    public void setQuantParcelas(Integer quantParcelas) { this.quantParcelas = quantParcelas; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
-    public String getFrequencia() { return frequencia; }
-    public void setFrequencia(String frequencia) { this.frequencia = frequencia; }
+    public Recorrencia getRecorrencia() { return recorrencia; }
+    public void setRecorrencia(Recorrencia recorrencia) { this.recorrencia = recorrencia; }
+
+    public Parcelas getParcelas() { return parcelas; }
+    public void setParcelas(Parcelas parcelas) { this.parcelas = parcelas; }
 }

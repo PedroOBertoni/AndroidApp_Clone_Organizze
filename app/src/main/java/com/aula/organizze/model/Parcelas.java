@@ -3,10 +3,16 @@ package com.aula.organizze.model;
 public class Parcelas {
     private int total;   // Total de parcelas
     private int atual;   // Parcela atual (1, 2, 3...)
-    private String fim;  // Data da última parcela (vai ser calculada)
+    private String fim;  // Data da última parcela (geralmente calculada)
 
     // Construtores
     public Parcelas() {
+    }
+
+    public Parcelas(int total, int atual, String fim) {
+        this.total = total;
+        this.atual = atual;
+        this.fim = fim;
     }
 
     // Getters e Setters

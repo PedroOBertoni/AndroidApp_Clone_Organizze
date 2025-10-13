@@ -24,6 +24,8 @@ import androidx.core.content.ContextCompat;
 
 import com.aula.organizze.R;
 import com.aula.organizze.model.Movimentacao;
+import com.aula.organizze.model.Parcelas;
+import com.aula.organizze.model.Recorrencia;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -189,7 +191,7 @@ public class ReceitasActivity extends AppCompatActivity {
 
         // Clique no campo de categoria -> abre lista de opções
         editTextCategoria.setOnClickListener(view -> {
-            String[] categorias = {"Assinaturas e Serviços", "Compras", "Alimentação", "Transporte", "Lazer", "Outros"};
+            String[] categorias = {"Salário", "Freelance e Serviços", "Investimentos", "Presentes e Doações", "Vendas", "Outros"};
             new MaterialAlertDialogBuilder(this, R.style.RoundedDialogReceita)
                     .setTitle("Selecione uma categoria")
                     .setItems(categorias, (dialog, which) -> editTextCategoria.setText(categorias[which]))
@@ -236,7 +238,6 @@ public class ReceitasActivity extends AppCompatActivity {
 
     /* Atualiza o estilo visual do botão de modo (Fixo/Parcelado) e
      * Adiciona borda colorAccentReceita quando ativo */
-
     private void atualizarEstiloBotao(Button botao, boolean ativo) {
         if (ativo) {
             botao.setTextColor(corTextoAtivo);
@@ -252,7 +253,6 @@ public class ReceitasActivity extends AppCompatActivity {
     }
 
     /* Ativa o modo Fixo: abre diálogo para escolher frequência */
-
     private void ativarModoFixo() {
         // Desativa modo parcelado se estiver ativo
         if (modoParceladoAtivo) {
@@ -394,46 +394,72 @@ public class ReceitasActivity extends AppCompatActivity {
         return true;
     }
 
-    /* Salva a receita no Firebase, organizada por mês/ano (ex: 202504) */
     public void salvarReceita(View view) {
+        // Validando os campos obrigatórios
+        if (!validarCampos(view)) {
+            return;
+        }
+
         // Formatando o valor
         Double valorRecuperado = formatandoValor(editTextValor);
 
-        // Instanciando a classe movimentacao
-        movimentacao = new Movimentacao();
-
-        // Aplicando os valores ao objeto movimentacao
+        // Criar objeto movimentação
+        Movimentacao movimentacao = new Movimentacao();
         movimentacao.setValor(valorRecuperado);
-        movimentacao.setTitulo(editTextTitulo.getText().toString());
-        movimentacao.setDescricao(editTextDescricao.getText().toString());
-        movimentacao.setCategoria(editTextCategoria.getText().toString());
-        movimentacao.setData(editTextData.getText().toString());
+        movimentacao.setTitulo(editTextTitulo.getText().toString().trim());
+        movimentacao.setDescricao(editTextDescricao.getText().toString().trim());
+        movimentacao.setCategoria(editTextCategoria.getText().toString().trim());
+        movimentacao.setData(editTextData.getText().toString().trim());
         movimentacao.setTipo("R");
+        movimentacao.setStatus("ativa");
 
-        // Salvar campos adicionais se aplicável
+        // configurando a recorrência (fixa)
         if (modoFixoAtivo) {
-            movimentacao.setFrequencia(frequencia);
-        } else if (modoParceladoAtivo) {
-            movimentacao.setQuantParcelas(quantParcelas);
+            Recorrencia recorrencia = new Recorrencia();
+            recorrencia.setTipo(frequencia);
+
+            // Definindo uma data final
+            recorrencia.setFim(null);
+
+            movimentacao.setRecorrencia(recorrencia);
         }
 
-        // Extrair mês/ano da data (formato dd/MM/yyyy → yyyyMM)
-        String data = editTextData.getText().toString();
-        String mesAno;
-        String[] partes = data.split("/");
-        if (partes.length == 3) {
-            String mes = partes[1];
-            String ano = partes[2];
-            mesAno = ano + mes; // ex: "202504"
-        } else {
-            // fallback para data atual
-            Calendar c = Calendar.getInstance();
-            mesAno = String.valueOf(c.get(Calendar.YEAR)) + String.format("%02d", c.get(Calendar.MONTH) + 1);
+        // Configurando o parcelamento
+        else if (modoParceladoAtivo) {
+            Parcelas parcelas = new Parcelas();
+            parcelas.setTotal(quantParcelas);
+            parcelas.setAtual(1); // Primeira parcela
+
+            // Calcula a data da última parcela (baseado na data inicial)
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(sdf.parse(editTextData.getText().toString()));
+
+                cal.add(Calendar.MONTH, quantParcelas - 1);
+                String dataFinal = sdf.format(cal.getTime());
+                parcelas.setFim(dataFinal);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            movimentacao.setParcelas(parcelas);
+
+            // Registrando a recorrência como mensal para manter consistência
+            Recorrencia recorrencia = new Recorrencia("mensal", parcelas.getFim());
+            movimentacao.setRecorrencia(recorrencia);
         }
 
-        // chamando método salvar da classe movimentacao com mesAno
-        movimentacao.salvar(mesAno);
+        // Salvando a movimentação no Firebase
+        movimentacao.salvar();
+
+        // 7️⃣ Feedback visual
+        Toast.makeText(this, "Receita salva com sucesso!", Toast.LENGTH_SHORT).show();
+
+        // Limpa os campos após salvar
+        limparCampos();
     }
+
 
     /* Limpa todos os campos após salvar */
     private void limparCampos() {

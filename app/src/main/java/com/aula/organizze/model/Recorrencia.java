@@ -7,6 +7,12 @@ public class Recorrencia {
     public Recorrencia() {
     }
 
+    // Construtor conveniente
+    public Recorrencia(String tipo, String fim) {
+        this.tipo = tipo;
+        this.fim = fim;
+    }
+
     // Getters e Setters
     public String getTipo() { return tipo; }
     public void setTipo(String tipo) { this.tipo = tipo; }
