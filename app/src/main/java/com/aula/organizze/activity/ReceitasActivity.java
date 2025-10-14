@@ -90,9 +90,25 @@ public class ReceitasActivity extends AppCompatActivity {
         textParcelasInfo = findViewById(R.id.textParcelasInfoReceita);
         buttonRemoverParcelamento = findViewById(R.id.buttonRemoverParcelamentoReceita);
 
-        // Estiliza botões iniciais como inativos
+        // Aplica o background selector
+        buttonFixo.setBackgroundResource(R.drawable.button_despesa_selector);
+        buttonParcelado.setBackgroundResource(R.drawable.button_despesa_selector);
+
+        // Define estado inicial (Fixo e Parcelados inativos)
         atualizarEstiloBotao(buttonFixo, false);
         atualizarEstiloBotao(buttonParcelado, false);
+
+        // Remove efeitos visuais e sonoros padrão dos botões para evitar piscadas ao clicar
+        // Botão Fixo:
+        buttonFixo.setBackgroundTintList(null);
+        buttonFixo.setStateListAnimator(null);
+        buttonFixo.setSoundEffectsEnabled(false);
+
+        // Botão Parcelado:
+        buttonParcelado.setBackgroundTintList(null);
+        buttonParcelado.setStateListAnimator(null);
+        buttonParcelado.setSoundEffectsEnabled(false);
+
 
         // Foca automaticamente no campo de valor e abre o teclado
         editTextValor.requestFocus();
@@ -124,14 +140,10 @@ public class ReceitasActivity extends AppCompatActivity {
         // TextWatcher que implementa o comportamento "digitar centavos e empurrar"
         editTextValor.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // não usado
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // não usado
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -239,17 +251,22 @@ public class ReceitasActivity extends AppCompatActivity {
     /* Atualiza o estilo visual do botão de modo (Fixo/Parcelado) e
      * Adiciona borda colorAccentReceita quando ativo */
     private void atualizarEstiloBotao(Button botao, boolean ativo) {
+        int corPrimaria = ContextCompat.getColor(this, R.color.colorAccentReceita);
+        int corBranca = ContextCompat.getColor(this, android.R.color.white);
+
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setCornerRadius(16f); // bordas arredondadas suaves
+        drawable.setStroke(3, corPrimaria);
+
         if (ativo) {
-            botao.setTextColor(corTextoAtivo);
-            GradientDrawable drawable = new GradientDrawable();
-            drawable.setColor(Color.TRANSPARENT);
-            drawable.setStroke(2, ContextCompat.getColor(this, R.color.colorAccentReceita));
-            drawable.setCornerRadius(8f);
-            botao.setBackground(drawable);
+            drawable.setColor(corPrimaria); // fundo cheio
+            botao.setTextColor(corBranca);
         } else {
-            botao.setTextColor(corTextoInativo);
-            botao.setBackground(null); // remove borda
+            drawable.setColor(Color.TRANSPARENT); // fundo transparente
+            botao.setTextColor(corPrimaria);
         }
+
+        botao.setBackground(drawable);
     }
 
     /* Ativa o modo Fixo: abre diálogo para escolher frequência */
