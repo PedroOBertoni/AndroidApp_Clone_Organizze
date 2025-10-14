@@ -11,7 +11,7 @@
     <LinearLayout
         android:id="@+id/linearLayoutReceita"
         android:layout_width="0dp"
-        android:layout_height="170dp"
+        android:layout_height="160dp"
         android:background="@color/colorPrimaryReceita"
         android:gravity="center"
         android:orientation="vertical"
@@ -97,36 +97,22 @@
             android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabCalendarioReceita"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="16dp"
-        app:backgroundTint="@color/colorAccentReceita"
-        app:layout_constraintEnd_toStartOf="@+id/textInputDataReceita"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputCategoriaReceita"
-        app:maxImageSize="32dp"
-        app:srcCompat="@drawable/ic_calendar_24dp"
-        app:tint="@android:color/white" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputDataReceita"
         android:layout_width="150dp"
         android:layout_height="55dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/fabCalendarioReceita"
-        app:layout_constraintTop_toBottomOf="@+id/textInputCategoriaReceita">
+        app:layout_constraintTop_toBottomOf="@+id/textView">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextDataReceita"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:enabled="false"
             android:fontFamily="@font/inter"
             android:inputType="date"
             android:textAlignment="center"
@@ -135,12 +121,27 @@
             android:textStyle="bold" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabCalendarioReceita"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="16dp"
+        app:backgroundTint="@color/colorAccentReceita"
+        app:layout_constraintEnd_toStartOf="@+id/textInputDataReceita"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:maxImageSize="32dp"
+        app:srcCompat="@drawable/ic_calendar_24dp"
+        app:tint="@android:color/white" />
 
     <LinearLayout
         android:id="@+id/linearModoReceita"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="30dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -201,7 +202,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="55dp"
+        android:layout_marginBottom="45dp"
         android:clickable="true"
         app:backgroundTint="@color/colorPrimary"
         app:fabCustomSize="80dp"
@@ -212,5 +213,21 @@
         app:maxImageSize="40dp"
         app:srcCompat="@drawable/ic_check_24dp"
         app:tint="@android:color/white" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="24dp"
+        android:fontFamily="@font/inter_light"
+        android:text="Selecione a data da receita por meio\ndo ícone de calendário abaixo"
+        android:textAlignment="center"
+        android:textColor="@color/textPrimary"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputCategoriaReceita" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
