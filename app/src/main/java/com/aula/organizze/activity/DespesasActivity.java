@@ -91,9 +91,25 @@ public class DespesasActivity extends AppCompatActivity {
         textParcelasInfo = findViewById(R.id.textParcelasInfoDespesa);
         buttonRemoverParcelamento = findViewById(R.id.buttonRemoverParcelamentoDespesa);
 
-        // Estiliza botões iniciais como inativos
+        // Aplica o background selector
+        buttonFixo.setBackgroundResource(R.drawable.button_despesa_selector);
+        buttonParcelado.setBackgroundResource(R.drawable.button_despesa_selector);
+
+        // Define estado inicial (Fixo e Parcelados inativos)
         atualizarEstiloBotao(buttonFixo, false);
         atualizarEstiloBotao(buttonParcelado, false);
+
+        // Remove efeitos visuais e sonoros padrão dos botões para evitar piscadas ao clicar
+        // Botão Fixo:
+        buttonFixo.setBackgroundTintList(null);
+        buttonFixo.setStateListAnimator(null);
+        buttonFixo.setSoundEffectsEnabled(false);
+
+        // Botão Parcelado:
+        buttonParcelado.setBackgroundTintList(null);
+        buttonParcelado.setStateListAnimator(null);
+        buttonParcelado.setSoundEffectsEnabled(false);
+
 
         // Foca automaticamente no campo de valor e abre o teclado
         editTextValor.requestFocus();
@@ -125,25 +141,18 @@ public class DespesasActivity extends AppCompatActivity {
         // TextWatcher que implementa o comportamento "digitar centavos e empurrar"
         editTextValor.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // não usado
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // não usado
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
             public void afterTextChanged(Editable s) {
                 if (isUpdating) return;
 
                 isUpdating = true;
-
-                // Pega apenas os dígitos do texto (remove "R$", espaços, pontuação etc)
                 String digits = s.toString().replaceAll("[^\\d]", "");
 
-                // Se não houver dígitos, considera 0
                 if (digits.isEmpty()) {
                     digitacaoContinua("0");
                     isUpdating = false;
@@ -151,20 +160,13 @@ public class DespesasActivity extends AppCompatActivity {
                 }
 
                 try {
-                    // Converte para centavos (long para evitar perda)
                     long cents = Long.parseLong(digits);
-
-                    // Converte para valor em reais (double apenas para formatação)
                     double valor = cents / 100.0;
-
-                    // Formata para moeda pt-BR (ex: R$ 1.234,56)
                     String formatted = NumberFormat.getCurrencyInstance(locale).format(valor);
 
-                    // Atualiza o EditText com o texto formatado e move o cursor para o fim
                     editTextValor.setText(formatted);
                     editTextValor.setSelection(formatted.length());
                 } catch (NumberFormatException e) {
-                    // Em caso raro de overflow/parsing
                     digitacaoContinua("0");
                 }
 
@@ -228,10 +230,8 @@ public class DespesasActivity extends AppCompatActivity {
         // Clique no FAB confirma -> realiza validação e tenta salvar
         fabConfirmar.setOnClickListener(view -> {
             if (validarCampos(view)) {
-                // Todos os campos válidos → salva e limpa
                 salvarDespesa(view);
                 limparCampos();
-
                 Snackbar.make(view, "Despesa adicionada com sucesso!", Snackbar.LENGTH_SHORT).show();
             }
         });
@@ -239,23 +239,26 @@ public class DespesasActivity extends AppCompatActivity {
 
     /* Atualiza o estilo visual do botão de modo (Fixo/Parcelado) e
      * Adiciona borda colorAccentDespesa quando ativo */
-
     private void atualizarEstiloBotao(Button botao, boolean ativo) {
+        int corPrimaria = ContextCompat.getColor(this, R.color.colorAccentDespesa);
+        int corBranca = ContextCompat.getColor(this, android.R.color.white);
+
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setCornerRadius(16f); // bordas arredondadas suaves
+        drawable.setStroke(3, corPrimaria);
+
         if (ativo) {
-            botao.setTextColor(corTextoAtivo);
-            GradientDrawable drawable = new GradientDrawable();
-            drawable.setColor(Color.TRANSPARENT);
-            drawable.setStroke(2, ContextCompat.getColor(this, R.color.colorAccentDespesa));
-            drawable.setCornerRadius(8f);
-            botao.setBackground(drawable);
+            drawable.setColor(corPrimaria); // fundo cheio
+            botao.setTextColor(corBranca);
         } else {
-            botao.setTextColor(corTextoInativo);
-            botao.setBackground(null); // remove borda
+            drawable.setColor(Color.TRANSPARENT); // fundo transparente
+            botao.setTextColor(corPrimaria);
         }
+
+        botao.setBackground(drawable);
     }
 
     /* Ativa o modo Fixo: abre diálogo para escolher frequência */
-
     private void ativarModoFixo() {
         // Desativa modo parcelado se estiver ativo
         if (modoParceladoAtivo) {

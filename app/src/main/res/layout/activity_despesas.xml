@@ -151,20 +151,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:backgroundTint="@color/colorAccentDespesa"
             android:text="Fixo"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:textColor="@color/textPrimary"
+            android:background="@null"
+            android:stateListAnimator="@null"
+            android:elevation="0dp" />
 
         <Button
             android:id="@+id/buttonParceladoDespesa"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@null"
-            android:backgroundTint="@color/colorAccentDespesa"
             android:text="Parcelado"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:textColor="@color/textPrimary"
+            android:background="@null"
+            android:stateListAnimator="@null"
+            android:elevation="0dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -190,7 +191,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginStart="8dp"
-            android:background="@drawable/circle_button_background"
+            android:background="@drawable/ic_close_24dp"
             android:src="@drawable/ic_close_24dp"
             app:tint="@color/white" />
     </LinearLayout>
