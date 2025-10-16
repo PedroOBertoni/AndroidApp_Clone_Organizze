@@ -152,9 +152,11 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:backgroundTint="@color/colorAccentDespesa"
+            android:fontFamily="@font/inter_bold"
             android:text="Fixo"
             android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/buttonParceladoDespesa"
@@ -162,9 +164,11 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:backgroundTint="@color/colorAccentDespesa"
+            android:fontFamily="@font/inter_bold"
             android:text="Parcelado"
             android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout

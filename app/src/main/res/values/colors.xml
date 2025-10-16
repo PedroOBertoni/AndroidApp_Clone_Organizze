@@ -7,11 +7,7 @@
     <color name="textPrimary">#212529</color>
     <color name="darkerGray">#6B6B6B</color>
 
-
-    <color name="sucess">#4CAF50</color>
-    <color name="warning">#FFC107</color>
     <color name="error">#DC3545</color>
-
 
     <color name="colorPrimaryReceita">#007BFF</color>
     <color name="colorPrimaryDarkReceita">#0056B3</color>

@@ -49,6 +49,9 @@ dependencies {
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 
+    // Módulo necessário para o uso do Fragment
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
     // Módulos necessários para o Firebase
     implementation platform('com.google.firebase:firebase-bom:33.4.0')
 
@@ -57,9 +60,20 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:21.1.1'
 
     // Módulo necessário para os Sliders
-    implementation 'com.heinrichreimersoftware:material-intro:2.0.0'
+    implementation ('com.heinrichreimersoftware:material-intro:2.0.0') {
+        exclude group: 'com.android.support'
+    }
 
     // Módulos necessários para o FloatingActionButton Speed Dial precisa
     implementation "com.leinardi.android:speed-dial:3.3.0"
     implementation "com.google.android.material:material:1.9.0"
+
+    // Módulo para calendário usado na PrincipalActivity
+    implementation 'com.github.prolificinteractive:material-calendarview:2.0.1'
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'androidx.core:core:1.13.1'
+    }
 }
