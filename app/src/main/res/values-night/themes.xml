@@ -11,7 +11,10 @@
         <item name="android:textColorSecondary">@color/darkerGray</item>
 
         <item name="colorError">@color/error</item>
+
+        <item name="materialAlertDialogTheme">@style/RoundedAlertDialogTheme</item>
     </style>
+
 
     <style name="despesaTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="windowActionBar">false</item>
@@ -29,17 +32,20 @@
         <item name="colorAccent">@color/colorAccentReceita</item>
     </style>
 
+
+    <style name="RoundedAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="shapeAppearanceMediumComponent">@style/RoundedDialogBase</item>
+        <item name="colorSurface">@color/colorBackgroundDialog</item>
+    </style>
+
     <style name="RoundedDialogBase" parent="ShapeAppearance.MaterialComponents.MediumComponent">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">16dp</item>
     </style>
 
-    <style name="RoundedDialogReceita" parent="ThemeOverlay.Material3.MaterialAlertDialog">
-        <item name="android:background">@drawable/bg_dialog_receita</item>
-    </style>
 
-    <style name="RoundedDialogDespesa" parent="ThemeOverlay.Material3.MaterialAlertDialog">
-        <item name="android:background">@drawable/bg_dialog_despesa</item>
+    <style name="CustomPopupMenu" parent="Widget.MaterialComponents.PopupMenu">
+        <item name="android:textColor">@color/textPrimary</item>
     </style>
 
 </resources>

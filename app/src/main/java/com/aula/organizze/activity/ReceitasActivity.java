@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.InputType;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -204,7 +205,9 @@ public class ReceitasActivity extends AppCompatActivity {
         // Clique no campo de categoria -> abre lista de opções
         editTextCategoria.setOnClickListener(view -> {
             String[] categorias = {"Salário", "Freelance e Serviços", "Investimentos", "Presentes e Doações", "Vendas", "Outros"};
-            new MaterialAlertDialogBuilder(this, R.style.RoundedDialogReceita)
+            new MaterialAlertDialogBuilder(
+                    new ContextThemeWrapper(this, R.style.RoundedAlertDialogTheme)
+            )
                     .setTitle("Selecione uma categoria")
                     .setItems(categorias, (dialog, which) -> editTextCategoria.setText(categorias[which]))
                     .show();
@@ -279,7 +282,9 @@ public class ReceitasActivity extends AppCompatActivity {
         String[] opcoesExibicao = {"Diário", "Semanal", "Quinzenal", "Mensal"};
         String[] opcoesValor = {"diario", "semanal", "quinzenal", "mensal"};
 
-        new MaterialAlertDialogBuilder(this, R.style.RoundedDialogReceita)
+        new MaterialAlertDialogBuilder(
+                new ContextThemeWrapper(this, R.style.RoundedAlertDialogTheme)
+        )
                 .setTitle("Frequência da receita fixa")
                 .setItems(opcoesExibicao, (dialog, which) -> {
                     frequencia = opcoesValor[which];

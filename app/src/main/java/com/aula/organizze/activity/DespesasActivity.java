@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.InputType;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -195,7 +196,9 @@ public class DespesasActivity extends AppCompatActivity {
         // Clique no campo de categoria -> abre lista de opções
         editTextCategoria.setOnClickListener(view -> {
             String[] categorias = {"Assinaturas e Serviços", "Compras", "Alimentação", "Transporte", "Lazer", "Outros"};
-            new MaterialAlertDialogBuilder(this, R.style.RoundedDialogDespesa)
+            new MaterialAlertDialogBuilder(
+                    new ContextThemeWrapper(this, R.style.RoundedAlertDialogTheme)
+            )
                     .setTitle("Selecione uma categoria")
                     .setItems(categorias, (dialog, which) -> editTextCategoria.setText(categorias[which]))
                     .show();
@@ -268,7 +271,9 @@ public class DespesasActivity extends AppCompatActivity {
         String[] opcoesExibicao = {"Diário", "Semanal", "Quinzenal", "Mensal"};
         String[] opcoesValor = {"diario", "semanal", "quinzenal", "mensal"};
 
-        new MaterialAlertDialogBuilder(this, R.style.RoundedDialogDespesa)
+        new MaterialAlertDialogBuilder(
+                new ContextThemeWrapper(this, R.style.RoundedAlertDialogTheme)
+        )
                 .setTitle("Frequência da despesa fixa")
                 .setItems(opcoesExibicao, (dialog, which) -> {
                     frequencia = opcoesValor[which];

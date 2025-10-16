@@ -66,7 +66,7 @@ dependencies {
 
     // Módulos necessários para o FloatingActionButton Speed Dial precisa
     implementation "com.leinardi.android:speed-dial:3.3.0"
-    implementation "com.google.android.material:material:1.9.0"
+    implementation 'com.google.android.material:material:1.12.0'
 
     // Módulo para calendário usado na PrincipalActivity
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.1'

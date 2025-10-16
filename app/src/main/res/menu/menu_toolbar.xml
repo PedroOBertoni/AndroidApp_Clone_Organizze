@@ -5,5 +5,5 @@
         android:title="Sair da conta"
         android:color="@color/textPrimary"
         android:icon="@drawable/ic_logout_24dp"
-        app:showAsAction="never" />
+        app:showAsAction="always" />
 </menu>

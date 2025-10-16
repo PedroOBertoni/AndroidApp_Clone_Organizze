@@ -8,7 +8,6 @@
     android:orientation="vertical"
     tools:context=".activity.PrincipalActivity">
 
-    <!-- Toolbar fina sem título -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,13 +19,11 @@
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
             android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar"
-            app:navigationIcon="@drawable/ic_menu_24dp"
             app:title=""
             app:titleCentered="false" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Header de saldo -->
     <LinearLayout
         android:id="@+id/layoutHeaderSaldo"
         android:layout_width="match_parent"
@@ -67,7 +64,6 @@
             android:textSize="16sp" />
     </LinearLayout>
 
-    <!-- Calendário -->
     <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
@@ -77,7 +73,6 @@
         app:mcv_tileSize="50dp"
         android:layout_marginTop="8dp" />
 
-    <!-- Lista de movimentações -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerMovimentacoes"
         android:layout_width="match_parent"
