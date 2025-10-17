@@ -1,88 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".activity.PrincipalActivity"
     android:fitsSystemWindows="true">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"
-        android:background="@color/colorPrimary"
-        android:elevation="0dp">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:background="@color/colorPrimary"
-            android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar"
-            app:title=""
-            app:menu="@menu/menu_toolbar" />
-    </com.google.android.material.appbar.AppBarLayout>
-
     <LinearLayout
-        android:id="@+id/layoutHeaderSaldo"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:background="@color/colorPrimary">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textTituloSaldo"
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Saldo Total"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:fontFamily="@font/inter_bold" />
+            android:fitsSystemWindows="true"
+            android:background="@color/colorPrimary"
+            android:elevation="0dp">
 
-        <TextView
-            android:id="@+id/textSaldo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="R$ 0,00"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="38sp"
-            android:fontFamily="@font/inter_bold" />
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:background="@color/colorPrimary"
+                android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar"
+                app:title=""
+                app:menu="@menu/menu_toolbar" />
+        </com.google.android.material.appbar.AppBarLayout>
 
-        <TextView
-            android:id="@+id/textDescricaoSaldo"
+        <LinearLayout
+            android:id="@+id/layoutHeaderSaldo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Mês atual"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:fontFamily="@font/inter" />
+            android:layout_height="140dp"
+            android:background="@color/colorPrimary"
+            android:gravity="top"
+            android:orientation="vertical"
+            android:paddingTop="5dp"
+            android:paddingBottom="8dp">
+
+            <TextView
+                android:id="@+id/textTituloSaldo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="Saldo Total"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/textSaldo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="R$ 0,00"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="38sp" />
+
+            <LinearLayout
+                android:id="@+id/layoutTotais"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
+
+                <TextView
+                    android:id="@+id/textTotalDespesas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter"
+                    android:text="- R$ 0,00"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/textSeparador"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:text="|"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/textTotalReceitas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter"
+                    android:text="+ R$ 0,00"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:mcv_showOtherDates="all"
+            app:mcv_selectionColor="@color/colorPrimary"
+            app:mcv_tileSize="50dp"
+            android:layout_marginTop="8dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerMovimentacoes"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="8dp"
+            android:paddingBottom="120dp"
+            android:clipToPadding="false"
+            android:scrollbars="vertical"
+            tools:listitem="@layout/item_movimentacao" />
     </LinearLayout>
-
-    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-        android:id="@+id/calendarView"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        app:mcv_showOtherDates="all"
-        app:mcv_selectionColor="@color/colorPrimary"
-        app:mcv_tileSize="50dp"
-        android:layout_marginTop="8dp" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerMovimentacoes"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="8dp"
-        android:clipToPadding="false"
-        android:scrollbars="vertical"
-        tools:listitem="@layout/item_movimentacao" />
 
     <com.leinardi.android.speeddial.SpeedDialView
         android:id="@+id/speedDial"
@@ -90,10 +126,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        style="@style/Widget.MaterialComponents.FloatingActionButton"
-        app:sdMainFabClosedSrc="@drawable/ic_add_24dp"
-        app:sdMainFabOpenedSrc="@drawable/ic_close_24dp"
-        android:elevation="5dp"
+        android:elevation="8dp"
+        android:background="@android:color/transparent"
+        app:sdOverlayLayout="@null"
         app:sdMainFabClosedIconColor="@color/white"
-        app:sdMainFabOpenedIconColor="@color/white"/>
-</LinearLayout>
+        app:sdMainFabClosedSrc="@drawable/ic_add_24dp"
+        app:sdMainFabOpenedIconColor="@color/white"
+        app:sdMainFabOpenedSrc="@drawable/ic_close_24dp" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

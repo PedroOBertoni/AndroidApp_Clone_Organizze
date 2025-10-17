@@ -29,6 +29,7 @@
             android:fontFamily="@font/inter_bold"
             android:inputType="number"
             android:text="R$ 0,00"
+            android:maxLength="16"
             android:textAlignment="viewEnd"
             android:textColor="@color/white"
             android:textSize="40sp" />
@@ -51,6 +52,7 @@
             android:layout_height="match_parent"
             android:fontFamily="@font/inter"
             android:hint="Título"
+            android:maxLength="30"
             android:inputType="textCapSentences"
             android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -71,6 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
+            android:maxLength="30"
             android:hint="Descrição (opcional)"
             android:inputType="textCapSentences"
             android:textSize="14sp" />
@@ -184,19 +187,22 @@
 
         <TextView
             android:id="@+id/textParcelasInfoDespesa"
+            android:layout_marginTop="8px"
+            android:fontFamily="@font/inter_light"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:textColor="@color/textPrimary"
+            android:textSize="16sp" />
 
         <ImageButton
             android:id="@+id/buttonRemoverParcelamentoDespesa"
+            android:layout_marginTop="8px"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginStart="8dp"
             android:background="@drawable/ic_close_24dp"
             android:src="@drawable/ic_close_24dp"
-            app:tint="@color/white" />
+            app:tint="@color/colorPrimaryDespesa" />
     </LinearLayout>
 
 

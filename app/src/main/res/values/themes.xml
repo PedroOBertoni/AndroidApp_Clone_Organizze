@@ -8,7 +8,7 @@
         <item name="android:colorBackground">@color/white</item>
 
         <item name="android:textColorPrimary">@color/textPrimary</item>
-        <item name="android:textColorSecondary">@color/darkerGray</item>
+        <item name="android:textColorSecondary">@color/textGray</item>
 
         <item name="colorError">@color/error</item>
 
@@ -33,8 +33,8 @@
     </style>
 
 
-    <style name="RoundedAlertDialogTheme" parent="ThemeOverlay.Material3.MaterialAlertDialog">
-        <item name="shapeAppearanceMediumComponent">@style/RoundedDialogBase</item>
+    <style name="RoundedAlertDialogTheme" parent="ThemeOverlay.Material3.MaterialAlertDialog.Centered">
+        <item name="shapeAppearance">@style/RoundedDialogBase</item>
         <item name="colorSurface">@color/colorBackgroundDialog</item>
     </style>
 

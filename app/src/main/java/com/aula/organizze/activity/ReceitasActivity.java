@@ -24,17 +24,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.aula.organizze.R;
+import com.aula.organizze.config.ConfigFirebase;
 import com.aula.organizze.model.Movimentacao;
-import com.aula.organizze.model.Parcelas;
 import com.aula.organizze.model.Recorrencia;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class ReceitasActivity extends AppCompatActivity {
@@ -92,8 +95,8 @@ public class ReceitasActivity extends AppCompatActivity {
         buttonRemoverParcelamento = findViewById(R.id.buttonRemoverParcelamentoReceita);
 
         // Aplica o background selector
-        buttonFixo.setBackgroundResource(R.drawable.button_despesa_selector);
-        buttonParcelado.setBackgroundResource(R.drawable.button_despesa_selector);
+        buttonFixo.setBackgroundResource(R.drawable.button_receita_selector);
+        buttonParcelado.setBackgroundResource(R.drawable.button_receita_selector);
 
         // Define estado inicial (Fixo e Parcelados inativos)
         atualizarEstiloBotao(buttonFixo, false);
@@ -151,11 +154,8 @@ public class ReceitasActivity extends AppCompatActivity {
                 if (isUpdating) return;
 
                 isUpdating = true;
-
-                // Pega apenas os dígitos do texto (remove "R$", espaços, pontuação etc)
                 String digits = s.toString().replaceAll("[^\\d]", "");
 
-                // Se não houver dígitos, considera 0
                 if (digits.isEmpty()) {
                     digitacaoContinua("0");
                     isUpdating = false;
@@ -163,20 +163,13 @@ public class ReceitasActivity extends AppCompatActivity {
                 }
 
                 try {
-                    // Converte para centavos (long para evitar perda)
                     long cents = Long.parseLong(digits);
-
-                    // Converte para valor em reais (double apenas para formatação)
                     double valor = cents / 100.0;
-
-                    // Formata para moeda pt-BR (ex: R$ 1.234,56)
                     String formatted = NumberFormat.getCurrencyInstance(locale).format(valor);
 
-                    // Atualiza o EditText com o texto formatado e move o cursor para o fim
                     editTextValor.setText(formatted);
                     editTextValor.setSelection(formatted.length());
                 } catch (NumberFormatException e) {
-                    // Em caso raro de overflow/parsing
                     digitacaoContinua("0");
                 }
 
@@ -204,7 +197,8 @@ public class ReceitasActivity extends AppCompatActivity {
 
         // Clique no campo de categoria -> abre lista de opções
         editTextCategoria.setOnClickListener(view -> {
-            String[] categorias = {"Salário", "Freelance e Serviços", "Investimentos", "Presentes e Doações", "Vendas", "Outros"};
+            String[] categorias = {"Salário e Renda fixa", "Vendas e Serviços", "Investimentos", "Transporte",
+                    "Presentes e Doações", "Outros"};
             new MaterialAlertDialogBuilder(
                     new ContextThemeWrapper(this, R.style.RoundedAlertDialogTheme)
             )
@@ -242,10 +236,8 @@ public class ReceitasActivity extends AppCompatActivity {
         // Clique no FAB confirma -> realiza validação e tenta salvar
         fabConfirmar.setOnClickListener(view -> {
             if (validarCampos(view)) {
-                // Todos os campos válidos → salva e limpa
                 salvarReceita(view);
                 limparCampos();
-
                 Snackbar.make(view, "Receita adicionada com sucesso!", Snackbar.LENGTH_SHORT).show();
             }
         });
@@ -279,8 +271,8 @@ public class ReceitasActivity extends AppCompatActivity {
             desativarModoParcelado();
         }
 
-        String[] opcoesExibicao = {"Diário", "Semanal", "Quinzenal", "Mensal"};
-        String[] opcoesValor = {"diario", "semanal", "quinzenal", "mensal"};
+        String[] opcoesExibicao = {"Diário", "Semanal", "Quinzenal", "Mensal", "Semestral", "Anual"};
+        String[] opcoesValor = {"diario", "semanal", "quinzenal", "mensal", "semestral", "anual"};
 
         new MaterialAlertDialogBuilder(
                 new ContextThemeWrapper(this, R.style.RoundedAlertDialogTheme)
@@ -435,53 +427,48 @@ public class ReceitasActivity extends AppCompatActivity {
         movimentacao.setTipo("R");
         movimentacao.setStatus("ativa");
 
-        // configurando a recorrência (fixa)
+        // Criar objeto de recorrência (se houver)
+        Recorrencia recorrencia = null;
+
         if (modoFixoAtivo) {
-            Recorrencia recorrencia = new Recorrencia();
-            recorrencia.setTipo(frequencia);
-
-            // Definindo uma data final
+            recorrencia = new Recorrencia();
+            recorrencia.setTipo("fixa");
+            recorrencia.setParcelaAtual(null);
+            recorrencia.setParcelasTotais(null);
             recorrencia.setFim(null);
-
-            movimentacao.setRecorrencia(recorrencia);
         }
-
-        // Configurando o parcelamento
         else if (modoParceladoAtivo) {
-            Parcelas parcelas = new Parcelas();
-            parcelas.setTotal(quantParcelas);
-            parcelas.setAtual(1); // Primeira parcela
+            recorrencia = new Recorrencia();
+            recorrencia.setTipo("parcelada");
+            recorrencia.setParcelaAtual(1);
+            recorrencia.setParcelasTotais(quantParcelas);
 
-            // Calcula a data da última parcela (baseado na data inicial)
             try {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(sdf.parse(editTextData.getText().toString()));
-
                 cal.add(Calendar.MONTH, quantParcelas - 1);
-                String dataFinal = sdf.format(cal.getTime());
-                parcelas.setFim(dataFinal);
+                recorrencia.setFim(sdf.format(cal.getTime()));
             } catch (Exception e) {
                 e.printStackTrace();
+                recorrencia.setFim(null);
             }
+        }
 
-            movimentacao.setParcelas(parcelas);
-
-            // Registrando a recorrência como mensal para manter consistência
-            Recorrencia recorrencia = new Recorrencia("mensal", parcelas.getFim());
+        // Se tiver recorrência, define na movimentação
+        if (recorrencia != null) {
             movimentacao.setRecorrencia(recorrencia);
         }
 
-        // Salvando a movimentação no Firebase
+        // a própria classe Movimentacao cuida do caminho correto que será salvo no Firebase
         movimentacao.salvar();
-
-        // 7️⃣ Feedback visual
-        Toast.makeText(this, "Receita salva com sucesso!", Toast.LENGTH_SHORT).show();
 
         // Limpa os campos após salvar
         limparCampos();
-    }
 
+        // Fecha a tela de Adicionar Receitas
+        finish();
+    }
 
     /* Limpa todos os campos após salvar */
     private void limparCampos() {

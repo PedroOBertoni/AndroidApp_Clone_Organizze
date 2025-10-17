@@ -2,7 +2,6 @@ package com.aula.organizze.activity;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -26,7 +25,6 @@ import androidx.core.content.ContextCompat;
 
 import com.aula.organizze.R;
 import com.aula.organizze.model.Movimentacao;
-import com.aula.organizze.model.Parcelas;
 import com.aula.organizze.model.Recorrencia;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -268,8 +266,8 @@ public class DespesasActivity extends AppCompatActivity {
             desativarModoParcelado();
         }
 
-        String[] opcoesExibicao = {"Diário", "Semanal", "Quinzenal", "Mensal"};
-        String[] opcoesValor = {"diario", "semanal", "quinzenal", "mensal"};
+        String[] opcoesExibicao = {"Diário", "Semanal", "Quinzenal", "Mensal", "Semestral", "Anual"};
+        String[] opcoesValor = {"diario", "semanal", "quinzenal", "mensal", "semestral", "anual"};
 
         new MaterialAlertDialogBuilder(
                 new ContextThemeWrapper(this, R.style.RoundedAlertDialogTheme)
@@ -424,53 +422,48 @@ public class DespesasActivity extends AppCompatActivity {
         movimentacao.setTipo("D");
         movimentacao.setStatus("ativa");
 
-        // configurando a recorrência (fixa)
+        // Criar objeto de recorrência (se houver)
+        Recorrencia recorrencia = null;
+
         if (modoFixoAtivo) {
-            Recorrencia recorrencia = new Recorrencia();
-            recorrencia.setTipo(frequencia);
-
-            // Definindo uma data final
+            recorrencia = new Recorrencia();
+            recorrencia.setTipo("fixa");
+            recorrencia.setParcelaAtual(null);
+            recorrencia.setParcelasTotais(null);
             recorrencia.setFim(null);
-
-            movimentacao.setRecorrencia(recorrencia);
         }
-
-        // Configurando o parcelamento
         else if (modoParceladoAtivo) {
-            Parcelas parcelas = new Parcelas();
-            parcelas.setTotal(quantParcelas);
-            parcelas.setAtual(1); // Primeira parcela
+            recorrencia = new Recorrencia();
+            recorrencia.setTipo("parcelada");
+            recorrencia.setParcelaAtual(1);
+            recorrencia.setParcelasTotais(quantParcelas);
 
-            // Calcula a data da última parcela (baseado na data inicial)
             try {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(sdf.parse(editTextData.getText().toString()));
-
                 cal.add(Calendar.MONTH, quantParcelas - 1);
-                String dataFinal = sdf.format(cal.getTime());
-                parcelas.setFim(dataFinal);
+                recorrencia.setFim(sdf.format(cal.getTime()));
             } catch (Exception e) {
                 e.printStackTrace();
+                recorrencia.setFim(null);
             }
+        }
 
-            movimentacao.setParcelas(parcelas);
-
-            // Registrando a recorrência como mensal para manter consistência
-            Recorrencia recorrencia = new Recorrencia("mensal", parcelas.getFim());
+        // Se tiver recorrência, define na movimentação
+        if (recorrencia != null) {
             movimentacao.setRecorrencia(recorrencia);
         }
 
-        // Salvando a movimentação no Firebase
+        // a própria classe Movimentacao cuida do caminho correto que será salvo no Firebase
         movimentacao.salvar();
-
-        // 7️⃣ Feedback visual
-        Toast.makeText(this, "Despesa salva com sucesso!", Toast.LENGTH_SHORT).show();
 
         // Limpa os campos após salvar
         limparCampos();
-    }
 
+        // Fecha a tela de Adicionar Receitas
+        finish();
+    }
 
     /* Limpa todos os campos após salvar */
     private void limparCampos() {

@@ -1,8 +1,14 @@
 package com.aula.organizze.model;
 
+import android.util.Log;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class Movimentacao {
 
@@ -16,7 +22,6 @@ public class Movimentacao {
     private String status;
 
     private Recorrencia recorrencia; // objeto que define se é fixa (mensal, diária, etc.)
-    private Parcelas parcelas;       // objeto que define as parcelas (se houver)
 
     public Movimentacao() {
     }
@@ -29,13 +34,28 @@ public class Movimentacao {
         DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference();
         DatabaseReference movimentacoesRef = firebaseRef.child("movimentacoes").child(uid);
 
-        // Gera um id único para esta movimentação
-        String idMov = movimentacoesRef.push().getKey();
-        this.id = idMov;
+        // Gera o nó do mês/ano a partir da data da movimentação
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            Date dataObj = sdf.parse(this.data);
+            SimpleDateFormat mesAnoFormat = new SimpleDateFormat("MM-yyyy", Locale.getDefault());
+            String mesAno = mesAnoFormat.format(dataObj);
 
-        // Salva o objeto completo (sem separar por ano/mês)
-        movimentacoesRef.child(idMov).setValue(this);
+            DatabaseReference mesRef = movimentacoesRef.child(mesAno);
+
+            // Gera um id único dentro do mês correspondente
+            String idMov = mesRef.push().getKey();
+            this.id = idMov;
+
+            // Salva a movimentação
+            mesRef.child(idMov).setValue(this);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("Movimentacao", "Erro ao salvar movimentação: data inválida (" + this.data + ")");
+        }
     }
+
 
     // Getters e Setters
     public String getId() { return id; }
@@ -64,7 +84,4 @@ public class Movimentacao {
 
     public Recorrencia getRecorrencia() { return recorrencia; }
     public void setRecorrencia(Recorrencia recorrencia) { this.recorrencia = recorrencia; }
-
-    public Parcelas getParcelas() { return parcelas; }
-    public void setParcelas(Parcelas parcelas) { this.parcelas = parcelas; }
 }
