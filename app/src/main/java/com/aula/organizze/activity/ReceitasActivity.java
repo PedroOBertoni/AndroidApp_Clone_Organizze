@@ -197,7 +197,7 @@ public class ReceitasActivity extends AppCompatActivity {
 
         // Clique no campo de categoria -> abre lista de opções
         editTextCategoria.setOnClickListener(view -> {
-            String[] categorias = {"Salário e Renda fixa", "Vendas e Serviços", "Investimentos", "Transporte",
+            String[] categorias = {"Salário e Renda fixa", "Vendas e Serviços", "Investimentos", "Freelances",
                     "Presentes e Doações", "Outros"};
             new MaterialAlertDialogBuilder(
                     new ContextThemeWrapper(this, R.style.RoundedAlertDialogTheme)
@@ -239,6 +239,8 @@ public class ReceitasActivity extends AppCompatActivity {
                 salvarReceita(view);
                 limparCampos();
                 Snackbar.make(view, "Receita adicionada com sucesso!", Snackbar.LENGTH_SHORT).show();
+
+                finish();
             }
         });
     }
@@ -462,12 +464,6 @@ public class ReceitasActivity extends AppCompatActivity {
 
         // a própria classe Movimentacao cuida do caminho correto que será salvo no Firebase
         movimentacao.salvar();
-
-        // Limpa os campos após salvar
-        limparCampos();
-
-        // Fecha a tela de Adicionar Receitas
-        finish();
     }
 
     /* Limpa todos os campos após salvar */

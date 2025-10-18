@@ -234,6 +234,7 @@ public class DespesasActivity extends AppCompatActivity {
                 salvarDespesa(view);
                 limparCampos();
                 Snackbar.make(view, "Despesa adicionada com sucesso!", Snackbar.LENGTH_SHORT).show();
+                finish();
             }
         });
     }
@@ -457,12 +458,6 @@ public class DespesasActivity extends AppCompatActivity {
 
         // a própria classe Movimentacao cuida do caminho correto que será salvo no Firebase
         movimentacao.salvar();
-
-        // Limpa os campos após salvar
-        limparCampos();
-
-        // Fecha a tela de Adicionar Receitas
-        finish();
     }
 
     /* Limpa todos os campos após salvar */
