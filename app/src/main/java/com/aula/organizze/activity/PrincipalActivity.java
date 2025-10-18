@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +25,7 @@ import com.aula.organizze.adapter.AdapterMovimentacao;
 import com.aula.organizze.config.ConfigFirebase;
 import com.aula.organizze.model.Movimentacao;
 import com.aula.organizze.model.Recorrencia;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,15 +44,21 @@ import java.util.Date;
 
 public class PrincipalActivity extends AppCompatActivity {
 
+    // Componentes
+    private LinearLayout layoutHeaderSaldo;
     private TextView textSaldo, textTotalDespesas, textTotalReceitas;
     private RecyclerView recyclerMovimentos;
 
+    // Adapter
     private AdapterMovimentacao adapterMovimentacao;
     private ArrayList<Movimentacao> movimentacoes = new ArrayList<>();
 
+    // Firebase
     private DatabaseReference databaseReference;
     private FirebaseAuth autenticacao;
     private DatabaseReference usuarioRef;
+
+    // Listeners
     private ValueEventListener valueEventListenerUsuario;
     private ValueEventListener valueEventListenerMovimentacoes;
 
@@ -65,12 +74,17 @@ public class PrincipalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
 
+        // Configurações iniciais Firebase
         autenticacao = FirebaseAuth.getInstance();
         databaseReference = ConfigFirebase.getFirebaseDatabase();
 
+        // Inicializa componentes
+        layoutHeaderSaldo = findViewById(R.id.layoutHeaderSaldo);
         textSaldo = findViewById(R.id.textSaldo);
         textTotalDespesas = findViewById(R.id.textTotalDespesas);
         textTotalReceitas = findViewById(R.id.textTotalReceitas);
+
+        // Inicializa Recycler View
         recyclerMovimentos = findViewById(R.id.recyclerMovimentacoes);
 
         // Configura Toolbar
@@ -225,19 +239,45 @@ public class PrincipalActivity extends AppCompatActivity {
         double saldo = totalReceitas - totalDespesas;
         resumoUsuario = saldo;
 
+        formatandoSaldoTotalReceitasTotalDespesas(saldo, totalDespesas, totalReceitas);
+        alterarCorCabecalhoSaldo(saldo);
+    }
+
+    public void formatandoSaldoTotalReceitasTotalDespesas(double saldo, double totalDespesas, double totalReceitas) {
         // Definindo formatação
         DecimalFormat df = new DecimalFormat("###,###,##0.00");
 
-        // Aplicando formatação no saldo, totalDespesas e totalReceitas
-        textSaldo.setText("R$ " + df.format(saldo));
+        // Aplicando formatação no saldo no totalDespesas e totalReceitas
+        if(saldo < 0){
+            saldo *= -1; // Inverte o sinal pois ele será adicionado antes do R$
+            textSaldo.setText("- R$ " + df.format(saldo));
+        } else{
+            textSaldo.setText("R$ " + df.format(saldo));
+        }
+
         textTotalDespesas.setText("- R$ " + df.format(totalDespesas));
         textTotalReceitas.setText("+ R$ " + df.format(totalReceitas));
+    }
 
-        // Altera cor do cabeçalho conforme saldo
+    @SuppressLint("ResourceAsColor")
+    public void alterarCorCabecalhoSaldo( double saldo ) {
+
+        // Altera cor do cabeçalho e toolbar conforme saldo
         int cor = (saldo < 0)
                 ? ContextCompat.getColor(this, R.color.colorPrimaryDespesa)
                 : ContextCompat.getColor(this, R.color.colorPrimary);
         toolbar.setBackground(new ColorDrawable(cor));
+        layoutHeaderSaldo.setBackground(new ColorDrawable(cor));
+
+        // Altera também a cor do AppBarLayout se existir
+        AppBarLayout appBarLayout = findViewById(R.id.appBarLayout);
+        if (appBarLayout != null) {
+            appBarLayout.setBackgroundColor(cor);
+        }
+
+        // Altera cor da status bar conforme saldo
+        Window window = getWindow();
+        window.setStatusBarColor(cor);
     }
 
     /* Menu Toolbar */
