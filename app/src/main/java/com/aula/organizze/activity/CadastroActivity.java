@@ -58,6 +58,7 @@ public class CadastroActivity extends AppCompatActivity {
             String textoEmail = campoEmail.getText().toString().trim();
             String textoSenha = campoSenha.getText().toString().trim();
 
+            // Chama o método de validação do preenchimento dos campos
             validaPreenchimentoDosCampos(textoNome, textoEmail, textoSenha);
         });
     }
@@ -69,49 +70,62 @@ public class CadastroActivity extends AppCompatActivity {
         layoutEmail.setError(null);
         layoutSenha.setError(null);
 
+        // Variáveis para controle de validação e exceção
         boolean valido = true;
         String excecao;
 
         if (nome.isEmpty()) {
+            // Validação de campo de nome vazio
             excecao = "Preencha o nome!";
             layoutNome.setError(excecao);
 
+            // Mostra erro geral com Snackbar
             Snackbar.make(findViewById(android.R.id.content),
                     excecao,
                     Snackbar.LENGTH_LONG).show();
 
+            // e define válido como falso
             valido = false;
         }
 
         if (email.isEmpty()) {
+            // Validação de campo de e-mail vazio
             excecao = "Preencha o e-mail!";
             layoutEmail.setError(excecao);
 
+            // Mostra erro geral com Snackbar
             Snackbar.make(findViewById(android.R.id.content),
                     excecao,
                     Snackbar.LENGTH_LONG).show();
 
+            // e define válido como falso
             valido = false;
         }
 
         if (senha.isEmpty()) {
+            // Validação de campo de senha vazio
             excecao = "Preencha a senha!";
             layoutSenha.setError(excecao);
 
+            // Mostra erro geral com Snackbar
             Snackbar.make(findViewById(android.R.id.content),
                     excecao,
                     Snackbar.LENGTH_LONG).show();
 
+            // e define válido como falso
             valido = false;
 
         } else if (senha.length() < 6) {
+            // Validação de senha com no mínimo 6 caracteres
             excecao = "A senha deve ter no mínimo 6 caracteres!";
             layoutSenha.setError(excecao);
 
+            // Mostra erro geral com Snackbar
             Snackbar.make(findViewById(android.R.id.content),
                     excecao,
                     Snackbar.LENGTH_LONG).show();
 
+            // e define válido como falso
             valido = false;
         }
 
@@ -121,10 +135,12 @@ public class CadastroActivity extends AppCompatActivity {
     }
 
     public void cadastrarUsuario(String email, String senha, String nome) {
+        // Criando objeto usuário
         usuario = new Usuario();
         usuario.setNome(nome);
         usuario.setEmail(email);
 
+        // Cadastrando usuário com e-mail e senha no Firebase
         autenticacao = ConfigFirebase.getFirebaseAutenticacao();
         autenticacao.createUserWithEmailAndPassword(email, senha)
                 .addOnCompleteListener(this, task -> {
@@ -142,24 +158,31 @@ public class CadastroActivity extends AppCompatActivity {
                         finish();
 
                     } else {
+                        /* Definindo varivabel captura das mensagens de erro no tratamento de erros
+                        específicos do Firebase */
                         String excecao;
 
                         try {
+                            // Lança a exceção capturada para tratá-la
                             throw task.getException();
 
                         } catch (FirebaseAuthWeakPasswordException e) {
+                            // Senha fraca
                             excecao = "Digite uma senha mais forte!";
                             layoutSenha.setError(excecao);
 
                         } catch (FirebaseAuthInvalidCredentialsException e) {
+                            // E-mail inválido
                             excecao = "Por favor, digite um e-mail válido!";
                             layoutEmail.setError(excecao);
 
                         } catch (FirebaseAuthUserCollisionException e) {
+                            // E-mail já cadastrado
                             excecao = "Esta conta já foi cadastrada!";
                             layoutEmail.setError(excecao);
 
                         } catch (Exception e) {
+                            // Erro geral
                             excecao = "Erro ao cadastrar: " + e.getMessage();
                             e.printStackTrace();
 
@@ -173,12 +196,13 @@ public class CadastroActivity extends AppCompatActivity {
                 });
     }
 
-    // Redireciona para as páginas Termos de Uso e Login
+    // Redireciona para a página Termos de Uso
     public void redirectTermosDeUso(View view){
         startActivity(new Intent(this, CadastroActivity.class));
         finish();
     }
 
+    // Redireciona para a tela de Login
     public void redirectEntrar(View view){
         startActivity(new Intent(this, LoginActivity.class));
         finish();

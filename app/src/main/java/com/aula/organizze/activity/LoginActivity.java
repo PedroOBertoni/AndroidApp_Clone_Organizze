@@ -70,38 +70,48 @@ public class LoginActivity extends AppCompatActivity {
         layoutEmail.setError(null);
         layoutSenha.setError(null);
 
+        // Variáveis para controle de validação e exceção
         boolean valido = true;
         String excecao;
 
         if (email.isEmpty()) {
+            // Validação de campo de e-mail vazio
             excecao = "Preencha o e-mail!";
             layoutEmail.setError(excecao);
 
+            // Mostra erro geral com Snackbar
             Snackbar.make(findViewById(android.R.id.content),
                     excecao,
                     Snackbar.LENGTH_LONG).show();
 
+            // e define válido como falso
             valido = false;
         }
 
         if (senha.isEmpty()) {
+            // Validação de campo de senha vazio
             excecao = "Preencha a senha!";
             layoutSenha.setError(excecao);
 
+            // Mostra erro geral com Snackbar
             Snackbar.make(findViewById(android.R.id.content),
                     excecao,
                     Snackbar.LENGTH_LONG).show();
 
+            // e define válido como falso
             valido = false;
 
         } else if (senha.length() < 6) {
+            // Validação de senha com no mínimo 6 caracteres
             excecao = "A senha deve ter no mínimo 6 caracteres!";
             layoutSenha.setError(excecao);
 
+            // Mostra erro geral com Snackbar
             Snackbar.make(findViewById(android.R.id.content),
                     excecao,
                     Snackbar.LENGTH_LONG).show();
 
+            // e define válido como falso
             valido = false;
         }
 
@@ -130,21 +140,26 @@ public class LoginActivity extends AppCompatActivity {
                     abrirTelaPrincipal();
 
                 } else {
-                    // Tratamento de erros específicos do Firebase
+                    /* Definindo varivabel captura das mensagens de erro no tratamento de erros
+                        específicos do Firebase */
                     String excecao;
 
                     try {
+                        // Lança a exceção capturada para tratá-la
                         throw task.getException();
 
                     } catch (FirebaseAuthInvalidUserException e) {
+                        // Usuário não cadastrado
                         excecao = "Usuário digitado não está cadastrado!";
                         layoutEmail.setError(excecao);
 
                     } catch (FirebaseAuthInvalidCredentialsException e) {
+                        // E-mail e/ou senha inválidos
                         excecao = "E-mail e/ou senha não correspondem a um usuário cadastrado!";
                         layoutSenha.setError(excecao);
 
                     } catch (Exception e) {
+                        // Erro genérico
                         excecao = "Erro ao fazer login: " + e.getMessage();
                         e.printStackTrace();
                     }
@@ -158,18 +173,19 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    // Redireciona para as páginas Termos de Uso, Cadastro e Tela Principal
+    // Redireciona para as páginas Termos de Uso
     public void redirectTermosDeUso(View view) {
         startActivity(new Intent(this, CadastroActivity.class));
         finish();
     }
 
+    // Redireciona para tela de Cadastro
     public void redirectCadastrar(View view) {
         startActivity(new Intent(this, CadastroActivity.class));
         finish();
     }
 
-    // Redireciona para tela principal após login bem-sucedido
+    // Redireciona para tela Principal após login bem-sucedido
     public void abrirTelaPrincipal() {
         startActivity(new Intent(getApplicationContext(), PrincipalActivity.class));
         finish();

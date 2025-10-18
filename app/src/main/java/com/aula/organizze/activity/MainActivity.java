@@ -24,17 +24,19 @@ public class MainActivity extends IntroActivity {
         setButtonBackVisible(false);
         setButtonNextVisible(false);
 
-        // adiciona slides
+        // Adiciona o slide 1
         addSlide(new com.heinrichreimersoftware.materialintro.slide.FragmentSlide.Builder()
                 .background(R.color.headerBackground)
                 .fragment(R.layout.intro_1)
                 .build());
 
+        // Adiciona o slide 2
         addSlide(new com.heinrichreimersoftware.materialintro.slide.FragmentSlide.Builder()
                 .background(R.color.headerBackground)
                 .fragment(R.layout.intro_2)
                 .build());
 
+        // E por fim adiciona o slide 3
         addSlide(new com.heinrichreimersoftware.materialintro.slide.FragmentSlide.Builder()
                 .background(R.color.headerBackground)
                 .fragment(R.layout.intro_3)
@@ -49,16 +51,7 @@ public class MainActivity extends IntroActivity {
         verificarUsuarioLogado();
     }
 
-    public void redirectEntrar(View view){
-        startActivity(new Intent(this, LoginActivity.class));
-        finish();
-    }
-
-    public void redirectCadastrar(View view){
-        startActivity(new Intent(this, CadastroActivity.class));
-        finish();
-    }
-
+    // Verifica se o usuário está logado
     public void verificarUsuarioLogado(){
         // Verifica no firebase se o usuário está logado
         autenticacao = ConfigFirebase.getFirebaseAutenticacao();
@@ -73,7 +66,20 @@ public class MainActivity extends IntroActivity {
         }
     }
 
+    // Abre a tela principal
     public void abrirTelaPrincipal() {
         startActivity(new Intent(getApplicationContext(), PrincipalActivity.class));
+    }
+
+    // Redireciona para tela de login
+    public void redirectEntrar(View view){
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
+    }
+
+    // Redireciona para tela de cadastro
+    public void redirectCadastrar(View view){
+        startActivity(new Intent(this, CadastroActivity.class));
+        finish();
     }
 }

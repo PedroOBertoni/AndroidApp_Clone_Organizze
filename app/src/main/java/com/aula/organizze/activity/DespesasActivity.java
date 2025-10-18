@@ -16,7 +16,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -84,6 +83,7 @@ public class DespesasActivity extends AppCompatActivity {
         fabConfirmar = findViewById(R.id.floatingActionButtonConfirmarDespesa);
         editTextValor = findViewById(R.id.editTextValorDespesa);
 
+        // Modos Fixo e Parcelado
         buttonFixo = findViewById(R.id.buttonFixoDespesa);
         buttonParcelado = findViewById(R.id.buttonParceladoDespesa);
         linearParcelamentoInfo = findViewById(R.id.linearParcelamentoInfoDespesa);
@@ -149,23 +149,33 @@ public class DespesasActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 if (isUpdating) return;
 
+                // Sinaliza que está atualizando para evitar loop
                 isUpdating = true;
                 String digits = s.toString().replaceAll("[^\\d]", "");
 
+
+                // Se não houver dígitos, define como "0"
                 if (digits.isEmpty()) {
                     digitacaoContinua("0");
                     isUpdating = false;
                     return;
                 }
 
+                // Converte dígitos para valor em centavos
                 try {
+                    // Converte para long
                     long cents = Long.parseLong(digits);
                     double valor = cents / 100.0;
+
+                    // Formata o valor como moeda
                     String formatted = NumberFormat.getCurrencyInstance(locale).format(valor);
 
+                    // Atualiza o campo com o valor formatado
                     editTextValor.setText(formatted);
                     editTextValor.setSelection(formatted.length());
+
                 } catch (NumberFormatException e) {
+                    // Em caso de erro, redefine para R$ 0,00
                     digitacaoContinua("0");
                 }
 
@@ -177,11 +187,15 @@ public class DespesasActivity extends AppCompatActivity {
 
         // Clique no FAB do calendário -> abre seletor de data
         fabCalendario.setOnClickListener(view -> {
+            // Obtém data atual para inicializar o DatePickerDialog
             Calendar cal = Calendar.getInstance();
+
+            // Recupera valores atuais do calendário
             int year = cal.get(Calendar.YEAR);
             int month = cal.get(Calendar.MONTH);
             int day = cal.get(Calendar.DAY_OF_MONTH);
 
+            // Cria DatePickerDialog para buscar a data da despesa
             DatePickerDialog datePicker = new DatePickerDialog(this,
                     (v, selectedYear, selectedMonth, selectedDay) -> {
                         cal.set(selectedYear, selectedMonth, selectedDay);
@@ -193,7 +207,10 @@ public class DespesasActivity extends AppCompatActivity {
 
         // Clique no campo de categoria -> abre lista de opções
         editTextCategoria.setOnClickListener(view -> {
+            // Define as categorias disponíveis
             String[] categorias = {"Assinaturas e Serviços", "Compras", "Alimentação", "Transporte", "Lazer", "Outros"};
+
+            // Cria e exibe o alertDialog de seleção das opções definidas acima
             new MaterialAlertDialogBuilder(
                     new ContextThemeWrapper(this, R.style.RoundedAlertDialogTheme)
             )
@@ -204,6 +221,7 @@ public class DespesasActivity extends AppCompatActivity {
 
         // Clique nos botões de modo
         buttonFixo.setOnClickListener(view -> {
+            // Desativa modo Fixo se já estiver ativo e depois ativa novamente
             if (modoFixoAtivo) {
                 desativarModoFixo();
             } else {
@@ -212,8 +230,10 @@ public class DespesasActivity extends AppCompatActivity {
         });
 
         buttonParcelado.setOnClickListener(view -> {
+            // // Desativa modo Parcela se já estiver ativo e depois ativa novamente
             if (modoParceladoAtivo) {
                 desativarModoParcelado();
+
             } else {
                 ativarModoParcelado();
             }
@@ -221,8 +241,10 @@ public class DespesasActivity extends AppCompatActivity {
 
         // Clique no botão de remover parcelamento/frequência
         buttonRemoverParcelamento.setOnClickListener(view -> {
+            // Desativa qualquer modo ativo
             if (modoFixoAtivo) {
                 desativarModoFixo();
+
             } else if (modoParceladoAtivo) {
                 desativarModoParcelado();
             }
@@ -230,6 +252,7 @@ public class DespesasActivity extends AppCompatActivity {
 
         // Clique no FAB confirma -> realiza validação e tenta salvar
         fabConfirmar.setOnClickListener(view -> {
+            // Valida campos, salva despesa, apresenta snackbar e fecha activity
             if (validarCampos(view)) {
                 salvarDespesa(view);
                 limparCampos();
@@ -245,13 +268,16 @@ public class DespesasActivity extends AppCompatActivity {
     /* Atualiza o estilo visual do botão de modo (Fixo/Parcelado) e
      * Adiciona borda colorAccentDespesa quando ativo */
     private void atualizarEstiloBotao(Button botao, boolean ativo) {
+        // Instancia as cores a serem usadas
         int corPrimaria = ContextCompat.getColor(this, R.color.colorAccentDespesa);
         int corBranca = ContextCompat.getColor(this, android.R.color.white);
 
+        // Cria um GradientDrawable para personalizar o fundo do botão
         GradientDrawable drawable = new GradientDrawable();
         drawable.setCornerRadius(16f); // bordas arredondadas suaves
         drawable.setStroke(3, corPrimaria);
 
+        // Define as cores conforme o estado ativo/inativo
         if (ativo) {
             drawable.setColor(corPrimaria); // fundo cheio
             botao.setTextColor(corBranca);
@@ -260,6 +286,7 @@ public class DespesasActivity extends AppCompatActivity {
             botao.setTextColor(corPrimaria);
         }
 
+        // Aplica o drawable como fundo do botão
         botao.setBackground(drawable);
     }
 
@@ -270,9 +297,11 @@ public class DespesasActivity extends AppCompatActivity {
             desativarModoParcelado();
         }
 
+        // Define array com as opções de frequência
         String[] opcoesExibicao = {"Diário", "Semanal", "Quinzenal", "Mensal", "Semestral", "Anual"};
         String[] opcoesValor = {"diario", "semanal", "quinzenal", "mensal", "semestral", "anual"};
 
+        // Cria alertDialog para escolher a frequência entre as opções definidas acima
         new MaterialAlertDialogBuilder(
                 new ContextThemeWrapper(this, R.style.RoundedAlertDialogTheme)
         )
@@ -298,11 +327,13 @@ public class DespesasActivity extends AppCompatActivity {
             desativarModoFixo();
         }
 
+        // Configura NumberPicker
         NumberPicker numberPicker = new NumberPicker(this);
         numberPicker.setMinValue(2);
         numberPicker.setMaxValue(24);
         numberPicker.setValue(quantParcelas != null ? quantParcelas : 2);
 
+        // Cria alertDialog para escolher a quantidade de parcelas com o NumberPicker
         new AlertDialog.Builder(this)
                 .setTitle("Número de parcelas")
                 .setView(numberPicker)
@@ -322,16 +353,22 @@ public class DespesasActivity extends AppCompatActivity {
 
     /* Desativa o modo Fixo */
     private void desativarModoFixo() {
+        // Redefine variáveis
         modoFixoAtivo = false;
         frequencia = null;
+
+        // Atualiza estilo do botão
         atualizarEstiloBotao(buttonFixo, false);
         linearParcelamentoInfo.setVisibility(View.GONE);
     }
 
     /* Desativa o modo Parcelado */
     private void desativarModoParcelado() {
+        // Redefine variáveis
         modoParceladoAtivo = false;
         quantParcelas = null;
+
+        // Atualiza estilo do botão
         atualizarEstiloBotao(buttonParcelado, false);
         linearParcelamentoInfo.setVisibility(View.GONE);
     }
@@ -345,12 +382,17 @@ public class DespesasActivity extends AppCompatActivity {
     // Helper para setar "R$ 0,00" ou qualquer centavos em string de dígitos (ex: "0" ou "12")
     private void digitacaoContinua(String digitosSomente) {
         try {
+            // Converte dígitos para valor em double
             long cents = Long.parseLong(digitosSomente);
             double valor = cents / 100.0;
+
+            // Formata e atualiza o campo
             String formatted = NumberFormat.getCurrencyInstance(locale).format(valor);
             editTextValor.setText(formatted);
             editTextValor.setSelection(formatted.length());
+
         } catch (NumberFormatException e) {
+            // Em caso de erro, define como R$ 0,00
             editTextValor.setText(NumberFormat.getCurrencyInstance(locale).format(0.0));
             editTextValor.setSelection(editTextValor.getText().length());
         }
@@ -358,6 +400,7 @@ public class DespesasActivity extends AppCompatActivity {
 
     /* Converte o texto formatado do campo de valor para Double */
     private Double formatandoValor(EditText editTextValor) {
+        // Remove formatação de R$, espaços indevidos, etc e converte para Double
         String valor = editTextValor.getText().toString()
                 .replace("R$", "")
                 .replaceAll("\\s", "")
@@ -371,24 +414,32 @@ public class DespesasActivity extends AppCompatActivity {
 
     /* Valida os campos antes de salvar */
     private boolean validarCampos(View view) {
+        // Recupera valores dos campos
         String titulo = editTextTitulo.getText().toString().trim();
         String categoria = editTextCategoria.getText().toString().trim();
         String data = editTextData.getText().toString().trim();
 
         boolean valorInvalido = formatandoValor(editTextValor) <= 0;
 
+        // Validação do título
         if (titulo.isEmpty()) {
             Snackbar.make(view, "Preencha o campo Título.", Snackbar.LENGTH_SHORT).show();
             return false;
         }
+
+        // Validação da categoria
         if (categoria.isEmpty()) {
             Snackbar.make(view, "Selecione uma Categoria.", Snackbar.LENGTH_SHORT).show();
             return false;
         }
+
+        // Validação da data
         if (data.isEmpty()) {
             Snackbar.make(view, "Informe uma Data.", Snackbar.LENGTH_SHORT).show();
             return false;
         }
+
+        // Validação do valor
         if (valorInvalido) {
             Snackbar.make(view, "Informe um Valor válido.", Snackbar.LENGTH_SHORT).show();
             return false;
@@ -399,6 +450,8 @@ public class DespesasActivity extends AppCompatActivity {
             Snackbar.make(view, "Selecione uma frequência para a despesa fixa.", Snackbar.LENGTH_SHORT).show();
             return false;
         }
+
+        // Se modo parcelado ativo, garantir que número de parcelas foi definido
         if (modoParceladoAtivo && quantParcelas == null) {
             Snackbar.make(view, "Informe o número de parcelas.", Snackbar.LENGTH_SHORT).show();
             return false;
@@ -416,7 +469,7 @@ public class DespesasActivity extends AppCompatActivity {
         // Formatando o valor
         Double valorRecuperado = formatandoValor(editTextValor);
 
-        // Criar objeto movimentação
+        // Criar objeto movimentação e define os seus atributos
         Movimentacao movimentacao = new Movimentacao();
         movimentacao.setValor(valorRecuperado);
         movimentacao.setTitulo(editTextTitulo.getText().toString().trim());
@@ -430,6 +483,7 @@ public class DespesasActivity extends AppCompatActivity {
         Recorrencia recorrencia = null;
 
         if (modoFixoAtivo) {
+            // Configura dados da recorrência fixa
             recorrencia = new Recorrencia();
             recorrencia.setTipo("fixa");
             recorrencia.setParcelaAtual(null);
@@ -437,18 +491,25 @@ public class DespesasActivity extends AppCompatActivity {
             recorrencia.setFim(null);
         }
         else if (modoParceladoAtivo) {
+            // Configura dados da recorrência parcelada
             recorrencia = new Recorrencia();
             recorrencia.setTipo("parcelada");
             recorrencia.setParcelaAtual(1);
             recorrencia.setParcelasTotais(quantParcelas);
 
             try {
+                // Calcula a data de fim somando meses à data inicial
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                 Calendar cal = Calendar.getInstance();
+
+                // Define a data inicial
                 cal.setTime(sdf.parse(editTextData.getText().toString()));
                 cal.add(Calendar.MONTH, quantParcelas - 1);
+
+                // Define a data de fim formatada
                 recorrencia.setFim(sdf.format(cal.getTime()));
             } catch (Exception e) {
+                // Em caso de erro, define fim como null
                 e.printStackTrace();
                 recorrencia.setFim(null);
             }

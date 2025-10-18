@@ -13,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.content.ContextCompat;
@@ -24,7 +23,6 @@ import com.aula.organizze.R;
 import com.aula.organizze.adapter.AdapterMovimentacao;
 import com.aula.organizze.config.ConfigFirebase;
 import com.aula.organizze.model.Movimentacao;
-import com.aula.organizze.model.Recorrencia;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -40,7 +38,6 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 public class PrincipalActivity extends AppCompatActivity {
 
@@ -96,6 +93,7 @@ public class PrincipalActivity extends AppCompatActivity {
         // Configura FAB (SpeedDial)
         speedDialView = findViewById(R.id.speedDial);
 
+        // Adiciona botão de Adicionar Despesa ao SpeedDial
         speedDialView.addActionItem(
                 new SpeedDialActionItem.Builder(R.id.fab_despesa, R.drawable.ic_add_24dp)
                         .setLabel("Adicionar despesa")
@@ -104,6 +102,7 @@ public class PrincipalActivity extends AppCompatActivity {
                         .create()
         );
 
+        // Adiciona botão de Adicionar Receita ao SpeedDial
         speedDialView.addActionItem(
                 new SpeedDialActionItem.Builder(R.id.fab_receita, R.drawable.ic_add_24dp)
                         .setLabel("Adicionar receita")
@@ -141,6 +140,7 @@ public class PrincipalActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        // Recarrega resumo e movimentações ao iniciar a activity
         recuperarResumo();
         recuperarMovimentacoes();
     }
@@ -149,10 +149,14 @@ public class PrincipalActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         if (usuarioRef != null && valueEventListenerUsuario != null)
+            // Remove listener de usuário
             usuarioRef.removeEventListener(valueEventListenerUsuario);
 
         if (valueEventListenerMovimentacoes != null) {
+            // Recupera UID do usuário logado
             String uidUsuario = autenticacao.getCurrentUser().getUid();
+
+            // Remove listener de movimentações
             DatabaseReference movimentacaoRef = databaseReference.child("movimentacoes").child(uidUsuario).child(mesAnoSelecionado);
             movimentacaoRef.removeEventListener(valueEventListenerMovimentacoes);
         }
@@ -160,10 +164,12 @@ public class PrincipalActivity extends AppCompatActivity {
 
     private void recuperarResumo() {
         try {
+            // Recupera UID do usuário logado
             String uidUsuario = autenticacao.getCurrentUser().getUid();
             usuarioRef = databaseReference.child("usuarios").child(uidUsuario);
 
             if (autenticacao.getCurrentUser() == null) {
+                // Usuário não autenticado, redireciona para a tela de login e encerrar a activity atual
                 Toast.makeText(this, "Sessão expirada. Faça login novamente.", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this, LoginActivity.class));
                 finish();
@@ -182,6 +188,7 @@ public class PrincipalActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
+                    // Log detalhado do erro
                     Log.e("FIREBASE", "Erro ao carregar dados do usuário: " + error.getMessage(), error.toException());
                     Toast.makeText(PrincipalActivity.this, "Erro ao carregar dados do usuário", Toast.LENGTH_SHORT).show();
                 }
@@ -192,6 +199,7 @@ public class PrincipalActivity extends AppCompatActivity {
     }
 
     private void recuperarMovimentacoes() {
+        // Recupera UID do usuário logado
         String uidUsuario = autenticacao.getCurrentUser().getUid();
 
         // Corrigido: agora lê as movimentações dentro de cada mês ("movimentacoes/uid/10-2025")
@@ -203,16 +211,20 @@ public class PrincipalActivity extends AppCompatActivity {
         valueEventListenerMovimentacoes = movRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // Limpa lista antes de adicionar novos dados
                 movimentacoes.clear();
 
                 for (DataSnapshot ds : snapshot.getChildren()) {
+                    // Recupera movimentação
                     Movimentacao movimentacao = ds.getValue(Movimentacao.class);
                     if (movimentacao != null) {
+                        // Define o ID da movimentação
                         movimentacao.setId(ds.getKey());
                         movimentacoes.add(movimentacao);
                     }
                 }
 
+                // Notifica o adapter sobre a mudança de dados e chama o cálculo do resumo
                 adapterMovimentacao.notifyDataSetChanged();
                 calcularResumo();
             }
@@ -225,9 +237,11 @@ public class PrincipalActivity extends AppCompatActivity {
     }
 
     private void calcularResumo() {
+        // Zera totais antes do cálculo
         double totalReceitas = 0.0;
         double totalDespesas = 0.0;
 
+        // Calcula total de receitas e despesas
         for (Movimentacao m : movimentacoes) {
             if ("R".equals(m.getTipo())) {
                 totalReceitas += m.getValor();
@@ -236,9 +250,11 @@ public class PrincipalActivity extends AppCompatActivity {
             }
         }
 
+        // Calcula saldo
         double saldo = totalReceitas - totalDespesas;
         resumoUsuario = saldo;
 
+        // Atualiza interface
         formatandoSaldoTotalReceitasTotalDespesas(saldo, totalDespesas, totalReceitas);
         alterarCorCabecalhoSaldo(saldo);
     }
@@ -255,6 +271,7 @@ public class PrincipalActivity extends AppCompatActivity {
             textSaldo.setText("R$ " + df.format(saldo));
         }
 
+        // Formata total de despesas e receitas
         textTotalDespesas.setText("- R$ " + df.format(totalDespesas));
         textTotalReceitas.setText("+ R$ " + df.format(totalReceitas));
     }
@@ -290,22 +307,29 @@ public class PrincipalActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_logout) {
+            // Confirmação de logout por meio de um AlertDialog
             new MaterialAlertDialogBuilder(
                     new ContextThemeWrapper(this, R.style.RoundedAlertDialogTheme)
             )
                     .setTitle("Sair da conta")
                     .setMessage("Tem certeza que deseja sair?")
                     .setPositiveButton("SIM", (dialog, which) -> {
+                        // Se clicar em sim faz logout
                         autenticacao.signOut();
+
+                        // Depois redireciona para a tela de login
                         Intent intent = new Intent(this, LoginActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
+
+                        // E por fim encerra a activity atual
                         finish();
                     })
                     .setNegativeButton("CANCELAR", (dialog, which) -> dialog.dismiss())
                     .show();
             return true;
         }
+        // Caso não seja logout, processa normalmente
         return super.onOptionsItemSelected(item);
     }
 }
