@@ -33,6 +33,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -131,10 +134,51 @@ public class PrincipalActivity extends AppCompatActivity {
         recyclerMovimentos.setHasFixedSize(true);
         recyclerMovimentos.setAdapter(adapterMovimentacao);
 
-        // Define mês atual (ex: 10-2025)
+        // Configura calendário
+        MaterialCalendarView calendarView = findViewById(R.id.calendarView);
+
+        // Define mês atual
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("MM-yyyy");
         mesAnoSelecionado = sdf.format(cal.getTime());
+
+        // Listener para detectar mudança de mês
+        calendarView.setOnMonthChangedListener(new OnMonthChangedListener() {
+            @Override
+            public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
+                // Converte CalendarDay para java.util.Calendar
+                int day = date.getDay();
+                int month = date.getMonth(); // mês base 1
+                int year = date.getYear();
+
+                //  Instancia o callendario e define o ano/mês selecionado
+                Calendar cal = Calendar.getInstance();
+                cal.set(Calendar.YEAR, year);
+                cal.set(Calendar.MONTH, month - 1); // java Calendar é 0-based
+                cal.set(Calendar.DAY_OF_MONTH, day);
+
+                // Formata mês/ano
+                SimpleDateFormat sdf = new SimpleDateFormat("MM-yyyy");
+                mesAnoSelecionado = sdf.format(cal.getTime());
+
+                // Remove listener antigo (opcional)
+                if (valueEventListenerMovimentacoes != null) {
+                    // Recupera UID do usuário logado
+                    String uidUsuario = autenticacao.getCurrentUser().getUid();
+
+                    // Remove listener de movimentações do mês anterior
+                    DatabaseReference movRef = databaseReference
+                            .child("movimentacoes")
+                            .child(uidUsuario)
+                            .child(mesAnoSelecionado);
+                    movRef.removeEventListener(valueEventListenerMovimentacoes);
+                }
+
+                // Recarrega RecyclerView com novo mês
+                recuperarMovimentacoes();
+            }
+        });
+
     }
 
     @Override
