@@ -240,7 +240,9 @@ public class ReceitasActivity extends AppCompatActivity {
                 limparCampos();
                 Snackbar.make(view, "Receita adicionada com sucesso!", Snackbar.LENGTH_SHORT).show();
 
-                finish();
+                new android.os.Handler().postDelayed(() -> {
+                    finish(); // Fecha a activity após 2 segundos
+                }, 2000); // 2000 milissegundos = 2 segundos
             }
         });
     }

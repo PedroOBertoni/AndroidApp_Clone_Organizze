@@ -234,7 +234,10 @@ public class DespesasActivity extends AppCompatActivity {
                 salvarDespesa(view);
                 limparCampos();
                 Snackbar.make(view, "Despesa adicionada com sucesso!", Snackbar.LENGTH_SHORT).show();
-                finish();
+
+                new android.os.Handler().postDelayed(() -> {
+                    finish(); // Fecha a activity após 2 segundos
+                }, 2000); // 2000 milissegundos = 2 segundos
             }
         });
     }
