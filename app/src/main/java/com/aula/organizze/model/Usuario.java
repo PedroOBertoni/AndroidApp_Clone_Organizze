@@ -5,16 +5,21 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 
 public class Usuario {
+    // Atributos
     private String idUsuario;
     private String nome;
     private String email;
 
+    // Construtor vazio necessário para o Firebase
     public Usuario() {
     }
 
     // Método para salvar o usuário no Realtime Database
     public void salvar() {
+        // Recupera a referência do Firebase Database
         DatabaseReference refFirebase = ConfigFirebase.getFirebaseDatabase();
+
+        // Salva o usuário na árvore "usuarios" com o ID do usuário como chave
         refFirebase.child("usuarios")
                 .child(this.idUsuario)
                 .setValue(this);

@@ -12,35 +12,42 @@ import java.util.Locale;
 
 public class Movimentacao {
 
+    // Atributos da classe Movimentação
     private String id;            // id único da movimentação (Firebase .push())
-    private String data;          // ex: "10/08/2025"
+    private String data;          // data no formato dd/MM/yyyy
     private String categoria;
     private String descricao;
     private Double valor;
     private String titulo;
     private String tipo;
     private String status;
-
     private Recorrencia recorrencia; // objeto que define se é fixa (mensal, diária, etc.)
 
+    // Construtor vazio necessário para o Firebase
     public Movimentacao() {
     }
 
     // 🔹 Método para salvar no Firebase
     public void salvar() {
+        // Obtém o uid do usuário logado
         FirebaseAuth auth = FirebaseAuth.getInstance();
         String uid = auth.getCurrentUser().getUid();
 
+        // Referência ao nó "movimentacoes/uid"
         DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference();
         DatabaseReference movimentacoesRef = firebaseRef.child("movimentacoes").child(uid);
 
         // Gera o nó do mês/ano a partir da data da movimentação
         try {
+            // Converte a data String para Date
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             Date dataObj = sdf.parse(this.data);
+
+            // Formata para "MM-yyyy"
             SimpleDateFormat mesAnoFormat = new SimpleDateFormat("MM-yyyy", Locale.getDefault());
             String mesAno = mesAnoFormat.format(dataObj);
 
+            // Aplica a referência ao nó do mês/ano
             DatabaseReference mesRef = movimentacoesRef.child(mesAno);
 
             // Gera um id único dentro do mês correspondente
@@ -51,6 +58,7 @@ public class Movimentacao {
             mesRef.child(idMov).setValue(this);
 
         } catch (Exception e) {
+            // Trata erro de parsing de data
             e.printStackTrace();
             Log.e("Movimentacao", "Erro ao salvar movimentação: data inválida (" + this.data + ")");
         }

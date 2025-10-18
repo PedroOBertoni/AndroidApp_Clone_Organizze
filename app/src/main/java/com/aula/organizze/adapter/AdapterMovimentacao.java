@@ -17,10 +17,11 @@ import com.aula.organizze.model.Movimentacao;
 import java.util.ArrayList;
 
 public class AdapterMovimentacao extends RecyclerView.Adapter<AdapterMovimentacao.MyViewHolder> {
-
+    // Lista de movimentações e contexto
     private final ArrayList<Movimentacao> movimentacoes;
     private final Context context;
 
+    // Construtor
     public AdapterMovimentacao(ArrayList<Movimentacao> movimentacoes, Context context) {
         this.movimentacoes = movimentacoes;
         this.context = context;
@@ -29,8 +30,11 @@ public class AdapterMovimentacao extends RecyclerView.Adapter<AdapterMovimentaca
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Infla o layout do item da lista
         View itemLista = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.adapter_movimentacao, parent, false);
+
+        // Retorna o ViewHolder com o layout inflado
         return new MyViewHolder(itemLista);
     }
 
@@ -70,15 +74,21 @@ public class AdapterMovimentacao extends RecyclerView.Adapter<AdapterMovimentaca
 
     @Override
     public int getItemCount() {
+        // Retorna o tamanho da lista de movimentações
         return movimentacoes.size();
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
+        // Componentes do layout
         TextView titulo, categoria, data, valor, prefixo, infoExtra;
 
+        // Construtor
         public MyViewHolder(@NonNull View itemView) {
+            // Inicializa os componentes
             super(itemView);
+
+            // Referências dos componentes
             titulo = itemView.findViewById(R.id.textTitulo);
             categoria = itemView.findViewById(R.id.textCategoria);
             data = itemView.findViewById(R.id.textData);

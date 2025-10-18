@@ -2,6 +2,8 @@ package com.aula.organizze.model;
 
 public class Recorrencia {
 
+    /* Atriutos */
+
     // "fixa", "parcelada", ou null
     private String tipo;
 
@@ -12,8 +14,12 @@ public class Recorrencia {
     // Data final (opcional) no formato "dd/MM/yyyy" — pode ser null
     private String fim;
 
-    // Construtor padrão (Firebase)
-    public Recorrencia() {}
+
+    /* Construtores */
+
+    // Construtor vazio necessário para o Firebase
+    public Recorrencia() {
+    }
 
     // Construtor conveniente (opcional)
     public Recorrencia(String tipo, Integer parcelaAtual, Integer parcelasTotais, String fim) {
@@ -23,7 +29,8 @@ public class Recorrencia {
         this.fim = fim;
     }
 
-    // Getters / Setters
+
+    // Getters e Setters
     public String getTipo() { return tipo; }
     public void setTipo(String tipo) { this.tipo = tipo; }
 
