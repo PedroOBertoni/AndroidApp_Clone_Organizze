@@ -1,4 +1,4 @@
-package com.aula.organizze.config;
+package com.aula.finansee.config;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;

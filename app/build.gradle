@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace "com.aula.organizze"
+    namespace "com.aula.finansee"
     compileSdk 36
 
     defaultConfig {
-        applicationId "com.aula.organizze"
+        applicationId "com.aula.finansee"
         minSdk 24
         targetSdk 36
         versionCode 1

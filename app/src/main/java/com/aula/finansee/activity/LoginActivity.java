@@ -1,4 +1,4 @@
-package com.aula.organizze.activity;
+package com.aula.finansee.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -11,9 +11,9 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.aula.organizze.R;
-import com.aula.organizze.config.ConfigFirebase;
-import com.aula.organizze.model.Usuario;
+import com.aula.finansee.R;
+import com.aula.finansee.config.ConfigFirebase;
+import com.aula.finansee.model.Usuario;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;

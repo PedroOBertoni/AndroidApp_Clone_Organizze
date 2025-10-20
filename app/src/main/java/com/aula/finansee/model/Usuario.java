@@ -1,6 +1,6 @@
-package com.aula.organizze.model;
+package com.aula.finansee.model;
 
-import com.aula.organizze.config.ConfigFirebase;
+import com.aula.finansee.config.ConfigFirebase;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 

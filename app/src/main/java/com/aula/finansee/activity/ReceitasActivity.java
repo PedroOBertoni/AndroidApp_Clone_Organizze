@@ -1,4 +1,4 @@
-package com.aula.organizze.activity;
+package com.aula.finansee.activity;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
@@ -22,9 +22,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import com.aula.organizze.R;
-import com.aula.organizze.model.Movimentacao;
-import com.aula.organizze.model.Recorrencia;
+import com.aula.finansee.R;
+import com.aula.finansee.model.Movimentacao;
+import com.aula.finansee.model.Recorrencia;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -35,7 +35,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class DespesasActivity extends AppCompatActivity {
+public class ReceitasActivity extends AppCompatActivity {
 
     // Componentes da interface
     private TextInputEditText editTextTitulo, editTextDescricao, editTextCategoria, editTextData;
@@ -68,31 +68,31 @@ public class DespesasActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_despesas);
+        setContentView(R.layout.activity_receitas);
 
         // Inicializa cores
         corTextoInativo = ContextCompat.getColor(this, R.color.textPrimary);
-        corTextoAtivo = ContextCompat.getColor(this, R.color.colorAccentDespesa);
+        corTextoAtivo = ContextCompat.getColor(this, R.color.colorAccentReceita);
 
         // Vincula os elementos do layout
-        editTextTitulo = findViewById(R.id.editTextTituloDespesa);
-        editTextDescricao = findViewById(R.id.editTextDescricaoDespesa);
-        editTextCategoria = findViewById(R.id.editTextCategoriaDespesa);
-        editTextData = findViewById(R.id.editTextDataDespesa);
-        fabCalendario = findViewById(R.id.fabCalendarioDespesa);
-        fabConfirmar = findViewById(R.id.floatingActionButtonConfirmarDespesa);
-        editTextValor = findViewById(R.id.editTextValorDespesa);
+        editTextTitulo = findViewById(R.id.editTextTituloReceita);
+        editTextDescricao = findViewById(R.id.editTextDescricaoReceita);
+        editTextCategoria = findViewById(R.id.editTextCategoriaReceita);
+        editTextData = findViewById(R.id.editTextDataReceita);
+        fabCalendario = findViewById(R.id.fabCalendarioReceita);
+        fabConfirmar = findViewById(R.id.floatingActionButtonConfirmarReceita);
+        editTextValor = findViewById(R.id.editTextValorReceita);
 
         // Modos Fixo e Parcelado
-        buttonFixo = findViewById(R.id.buttonFixoDespesa);
-        buttonParcelado = findViewById(R.id.buttonParceladoDespesa);
-        linearParcelamentoInfo = findViewById(R.id.linearParcelamentoInfoDespesa);
-        textParcelasInfo = findViewById(R.id.textParcelasInfoDespesa);
-        buttonRemoverParcelamento = findViewById(R.id.buttonRemoverParcelamentoDespesa);
+        buttonFixo = findViewById(R.id.buttonFixoReceita);
+        buttonParcelado = findViewById(R.id.buttonParceladoReceita);
+        linearParcelamentoInfo = findViewById(R.id.linearParcelamentoInfoReceita);
+        textParcelasInfo = findViewById(R.id.textParcelasInfoReceita);
+        buttonRemoverParcelamento = findViewById(R.id.buttonRemoverParcelamentoReceita);
 
         // Aplica o background selector
-        buttonFixo.setBackgroundResource(R.drawable.button_despesa_selector);
-        buttonParcelado.setBackgroundResource(R.drawable.button_despesa_selector);
+        buttonFixo.setBackgroundResource(R.drawable.button_receita_selector);
+        buttonParcelado.setBackgroundResource(R.drawable.button_receita_selector);
 
         // Define estado inicial (Fixo e Parcelados inativos)
         atualizarEstiloBotao(buttonFixo, false);
@@ -195,7 +195,7 @@ public class DespesasActivity extends AppCompatActivity {
             int month = cal.get(Calendar.MONTH);
             int day = cal.get(Calendar.DAY_OF_MONTH);
 
-            // Cria DatePickerDialog para buscar a data da despesa
+            // Cria DatePickerDialog para buscar a data da receita
             DatePickerDialog datePicker = new DatePickerDialog(this,
                     (v, selectedYear, selectedMonth, selectedDay) -> {
                         cal.set(selectedYear, selectedMonth, selectedDay);
@@ -208,7 +208,7 @@ public class DespesasActivity extends AppCompatActivity {
         // Clique no campo de categoria -> abre lista de opções
         editTextCategoria.setOnClickListener(view -> {
             // Define as categorias disponíveis
-            String[] categorias = {"Assinaturas e Serviços", "Compras", "Alimentação", "Transporte", "Lazer", "Outros"};
+            String[] categorias = {"Salário e Renda Fixa", "Investimentos", "Vendas e Serviços", "Presentes e Doações", "Reembolsos e Restituições", "Outros"};
 
             // Cria e exibe o alertDialog de seleção das opções definidas acima
             new MaterialAlertDialogBuilder(
@@ -252,11 +252,11 @@ public class DespesasActivity extends AppCompatActivity {
 
         // Clique no FAB confirma -> realiza validação e tenta salvar
         fabConfirmar.setOnClickListener(view -> {
-            // Valida campos, salva despesa, apresenta snackbar e fecha activity
+            // Valida campos, salva receita, apresenta snackbar e fecha activity
             if (validarCampos(view)) {
-                salvarDespesa(view);
+                salvarReceita(view);
                 limparCampos();
-                Snackbar.make(view, "Despesa adicionada com sucesso!", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(view, "Receita adicionada com sucesso!", Snackbar.LENGTH_SHORT).show();
 
                 new android.os.Handler().postDelayed(() -> {
                     finish(); // Fecha a activity após 2 segundos
@@ -266,10 +266,10 @@ public class DespesasActivity extends AppCompatActivity {
     }
 
     /* Atualiza o estilo visual do botão de modo (Fixo/Parcelado) e
-     * Adiciona borda colorAccentDespesa quando ativo */
+     * Adiciona borda colorAccentReceita quando ativo */
     private void atualizarEstiloBotao(Button botao, boolean ativo) {
         // Instancia as cores a serem usadas
-        int corPrimaria = ContextCompat.getColor(this, R.color.colorAccentDespesa);
+        int corPrimaria = ContextCompat.getColor(this, R.color.colorAccentReceita);
         int corBranca = ContextCompat.getColor(this, android.R.color.white);
 
         // Cria um GradientDrawable para personalizar o fundo do botão
@@ -305,7 +305,7 @@ public class DespesasActivity extends AppCompatActivity {
         new MaterialAlertDialogBuilder(
                 new ContextThemeWrapper(this, R.style.RoundedAlertDialogTheme)
         )
-                .setTitle("Frequência da despesa fixa")
+                .setTitle("Frequência da receita fixa")
                 .setItems(opcoesExibicao, (dialog, which) -> {
                     frequencia = opcoesValor[which];
                     modoFixoAtivo = true;
@@ -447,7 +447,7 @@ public class DespesasActivity extends AppCompatActivity {
 
         // Se algum modo estiver ativo, garantir que os dados foram definidos
         if (modoFixoAtivo && frequencia == null) {
-            Snackbar.make(view, "Selecione uma frequência para a despesa fixa.", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(view, "Selecione uma frequência para a receita fixa.", Snackbar.LENGTH_SHORT).show();
             return false;
         }
 
@@ -460,7 +460,7 @@ public class DespesasActivity extends AppCompatActivity {
         return true;
     }
 
-    public void salvarDespesa(View view) {
+    public void salvarReceita(View view) {
         // Validando os campos obrigatórios
         if (!validarCampos(view)) {
             return;
@@ -476,7 +476,7 @@ public class DespesasActivity extends AppCompatActivity {
         movimentacao.setDescricao(editTextDescricao.getText().toString().trim());
         movimentacao.setCategoria(editTextCategoria.getText().toString().trim());
         movimentacao.setData(editTextData.getText().toString().trim());
-        movimentacao.setTipo("D");
+        movimentacao.setTipo("R");
         movimentacao.setStatus("ativa");
 
         // Criar objeto de recorrência (se houver)

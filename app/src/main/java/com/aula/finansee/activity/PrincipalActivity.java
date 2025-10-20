@@ -1,4 +1,4 @@
-package com.aula.organizze.activity;
+package com.aula.finansee.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -19,11 +19,11 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.aula.organizze.R;
-import com.aula.organizze.adapter.AdapterMovimentacao;
-import com.aula.organizze.config.ConfigFirebase;
-import com.aula.organizze.model.Movimentacao;
-import com.aula.organizze.model.Recorrencia;
+import com.aula.finansee.R;
+import com.aula.finansee.adapter.AdapterMovimentacao;
+import com.aula.finansee.config.ConfigFirebase;
+import com.aula.finansee.model.Movimentacao;
+import com.aula.finansee.model.Recorrencia;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;

@@ -1,14 +1,14 @@
-package com.aula.organizze.activity;
+package com.aula.finansee.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.aula.organizze.config.ConfigFirebase;
+import com.aula.finansee.config.ConfigFirebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.heinrichreimersoftware.materialintro.app.IntroActivity;
-import com.aula.organizze.R;
+import com.aula.finansee.R;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 public class MainActivity extends IntroActivity {

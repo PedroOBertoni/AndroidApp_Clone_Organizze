@@ -1,4 +1,4 @@
-package com.aula.organizze.activity;
+package com.aula.finansee.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -10,9 +10,9 @@ import android.widget.EditText;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.aula.organizze.R;
-import com.aula.organizze.config.ConfigFirebase;
-import com.aula.organizze.model.Usuario;
+import com.aula.finansee.R;
+import com.aula.finansee.config.ConfigFirebase;
+import com.aula.finansee.model.Usuario;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
