@@ -309,6 +309,10 @@ public class PrincipalActivity extends AppCompatActivity {
                     }
                 }
 
+                /* Chama método para ordenar as movimentações da RecyclerView com base no valor absoluto antes
+                    de notificar o adapter da mudança de dados */
+                ordernaMovimentacoesValorAbsoluto();
+
                 // Notifica o adapter sobre a mudança de dados e recalcula o saldo
                 adapterMovimentacao.notifyDataSetChanged();
                 calcularSaldo();
@@ -398,6 +402,23 @@ public class PrincipalActivity extends AppCompatActivity {
         }
 
         return copia;
+    }
+
+    // Método que orderna as movimentações da RecyclerView com base em seu valor absoluto
+    public void ordernaMovimentacoesValorAbsoluto(){
+        // Orderna as movimentações utilizando o Comparator
+        Collections.sort(movimentacoes, new Comparator<Movimentacao>() {
+            @Override
+            public int compare(Movimentacao m1, Movimentacao m2) {
+
+                // Primeiro transforma os valores em absoluto, ignorando o sinal (positivo ou negativo)
+                double valor1 = Math.abs(m1.getValor());
+                double valor2 = Math.abs(m2.getValor());
+
+                // E depois compara em ordem Decrescente
+                return Double.compare(valor2, valor1);
+            }
+        });
     }
 
     /* Métodos para formatação de Datas */
