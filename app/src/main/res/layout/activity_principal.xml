@@ -106,6 +106,8 @@
             app:mcv_showOtherDates="all"
             app:mcv_selectionColor="@color/colorPrimary"
             app:mcv_tileSize="50dp"
+            app:mcv_rightArrow="@drawable/ic_arrow_right"
+            app:mcv_leftArrow="@drawable/ic_arrow_left"
             android:layout_marginTop="8dp" />
 
         <androidx.recyclerview.widget.RecyclerView
