@@ -9,6 +9,7 @@ import com.aula.finansee.config.ConfigFirebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.heinrichreimersoftware.materialintro.app.IntroActivity;
 import com.aula.finansee.R;
+import com.heinrichreimersoftware.materialintro.slide.FragmentSlide;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 public class MainActivity extends IntroActivity {
@@ -19,7 +20,7 @@ public class MainActivity extends IntroActivity {
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.Theme_Organizze); // força o tema base
+        setTheme(R.style.Theme_Finansee); // força o tema base
         super.onCreate(savedInstanceState);
 
         // Inicializa a biblioteca de data/hora
@@ -30,19 +31,19 @@ public class MainActivity extends IntroActivity {
         setButtonNextVisible(false);
 
         // Adiciona o slide 1
-        addSlide(new com.heinrichreimersoftware.materialintro.slide.FragmentSlide.Builder()
+        addSlide(new FragmentSlide.Builder()
                 .background(R.color.headerBackground)
                 .fragment(R.layout.intro_1)
                 .build());
 
         // Adiciona o slide 2
-        addSlide(new com.heinrichreimersoftware.materialintro.slide.FragmentSlide.Builder()
+        addSlide(new FragmentSlide.Builder()
                 .background(R.color.headerBackground)
                 .fragment(R.layout.intro_2)
                 .build());
 
         // E por fim adiciona o slide 3
-        addSlide(new com.heinrichreimersoftware.materialintro.slide.FragmentSlide.Builder()
+        addSlide(new FragmentSlide.Builder()
                 .background(R.color.headerBackground)
                 .fragment(R.layout.intro_3)
                 .canGoForward(false)
