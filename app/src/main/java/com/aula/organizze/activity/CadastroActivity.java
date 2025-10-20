@@ -137,6 +137,8 @@ public class CadastroActivity extends AppCompatActivity {
     public void cadastrarUsuario(String email, String senha, String nome) {
         // Criando objeto usuário
         usuario = new Usuario();
+
+        // Definindo seu nome e email
         usuario.setNome(nome);
         usuario.setEmail(email);
 
