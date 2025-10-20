@@ -23,6 +23,7 @@ import com.aula.organizze.R;
 import com.aula.organizze.adapter.AdapterMovimentacao;
 import com.aula.organizze.config.ConfigFirebase;
 import com.aula.organizze.model.Movimentacao;
+import com.aula.organizze.model.Recorrencia;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -37,10 +38,19 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.YearMonth;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.format.DateTimeParseException;
+import org.threeten.bp.temporal.ChronoUnit;
+
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Locale;
 
 public class PrincipalActivity extends AppCompatActivity {
 
@@ -62,7 +72,7 @@ public class PrincipalActivity extends AppCompatActivity {
     private ValueEventListener valueEventListenerUsuario;
     private ValueEventListener valueEventListenerMovimentacoes;
 
-    private double resumoUsuario = 0.0;
+    private double saldoUsuario = 0.0;
     private String mesAnoSelecionado;
 
     private SpeedDialView speedDialView;
@@ -128,10 +138,25 @@ public class PrincipalActivity extends AppCompatActivity {
             return false;
         });
 
-        // Configura RecyclerView
+        // Ordena as movimentações por valor absoluto (decrescente)
+        Collections.sort(movimentacoes, new Comparator<Movimentacao>() {
+            @Override
+            public int compare(Movimentacao m1, Movimentacao m2) {
+                double valor1 = Math.abs(m1.getValor());
+                double valor2 = Math.abs(m2.getValor());
+                // ordem decrescente
+                return Double.compare(valor2, valor1);
+            }
+        });
+
+        // Configura o Adapter
         adapterMovimentacao = new AdapterMovimentacao(movimentacoes, this);
+
+        // Configura a RecyclerView
         recyclerMovimentos.setLayoutManager(new LinearLayoutManager(this));
         recyclerMovimentos.setHasFixedSize(true);
+
+        // Define o Adapter para a RecyclerView
         recyclerMovimentos.setAdapter(adapterMovimentacao);
 
         // Configura calendário
@@ -184,8 +209,8 @@ public class PrincipalActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        // Recarrega resumo e movimentações ao iniciar a activity
-        recuperarResumo();
+        // Recarrega o saldo e movimentações ao iniciar a activity
+        recuperarSaldo();
         recuperarMovimentacoes();
     }
 
@@ -206,7 +231,7 @@ public class PrincipalActivity extends AppCompatActivity {
         }
     }
 
-    private void recuperarResumo() {
+    private void recuperarSaldo() {
         try {
             // Recupera UID do usuário logado
             String uidUsuario = autenticacao.getCurrentUser().getUid();
@@ -242,35 +267,51 @@ public class PrincipalActivity extends AppCompatActivity {
         }
     }
 
+    // Método que recupera movimentações do Firebase para depois serem exibidas no RecyclerView
     private void recuperarMovimentacoes() {
         // Recupera UID do usuário logado
         String uidUsuario = autenticacao.getCurrentUser().getUid();
 
-        // Corrigido: agora lê as movimentações dentro de cada mês ("movimentacoes/uid/10-2025")
+        // Referencia para as movimentações do usuário
         DatabaseReference movRef = databaseReference
                 .child("movimentacoes")
-                .child(uidUsuario)
-                .child(mesAnoSelecionado);
+                .child(uidUsuario);
 
+        // Adiciona listener para recuperar movimentações
         valueEventListenerMovimentacoes = movRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                // Limpa lista antes de adicionar novos dados
                 movimentacoes.clear();
 
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    // Recupera movimentação
-                    Movimentacao movimentacao = ds.getValue(Movimentacao.class);
-                    if (movimentacao != null) {
-                        // Define o ID da movimentação
-                        movimentacao.setId(ds.getKey());
-                        movimentacoes.add(movimentacao);
+                // Percorre os meses
+                for (DataSnapshot mesSnapshot : snapshot.getChildren()) {
+
+                    // Percorre as movimentações do mês
+                    for (DataSnapshot ds : mesSnapshot.getChildren()) {
+
+                        // Converte DataSnapshot em Movimentacao
+                        Movimentacao mov = ds.getValue(Movimentacao.class);
+
+                        if (mov != null) {
+                            // Define o ID da movimentação
+                            mov.setId(ds.getKey());
+
+                            // Verifica se a movimentação deve ser exibida no mês selecionado
+                            if (deveExibirMovimentacaoNoMes(mov, mesAnoSelecionado)) {
+
+                                // Ajusta a movimentação para o mês selecionado (parcelada ou fixa)
+                                Movimentacao ajustada = ajustarMovimentacaoParaMes(mov, mesAnoSelecionado);
+
+                                // Adiciona a movimentação ajustada à lista
+                                if (ajustada != null) movimentacoes.add(ajustada);
+                            }
+                        }
                     }
                 }
 
-                // Notifica o adapter sobre a mudança de dados e chama o cálculo do resumo
+                // Notifica o adapter sobre a mudança de dados e recalcula o saldo
                 adapterMovimentacao.notifyDataSetChanged();
-                calcularResumo();
+                calcularSaldo();
             }
 
             @Override
@@ -280,7 +321,118 @@ public class PrincipalActivity extends AppCompatActivity {
         });
     }
 
-    private void calcularResumo() {
+    // Método que verifica se a movimentação deve ser exibida ou não no mês atual selecionado
+    private boolean deveExibirMovimentacaoNoMes(Movimentacao mov, String mesAnoSelecionado) {
+        Recorrencia rec = mov.getRecorrencia();
+        if (rec == null || rec.getTipo() == null) {
+            // Normal: aparece só no mês da data
+            return getMesAno(mov.getData()).equals(mesAnoSelecionado);
+        }
+
+        String tipo = rec.getTipo().toLowerCase(Locale.ROOT);
+        LocalDate dataInicio = parseData(mov.getData());
+        YearMonth mesSel = parseMesAno(mesAnoSelecionado);
+
+        if ("parcelada".equals(tipo)) {
+            int total = rec.getParcelasTotais() != null ? rec.getParcelasTotais() : 1;
+            YearMonth inicio = YearMonth.from(dataInicio);
+
+            for (int i = 0; i < total; i++) {
+                YearMonth parcelaMes = inicio.plusMonths(i);
+                if (parcelaMes.equals(mesSel)) return true;
+            }
+            return false;
+        }
+
+        if ("fixa".equals(tipo)) {
+            YearMonth inicio = YearMonth.from(dataInicio);
+            return !mesSel.isBefore(inicio); // aparece a partir da dataInicio
+        }
+
+        return getMesAno(mov.getData()).equals(mesAnoSelecionado);
+    }
+
+    // Método que ajusta as movimentações parceladas e fixas para o mês atual selecionado
+    private Movimentacao ajustarMovimentacaoParaMes(Movimentacao mov, String mesAnoSelecionado) {
+        Recorrencia rec = mov.getRecorrencia();
+        if (rec == null || rec.getTipo() == null) return mov;
+
+        String tipo = rec.getTipo().toLowerCase(Locale.ROOT);
+        LocalDate dataInicio = parseData(mov.getData());
+        YearMonth mesSel = parseMesAno(mesAnoSelecionado);
+
+        Movimentacao copia = new Movimentacao();
+        copia.setId(mov.getId());
+        copia.setCategoria(mov.getCategoria());
+        copia.setDescricao(mov.getDescricao());
+        copia.setTitulo(mov.getTitulo());
+        copia.setTipo(mov.getTipo());
+        copia.setStatus(mov.getStatus());
+        copia.setData(mov.getData());
+
+        if ("parcelada".equals(tipo)) {
+            int total = rec.getParcelasTotais() != null ? rec.getParcelasTotais() : 1;
+            YearMonth inicio = YearMonth.from(dataInicio);
+            int diff = (int) ChronoUnit.MONTHS.between(inicio, mesSel);
+
+            if (diff >= 0 && diff < total) {
+                double valorParcela = mov.getValor() / total;
+                copia.setValor(valorParcela);
+
+                Recorrencia r = new Recorrencia();
+                r.setTipo("parcelada");
+                r.setParcelaAtual(diff + 1);
+                r.setParcelasTotais(total);
+                r.setFim(rec.getFim());
+                copia.setRecorrencia(r);
+            } else {
+                return null;
+            }
+        } else if ("fixa".equals(tipo)) {
+            copia.setValor(mov.getValor());
+            Recorrencia r = new Recorrencia();
+            r.setTipo("fixa");
+            copia.setRecorrencia(r);
+        } else {
+            return mov;
+        }
+
+        return copia;
+    }
+
+    /* Métodos para formatação de Datas */
+    // Método para converter String em LocalDate
+    private LocalDate parseData(String data) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault());
+            return LocalDate.parse(data, formatter);
+        } catch (DateTimeParseException e) {
+            e.printStackTrace();
+            return LocalDate.now();
+        }
+    }
+
+    // Método para converter String mesAno em YearMonth
+    private YearMonth parseMesAno(String mesAno) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-yyyy", Locale.getDefault());
+            return YearMonth.parse(mesAno, formatter);
+        } catch (DateTimeParseException e) {
+            e.printStackTrace();
+            return YearMonth.now();
+        }
+    }
+
+    // Método para obter String mesAno a partir de uma data
+    private String getMesAno(String data) {
+        LocalDate d = parseData(data);
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MM-yyyy", Locale.getDefault());
+        return d.format(fmt);
+    }
+
+
+    // Método para calcular o saldo financeiro do usuário
+    private void calcularSaldo() {
         // Zera totais antes do cálculo
         double totalReceitas = 0.0;
         double totalDespesas = 0.0;
@@ -296,13 +448,14 @@ public class PrincipalActivity extends AppCompatActivity {
 
         // Calcula saldo
         double saldo = totalReceitas - totalDespesas;
-        resumoUsuario = saldo;
+        saldoUsuario = saldo;
 
         // Atualiza interface
         formatandoSaldoTotalReceitasTotalDespesas(saldo, totalDespesas, totalReceitas);
         alterarCorCabecalhoSaldo(saldo);
     }
 
+    // Método que formata o saldo, total de despesas e total de receitas
     public void formatandoSaldoTotalReceitasTotalDespesas(double saldo, double totalDespesas, double totalReceitas) {
         // Definindo formatação
         DecimalFormat df = new DecimalFormat("###,###,##0.00");
@@ -320,10 +473,11 @@ public class PrincipalActivity extends AppCompatActivity {
         textTotalReceitas.setText("+ R$ " + df.format(totalReceitas));
     }
 
+    // Método que altera a cor do cabeçalho do saldo conforme o valor do saldo
     @SuppressLint("ResourceAsColor")
     public void alterarCorCabecalhoSaldo( double saldo ) {
 
-        // Altera cor do cabeçalho e toolbar conforme saldo
+        // Define a cor com base no saldo, se ele for negativo será colorPrimaryDespesa, se for positivo colorPrimary
         int cor = (saldo < 0)
                 ? ContextCompat.getColor(this, R.color.colorPrimaryDespesa)
                 : ContextCompat.getColor(this, R.color.colorPrimary);

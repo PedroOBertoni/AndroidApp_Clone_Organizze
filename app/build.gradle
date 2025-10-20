@@ -70,6 +70,9 @@ dependencies {
 
     // Módulo para calendário usado na PrincipalActivity
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.1'
+
+    // Módulo que traz o suporte ao Java 8 Date and Time API para Android
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.4.4'
 }
 
 configurations.all {

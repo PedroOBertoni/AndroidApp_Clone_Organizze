@@ -208,7 +208,7 @@ public class ReceitasActivity extends AppCompatActivity {
         // Clique no campo de categoria -> abre lista de opções
         editTextCategoria.setOnClickListener(view -> {
             // Define as categorias disponíveis
-            String[] categorias = {"Assinaturas e Serviços", "Compras", "Alimentação", "Transporte", "Lazer", "Outros"};
+            String[] categorias = {"Salário e Renda Fixa", "Investimentos", "Vendas e Serviços", "Presentes e Doações", "Reembolsos e Restituições", "Outros"};
 
             // Cria e exibe o alertDialog de seleção das opções definidas acima
             new MaterialAlertDialogBuilder(

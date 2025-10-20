@@ -9,6 +9,7 @@ import com.aula.organizze.config.ConfigFirebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.heinrichreimersoftware.materialintro.app.IntroActivity;
 import com.aula.organizze.R;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 
 public class MainActivity extends IntroActivity {
 
@@ -19,6 +20,9 @@ public class MainActivity extends IntroActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_Organizze); // força o tema base
         super.onCreate(savedInstanceState);
+
+        // Inicializa a biblioteca de data/hora
+        AndroidThreeTen.init(this);
 
         // esconde botões padrão
         setButtonBackVisible(false);
