@@ -1,49 +1,41 @@
-# Tratar arquivos Java como código Java (para diff, merge, etc.)
-*.java text diff=java
+# Arquivos de build e configuração (não contam no cálculo)
+*.gradle linguist-vendored
+gradle-wrapper.jar linguist-vendored
+gradlew linguist-vendored
+gradlew.bat linguist-vendored
+/local.properties linguist-vendored
+/.gradle/** linguist-vendored
+/.idea/** linguist-vendored
+*.iml linguist-vendored
+*.json linguist-vendored
+*.properties linguist-vendored
+*.txt linguist-vendored
+*.md linguist-vendored
+*.csv linguist-vendored
+*.yml linguist-vendored
+*.yaml linguist-vendored
 
-# Tratar XML como HTML (melhor visualização de diff)
+# Código-fonte principal
+*.java linguist-detectable=true
+*.xml linguist-detectable=true
+
+# Realce de diffs
+*.java text diff=java
 *.xml text diff=html
 
-# Arquivos de manifesto (também XML)
-AndroidManifest.xml text diff=html
-
-*.json text
-*.txt text
-*.md text
-*.csv text
-
-# Gradle e propriedades de build
-*.gradle binary
-gradle-wrapper.jar binary
-gradlew binary
-gradlew.bat binary
-/local.properties binary
-/.gradle/** binary
-/build/** binary
-
-# Configurações de projeto Android Studio / IntelliJ
-/.idea/** binary
-*.iml binary
-
-# Cache e pastas temporárias
-/.externalNativeBuild/** binary
-/.cxx/** binary
-/.settings/** binary
-/.vs/** binary
-
-# Arquivos binários (imagens, libs nativas, etc.)
-*.png binary
-*.jpg binary
-*.jpeg binary
-*.webp binary
-*.gif binary
-*.ico binary
-*.ttf binary
-*.otf binary
-*.so binary
-*.jar binary
-*.keystore binary
-*.jks binary
-*.dex binary
-*.apk binary
-*.aab binary
+# Outros binários (imagens, libs nativas) não contam
+*.png linguist-vendored
+*.jpg linguist-vendored
+*.jpeg linguist-vendored
+*.webp linguist-vendored
+*.gif linguist-vendored
+*.ico linguist-vendored
+*.ttf linguist-vendored
+*.otf linguist-vendored
+*.so linguist-vendored
+*.jar linguist-vendored
+*.keystore linguist-vendored
+*.jks linguist-vendored
+*.dex linguist-vendored
+*.apk linguist-vendored
+*.aab linguist-vendored
