@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Organizze">
+        android:theme="@style/Theme.Finansee">
         <activity
             android:name=".activity.DespesasActivity"
             android:exported="false"
@@ -22,7 +22,7 @@
         <activity
             android:name=".activity.PrincipalActivity"
             android:exported="false"
-            android:theme="@style/Theme.Organizze" />
+            android:theme="@style/Theme.Finansee" />
         <activity
             android:name=".activity.LoginActivity"
             android:exported="false" />

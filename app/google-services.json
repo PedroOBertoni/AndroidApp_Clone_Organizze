@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "79592253039",
+    "firebase_url": "https://finansee-6db6d-default-rtdb.firebaseio.com",
+    "project_id": "finansee-6db6d",
+    "storage_bucket": "finansee-6db6d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:79592253039:android:917c4dcf880e63622f8f9a",
+        "android_client_info": {
+          "package_name": "com.aula.finansee"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6jnC0n5t5iXWPJ3OYn0iJgqNKQCsVlEw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
