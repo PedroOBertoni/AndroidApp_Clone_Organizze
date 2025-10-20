@@ -1,21 +1,22 @@
 {
   "project_info": {
-    "project_number": "939941302297",
-    "project_id": "organizzeclone-c629b",
-    "storage_bucket": "organizzeclone-c629b.firebasestorage.app"
+    "project_number": "79592253039",
+    "firebase_url": "https://finansee-6db6d-default-rtdb.firebaseio.com",
+    "project_id": "finansee-6db6d",
+    "storage_bucket": "finansee-6db6d.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:939941302297:android:df9a3282f27593750b5a88",
+        "mobilesdk_app_id": "1:79592253039:android:917c4dcf880e63622f8f9a",
         "android_client_info": {
-          "package_name": "com.aula.organizze"
+          "package_name": "com.aula.finansee"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDu6Bvq6s0JfckRc_I_xSHkAgmKnLN5_2g"
+          "current_key": "AIzaSyB6jnC0n5t5iXWPJ3OYn0iJgqNKQCsVlEw"
         }
       ],
       "services": {
