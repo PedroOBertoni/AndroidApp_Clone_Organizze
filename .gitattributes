@@ -1,16 +1,11 @@
-# Reconhecer código
+# Código principal
 *.java linguist-language=Java
 *.kt linguist-language=Java
 
-# XML de layout/Android como HTML
-res/layout/*.xml linguist-language=HTML
-AndroidManifest.xml linguist-language=HTML
-
-# Arquivos XML "vendored" (não contam para estatísticas)
-res/values/*.xml linguist-vendored
-res/menu/*.xml linguist-vendored
-res/drawable/*.xml linguist-vendored
-res/navigation/*.xml linguist-vendored
+# Ignorar todos HTML/XML
+*.xml linguist-vendored
+*.html linguist-vendored
+*.htm linguist-vendored
 
 # Gradle e IDE
 *.gradle linguist-vendored

@@ -13,6 +13,7 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 
 public class MainActivity extends IntroActivity {
 
+    // Variavel de intancia da autenticação do Firebase
     private FirebaseAuth autenticacao;
 
     @SuppressLint("MissingInflatedId")
