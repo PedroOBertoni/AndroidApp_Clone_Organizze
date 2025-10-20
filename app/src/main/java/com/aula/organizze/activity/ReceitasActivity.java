@@ -260,7 +260,7 @@ public class ReceitasActivity extends AppCompatActivity {
 
                 new android.os.Handler().postDelayed(() -> {
                     finish(); // Fecha a activity após 2 segundos
-                }, 2000); // 2000 milissegundos = 2 segundos
+                }, 1500); // 1500 milissegundos = 1,5 segundos
             }
         });
     }

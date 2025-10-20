@@ -49,7 +49,10 @@ public class AdapterMovimentacao extends RecyclerView.Adapter<AdapterMovimentaca
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+        // Instanciando um objeto movimentação com base em sua posição
         Movimentacao movimentacao = movimentacoes.get(position);
+
+        /* Adicionando valores da classe Movimentacao nos elementos do item da recyclerView */
 
         // Título — sempre usa a cor textPrimary do tema
         holder.titulo.setText(movimentacao.getTitulo());
