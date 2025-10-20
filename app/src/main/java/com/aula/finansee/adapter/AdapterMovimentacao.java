@@ -83,9 +83,9 @@ public class AdapterMovimentacao extends RecyclerView.Adapter<AdapterMovimentaca
             holder.prefixo.setTextColor(ContextCompat.getColor(context, R.color.colorPrimaryDespesa));
         } else if (movimentacao.getTipo().equalsIgnoreCase("R")) {
             // Receita
-            holder.valor.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
+            holder.valor.setTextColor(ContextCompat.getColor(context, R.color.colorPrimaryReceita));
             holder.prefixo.setText("+");
-            holder.prefixo.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
+            holder.prefixo.setTextColor(ContextCompat.getColor(context, R.color.colorPrimaryReceita));
         } else {
             // Tipo indefinido — fallback
             holder.valor.setTextColor(ContextCompat.getColor(context, R.color.textPrimary));

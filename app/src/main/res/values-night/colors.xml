@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#28A745</color>
-    <color name="colorPrimaryDark">#218838</color>
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#0D47A1</color>
     <color name="headerBackground">#121212</color>
 
     <color name="textPrimary">#F1F5F9</color>
@@ -9,9 +9,9 @@
 
     <color name="error">#DC3545</color>
 
-    <color name="colorPrimaryReceita">#007BFF</color>
-    <color name="colorPrimaryDarkReceita">#0056B3</color>
-    <color name="colorAccentReceita">#66B2FF</color>
+    <color name="colorPrimaryReceita">#28A745</color>
+    <color name="colorPrimaryDarkReceita">#218838</color>
+    <color name="colorAccentReceita">#34C759</color>
 
     <color name="colorPrimaryDespesa">#DC3545</color>
     <color name="colorPrimaryDarkDespesa">#A71D2A</color>

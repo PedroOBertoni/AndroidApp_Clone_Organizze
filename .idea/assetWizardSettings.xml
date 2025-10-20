@@ -79,8 +79,8 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\pedro\OneDrive\Desktop\play_store_512.png" />
-                                                <entry key="scalingPercent" value="80" />
+                                                <entry key="imagePath" value="C:\Users\pedro\OneDrive\Desktop\logo.png" />
+                                                <entry key="scalingPercent" value="60" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -108,6 +108,12 @@
                                           </PersistentState>
                                         </value>
                                       </entry>
+                                    </map>
+                                  </option>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="backgroundAssetType" value="COLOR" />
+                                      <entry key="backgroundColor" value="2196f3" />
                                     </map>
                                   </option>
                                 </PersistentState>
