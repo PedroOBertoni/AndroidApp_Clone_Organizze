@@ -1,4 +1,4 @@
-package com.aula.organizze.model;
+package com.aula.finansee.model;
 
 import android.util.Log;
 

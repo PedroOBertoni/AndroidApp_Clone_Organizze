@@ -1,4 +1,4 @@
-package com.aula.organizze;
+package com.aula.finansee;
 
 import org.junit.Test;
 

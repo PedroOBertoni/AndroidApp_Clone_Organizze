@@ -1,4 +1,4 @@
-package com.aula.organizze.adapter;
+package com.aula.finansee.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,9 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.aula.organizze.R;
-import com.aula.organizze.model.Movimentacao;
-import com.aula.organizze.model.Recorrencia;
+import com.aula.finansee.R;
+import com.aula.finansee.model.Movimentacao;
+import com.aula.finansee.model.Recorrencia;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
