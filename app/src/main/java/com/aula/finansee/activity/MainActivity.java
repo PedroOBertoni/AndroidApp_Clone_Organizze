@@ -9,10 +9,7 @@ import com.aula.finansee.config.ConfigFirebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.heinrichreimersoftware.materialintro.app.IntroActivity;
 import com.aula.finansee.R;
-<<<<<<< HEAD
-=======
 import com.heinrichreimersoftware.materialintro.slide.FragmentSlide;
->>>>>>> 5591559fbddb09f6bd6b2a66bd4b6d8f6a989c98
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 public class MainActivity extends IntroActivity {
