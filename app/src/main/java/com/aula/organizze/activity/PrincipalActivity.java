@@ -27,6 +27,7 @@ import com.aula.organizze.model.Recorrencia;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -217,19 +218,19 @@ public class PrincipalActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (usuarioRef != null && valueEventListenerUsuario != null)
-            // Remove listener de usuário
-            usuarioRef.removeEventListener(valueEventListenerUsuario);
 
-        if (valueEventListenerMovimentacoes != null) {
-            // Recupera UID do usuário logado
-            String uidUsuario = autenticacao.getCurrentUser().getUid();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() != null) {
+            String idUsuario = auth.getCurrentUser().getUid();
 
-            // Remove listener de movimentações
-            DatabaseReference movimentacaoRef = databaseReference.child("movimentacoes").child(uidUsuario).child(mesAnoSelecionado);
-            movimentacaoRef.removeEventListener(valueEventListenerMovimentacoes);
+            if (usuarioRef != null && valueEventListenerUsuario != null) {
+                usuarioRef.removeEventListener(valueEventListenerUsuario);
+            }
+        } else {
+            Log.w("PrincipalActivity", "onStop: usuário não está logado, listener não será removido.");
         }
     }
+
 
     private void recuperarSaldo() {
         try {
@@ -257,10 +258,23 @@ public class PrincipalActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    // Log detalhado do erro
+                    // Adiciona erro ao Log
                     Log.e("FIREBASE", "Erro ao carregar dados do usuário: " + error.getMessage(), error.toException());
-                    Toast.makeText(PrincipalActivity.this, "Erro ao carregar dados do usuário", Toast.LENGTH_SHORT).show();
+
+                    // Verifica se o usuário está logado
+                    if (autenticacao.getCurrentUser() != null) {
+                        
+                        // Mostra mensagem de erro em uma snackBar
+                        Snackbar.make(findViewById(android.R.id.content),
+                                        "Erro ao carregar dados do usuário",
+                                        Snackbar.LENGTH_SHORT)
+                                .show();
+                    } else {
+                        // Caso contrário apenas explica que o usuário fez logout e que o erro foi ignorado
+                        Log.i("FIREBASE", "onCancelled chamado após logout — ignorado.");
+                    }
                 }
+
             });
         } catch (Exception e) {
             Log.e("FIREBASE", "Erro inesperado ao configurar listener de usuário", e);
@@ -320,7 +334,21 @@ public class PrincipalActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(PrincipalActivity.this, "Erro ao carregar movimentações", Toast.LENGTH_SHORT).show();
+                // Adiciona erro ao Log
+                Log.e("FIREBASE", "Erro ao carregar movimentações: " + error.getMessage(), error.toException());
+
+                // Verifica se o usuário ta logado
+                if (autenticacao.getCurrentUser() != null) {
+
+                    // Se sim apresenta o erro em uma snackbar
+                    Snackbar.make(findViewById(android.R.id.content),
+                                    "Erro ao carregar movimentações",
+                                    Snackbar.LENGTH_SHORT)
+                            .show();
+                } else {
+                    // Caso contrário apenas explica que o usuário fez logout e que o erro foi ignorado
+                    Log.i("FIREBASE", "onCancelled chamado após logout — ignorado.");
+                }
             }
         });
     }
@@ -533,7 +561,12 @@ public class PrincipalActivity extends AppCompatActivity {
                     .setTitle("Sair da conta")
                     .setMessage("Tem certeza que deseja sair?")
                     .setPositiveButton("SIM", (dialog, which) -> {
-                        // Se clicar em sim faz logout
+                        // Se clicar em sim, remove os listeners se o usuário ainda existe
+                        if (usuarioRef != null && valueEventListenerUsuario != null) {
+                            usuarioRef.removeEventListener(valueEventListenerUsuario);
+                        }
+
+                        // Faz logout
                         autenticacao.signOut();
 
                         // Depois redireciona para a tela de login
