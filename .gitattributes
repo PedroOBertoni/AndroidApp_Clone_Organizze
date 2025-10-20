@@ -1,4 +1,17 @@
-# Arquivos de build e configuração (não contam no cálculo)
+*.java linguist-detectable=true
+res/layout/*.xml linguist-detectable=true
+AndroidManifest.xml linguist-detectable=true
+
+# Realce de diffs
+*.java text diff=java
+*.xml text diff=html
+
+res/values/*.xml linguist-vendored
+res/menu/*.xml linguist-vendored
+res/drawable/*.xml linguist-vendored
+res/navigation/*.xml linguist-vendored
+
+# Gradle e IDE
 *.gradle linguist-vendored
 gradle-wrapper.jar linguist-vendored
 gradlew linguist-vendored
@@ -7,23 +20,8 @@ gradlew.bat linguist-vendored
 /.gradle/** linguist-vendored
 /.idea/** linguist-vendored
 *.iml linguist-vendored
-*.json linguist-vendored
-*.properties linguist-vendored
-*.txt linguist-vendored
-*.md linguist-vendored
-*.csv linguist-vendored
-*.yml linguist-vendored
-*.yaml linguist-vendored
 
-# Código-fonte principal
-*.java linguist-detectable=true
-*.xml linguist-detectable=true
-
-# Realce de diffs
-*.java text diff=java
-*.xml text diff=html
-
-# Outros binários (imagens, libs nativas) não contam
+# Binários e imagens
 *.png linguist-vendored
 *.jpg linguist-vendored
 *.jpeg linguist-vendored
