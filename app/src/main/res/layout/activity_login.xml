@@ -22,7 +22,7 @@
             android:layout_gravity="center"
             android:contentDescription="@string/app_name"
             android:scaleType="fitCenter"
-            android:src="@drawable/logo_organizze" />
+            android:src="@drawable/imagem_logo" />
     </FrameLayout>
 
     <TextView

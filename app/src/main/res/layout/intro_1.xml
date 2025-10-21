@@ -9,18 +9,18 @@
     <FrameLayout
         android:id="@+id/headerContainer"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="60dp"
         android:background="@color/headerBackground"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/imageLogo"
-            android:layout_width="wrap_content"
-            android:layout_height="28dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:contentDescription="@string/app_name"
             android:scaleType="fitCenter"
-            android:src="@drawable/logo_organizze" />
+            android:src="@drawable/imagem_logo" />
     </FrameLayout>
 
     <ImageView
@@ -41,7 +41,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="Todas as suas contas e \n cartões num só lugar"
+        android:fontFamily="@font/inter_bold"
+        android:text="Controle completo das\nsuas finanças"
         android:textAlignment="center"
         android:textColor="@color/textPrimary"
         android:textSize="28sp"
@@ -58,7 +59,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
         android:fontFamily="@font/inter"
-        android:text="Sinta a satisfação de ter o controle de suas finanças e descomplique de vez a sua vida"
+        android:text="Registre receitas e despesas, organize por categoria e tipo, e tenha uma visão clara de cada movimentação."
         android:textAlignment="center"
         android:textColor="@color/textGray"
         android:textSize="18sp"
@@ -71,7 +72,7 @@
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="24dp"
         android:background="@drawable/button_background"
         android:fontFamily="@font/inter_bold"
@@ -79,6 +80,7 @@
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:text="Criar uma conta"
+        android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="20sp"
