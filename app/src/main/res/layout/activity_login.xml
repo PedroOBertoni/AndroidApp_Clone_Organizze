@@ -11,14 +11,14 @@
     <FrameLayout
         android:id="@+id/headerContainer"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="60dp"
         android:background="@color/headerBackground"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/imageLogo"
-            android:layout_width="wrap_content"
-            android:layout_height="28dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:contentDescription="@string/app_name"
             android:scaleType="fitCenter"
