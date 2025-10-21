@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.aula.finansee.R;
 import com.aula.finansee.config.ConfigFirebase;
 import com.aula.finansee.model.Usuario;
+import com.aula.finansee.utils.FirebaseErrorHandler;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -135,6 +136,12 @@ public class CadastroActivity extends AppCompatActivity {
     }
 
     public void cadastrarUsuario(String email, String senha, String nome) {
+
+        // Primeiro verifica se o aparelho está conectado a uma rede ativa
+        if (!FirebaseErrorHandler.checkConnectionAndNotify(this, "fazer cadastro")) {
+            return;
+        }
+
         // Criando objeto usuário
         usuario = new Usuario();
 

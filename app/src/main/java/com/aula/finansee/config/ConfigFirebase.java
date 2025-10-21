@@ -7,7 +7,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class ConfigFirebase {
 
     /* Instanciando os atributos estáticos para que eles possam ser acessados sem a necessidade de
-        instanciar a classe, pois os atributos teram sempre o mesmo valor independente da quantidade
+        instanciar a classe, pois os atributos sempre teram o mesmo valor independente da quantidade
         de instâncias */
     private static FirebaseAuth autenticacao;
     private static DatabaseReference bancoFirebase;

@@ -1,6 +1,7 @@
 package com.aula.finansee.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -10,7 +11,6 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +24,7 @@ import com.aula.finansee.adapter.AdapterMovimentacao;
 import com.aula.finansee.config.ConfigFirebase;
 import com.aula.finansee.model.Movimentacao;
 import com.aula.finansee.model.Recorrencia;
+import com.aula.finansee.utils.FirebaseErrorHandler;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -234,13 +235,20 @@ public class PrincipalActivity extends AppCompatActivity {
 
     private void recuperarSaldo() {
         try {
+            // Primeiro verifica se o aparelho está conectado a uma rede ativa
+            if (!FirebaseErrorHandler.checkConnectionAndNotify(this, "carregar saldo")) {
+                return;
+            }
+
             // Recupera UID do usuário logado
             String uidUsuario = autenticacao.getCurrentUser().getUid();
             usuarioRef = databaseReference.child("usuarios").child(uidUsuario);
 
             if (autenticacao.getCurrentUser() == null) {
                 // Usuário não autenticado, redireciona para a tela de login e encerrar a activity atual
-                Toast.makeText(this, "Sessão expirada. Faça login novamente.", Toast.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(android.R.id.content),
+                        "Sessão expirada! Faça login novamente.",
+                        Snackbar.LENGTH_LONG).show();
                 startActivity(new Intent(this, LoginActivity.class));
                 finish();
                 return;
@@ -260,6 +268,11 @@ public class PrincipalActivity extends AppCompatActivity {
                 public void onCancelled(@NonNull DatabaseError error) {
                     // Adiciona erro ao Log
                     Log.e("FIREBASE", "Erro ao carregar dados do usuário: " + error.getMessage(), error.toException());
+
+                    // Trata o erro de falha de conexão com a internet
+                    FirebaseErrorHandler.handleDatabaseError(PrincipalActivity.this,
+                            error,
+                            "carregar saldo");
 
                     // Verifica se o usuário está logado
                     if (autenticacao.getCurrentUser() != null) {
@@ -283,6 +296,11 @@ public class PrincipalActivity extends AppCompatActivity {
 
     // Método que recupera movimentações do Firebase para depois serem exibidas no RecyclerView
     private void recuperarMovimentacoes() {
+        // Primeiro verifica se o aparelho está conectado a uma rede ativa
+        if (!FirebaseErrorHandler.checkConnectionAndNotify(this, "carregar movimentações")) {
+            return;
+        }
+
         // Recupera UID do usuário logado
         String uidUsuario = autenticacao.getCurrentUser().getUid();
 
@@ -336,6 +354,11 @@ public class PrincipalActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
                 // Adiciona erro ao Log
                 Log.e("FIREBASE", "Erro ao carregar movimentações: " + error.getMessage(), error.toException());
+
+                // Trata o erro de falha de conexão com a internet
+                FirebaseErrorHandler.handleDatabaseError(PrincipalActivity.this,
+                        error,
+                        "carregar movimentações");
 
                 // Verifica se o usuário ta logado
                 if (autenticacao.getCurrentUser() != null) {
@@ -453,10 +476,13 @@ public class PrincipalActivity extends AppCompatActivity {
     // Método para converter String em LocalDate
     private LocalDate parseData(String data) {
         try {
+            // Formata uma Stirng em um LocalDate com formato "dd/MM/yyyy" e retorna
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault());
             return LocalDate.parse(data, formatter);
+
         } catch (DateTimeParseException e) {
             e.printStackTrace();
+            // Caso dê algum erro, captura o erro e retorna o LocalDate atual
             return LocalDate.now();
         }
     }
@@ -464,9 +490,12 @@ public class PrincipalActivity extends AppCompatActivity {
     // Método para converter String mesAno em YearMonth
     private YearMonth parseMesAno(String mesAno) {
         try {
+            // Formata uma String em uma data com formato "MM-yyyy" e retorna
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-yyyy", Locale.getDefault());
             return YearMonth.parse(mesAno, formatter);
+
         } catch (DateTimeParseException e) {
+            // Caso dê algum erro, captura o erro e retorna o mes e ano atual
             e.printStackTrace();
             return YearMonth.now();
         }
@@ -474,7 +503,10 @@ public class PrincipalActivity extends AppCompatActivity {
 
     // Método para obter String mesAno a partir de uma data
     private String getMesAno(String data) {
+        // Captura a data e transforma em LocalDate
         LocalDate d = parseData(data);
+
+        // Formata a data em uma string "MM-yyyy" e retorna
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MM-yyyy", Locale.getDefault());
         return d.format(fmt);
     }

@@ -2,6 +2,8 @@ package com.aula.finansee.model;
 
 import android.util.Log;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -27,8 +29,8 @@ public class Movimentacao {
     public Movimentacao() {
     }
 
-    // 🔹 Método para salvar no Firebase
-    public void salvar() {
+    // Método para salvar movimentação no Firebase
+    public Task<Void> salvar() { // retorna Task<Void>
         // Obtém o uid do usuário logado
         FirebaseAuth auth = FirebaseAuth.getInstance();
         String uid = auth.getCurrentUser().getUid();
@@ -54,13 +56,16 @@ public class Movimentacao {
             String idMov = mesRef.push().getKey();
             this.id = idMov;
 
-            // Salva a movimentação
-            mesRef.child(idMov).setValue(this);
+            // Salva a movimentação E RETORNA A TASK
+            return mesRef.child(idMov).setValue(this); // <-- MUDANÇA AQUI: Retorna a Task
 
         } catch (Exception e) {
             // Trata erro de parsing de data
             e.printStackTrace();
             Log.e("Movimentacao", "Erro ao salvar movimentação: data inválida (" + this.data + ")");
+
+            // Em caso de falha de parsing, retorne uma Task falha para a Activity tratar
+            return Tasks.forException(e); // Retorna a Task falha
         }
     }
 

@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.aula.finansee.R;
 import com.aula.finansee.config.ConfigFirebase;
 import com.aula.finansee.model.Usuario;
+import com.aula.finansee.utils.FirebaseErrorHandler;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
@@ -32,7 +33,6 @@ public class LoginActivity extends AppCompatActivity {
 
     // objeto para autenticação do Firebase
     private FirebaseAuth autenticacao;
-    private Usuario usuario;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -122,6 +122,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void validarLoginUsuario(String email, String senha) {
+
+        // Primeiro verifica se o aparelho está conectado a uma rede ativa
+        if (!FirebaseErrorHandler.checkConnectionAndNotify(this, "fazer login")) {
+            return;
+        }
 
         // Obtém a instância do FirebaseAuth
         autenticacao = ConfigFirebase.getFirebaseAutenticacao();

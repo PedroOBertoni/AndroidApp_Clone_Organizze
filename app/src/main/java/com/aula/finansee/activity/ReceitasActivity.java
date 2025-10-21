@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.InputType;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.WindowManager;
@@ -25,6 +26,7 @@ import androidx.core.content.ContextCompat;
 import com.aula.finansee.R;
 import com.aula.finansee.model.Movimentacao;
 import com.aula.finansee.model.Recorrencia;
+import com.aula.finansee.utils.FirebaseErrorHandler;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -423,37 +425,49 @@ public class ReceitasActivity extends AppCompatActivity {
 
         // Validação do título
         if (titulo.isEmpty()) {
-            Snackbar.make(view, "Preencha o campo Título.", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(view,
+                    "Preencha o campo Título.",
+                    Snackbar.LENGTH_SHORT).show();
             return false;
         }
 
         // Validação da categoria
         if (categoria.isEmpty()) {
-            Snackbar.make(view, "Selecione uma Categoria.", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(view,
+                    "Selecione uma Categoria.",
+                    Snackbar.LENGTH_SHORT).show();
             return false;
         }
 
         // Validação da data
         if (data.isEmpty()) {
-            Snackbar.make(view, "Informe uma Data.", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(view,
+                    "Informe uma Data.",
+                    Snackbar.LENGTH_SHORT).show();
             return false;
         }
 
         // Validação do valor
         if (valorInvalido) {
-            Snackbar.make(view, "Informe um Valor válido.", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(view,
+                    "Informe um Valor válido.",
+                    Snackbar.LENGTH_SHORT).show();
             return false;
         }
 
         // Se algum modo estiver ativo, garantir que os dados foram definidos
         if (modoFixoAtivo && frequencia == null) {
-            Snackbar.make(view, "Selecione uma frequência para a receita fixa.", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(view,
+                    "Selecione uma frequência para a receita fixa.",
+                    Snackbar.LENGTH_SHORT).show();
             return false;
         }
 
         // Se modo parcelado ativo, garantir que número de parcelas foi definido
         if (modoParceladoAtivo && quantParcelas == null) {
-            Snackbar.make(view, "Informe o número de parcelas.", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(view,
+                    "Informe o número de parcelas.",
+                    Snackbar.LENGTH_SHORT).show();
             return false;
         }
 
@@ -461,6 +475,11 @@ public class ReceitasActivity extends AppCompatActivity {
     }
 
     public void salvarReceita(View view) {
+        // Primeiro verifica se o aparelho está conectado a uma rede ativa
+        if (!FirebaseErrorHandler.checkConnectionAndNotify(this, "salvar receita")) {
+            return;
+        }
+
         // Validando os campos obrigatórios
         if (!validarCampos(view)) {
             return;
@@ -521,7 +540,16 @@ public class ReceitasActivity extends AppCompatActivity {
         }
 
         // a própria classe Movimentacao cuida do caminho correto que será salvo no Firebase
-        movimentacao.salvar();
+        movimentacao.salvar()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Apresenta o sucesso na snackBar
+                        Snackbar.make(view, "Receita adicionada com sucesso!", Snackbar.LENGTH_LONG).show();
+                    } else {
+                        // Erro de rede, timeout ou parsing de data irá cair abaixo
+                        FirebaseErrorHandler.handleTaskFailure(this, task.getException(), "salvar receita");
+                    }
+                });
     }
 
     /* Limpa todos os campos após salvar */

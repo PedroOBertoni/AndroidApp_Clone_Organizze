@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.InputType;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.WindowManager;
@@ -25,6 +26,7 @@ import androidx.core.content.ContextCompat;
 import com.aula.finansee.R;
 import com.aula.finansee.model.Movimentacao;
 import com.aula.finansee.model.Recorrencia;
+import com.aula.finansee.utils.FirebaseErrorHandler;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -461,6 +463,12 @@ public class DespesasActivity extends AppCompatActivity {
     }
 
     public void salvarDespesa(View view) {
+
+        // Primeiro verifica se o aparelho está conectado a uma rede ativa
+        if (!FirebaseErrorHandler.checkConnectionAndNotify(this, "salvar despesa")) {
+            return;
+        }
+
         // Validando os campos obrigatórios
         if (!validarCampos(view)) {
             return;
@@ -521,7 +529,16 @@ public class DespesasActivity extends AppCompatActivity {
         }
 
         // a própria classe Movimentacao cuida do caminho correto que será salvo no Firebase
-        movimentacao.salvar();
+        movimentacao.salvar()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Apresenta o sucesso na snackBar
+                        Snackbar.make(view, "Receita adicionada com sucesso!", Snackbar.LENGTH_LONG).show();
+                    } else {
+                        // Erro de rede, timeout ou parsing de data irá cair abaixo
+                        FirebaseErrorHandler.handleTaskFailure(this, task.getException(), "salvar despesa");
+                    }
+                });
     }
 
     /* Limpa todos os campos após salvar */
