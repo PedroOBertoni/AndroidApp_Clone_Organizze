@@ -335,6 +335,9 @@ public class DespesasActivity extends AppCompatActivity {
         numberPicker.setMaxValue(24);
         numberPicker.setValue(quantParcelas != null ? quantParcelas : 2);
 
+        // Aplica o background customizado
+        numberPicker.setBackgroundResource(R.drawable.bg_numberpicker);
+
         // Cria alertDialog para escolher a quantidade de parcelas com o NumberPicker
         new AlertDialog.Builder(this)
                 .setTitle("Número de parcelas")
