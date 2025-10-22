@@ -5,10 +5,11 @@ import android.app.DatePickerDialog;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.InputType;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.WindowManager;
@@ -19,7 +20,6 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -27,6 +27,7 @@ import com.aula.finansee.R;
 import com.aula.finansee.model.Movimentacao;
 import com.aula.finansee.model.Recorrencia;
 import com.aula.finansee.utils.FirebaseErrorHandler;
+import com.aula.finansee.utils.NetworkUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -111,10 +112,25 @@ public class DespesasActivity extends AppCompatActivity {
         buttonParcelado.setStateListAnimator(null);
         buttonParcelado.setSoundEffectsEnabled(false);
 
+        if (!NetworkUtils.isNetworkAvailable(this)) {
+            // Avisa o usuário usando Snackbar
+            Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content),
+                    "Você está offline. Conecte-se à internet para adicionar uma movimentação.",
+                    Snackbar.LENGTH_LONG);
 
-        // Foca automaticamente no campo de valor e abre o teclado
-        editTextValor.requestFocus();
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+            // Define a cor do texto do botão de ação
+            snackbar.setActionTextColor(getColor(R.color.colorPrimaryDarkDespesa));
+
+            // Botão fecha finaliza a activity
+            snackbar.setAction("FECHAR", v -> {
+                finish();
+            }).show();
+
+            // Finaliza a Activity automaticamente após 3 segundos
+            new Handler(Looper.getMainLooper()).postDelayed(this::finish, 3000);
+
+            return;
+        }
 
         // Impede mover o cursor manualmente, mas ainda permite digitar normalmente
         editTextValor.setOnTouchListener((view, event) -> {
@@ -258,7 +274,9 @@ public class DespesasActivity extends AppCompatActivity {
             if (validarCampos(view)) {
                 salvarDespesa(view);
                 limparCampos();
-                Snackbar.make(view, "Despesa adicionada com sucesso!", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(view,
+                        "Despesa adicionada com sucesso!",
+                        Snackbar.LENGTH_SHORT).show();
 
                 new android.os.Handler().postDelayed(() -> {
                     finish(); // Fecha a activity após 2 segundos
@@ -427,37 +445,49 @@ public class DespesasActivity extends AppCompatActivity {
 
         // Validação do título
         if (titulo.isEmpty()) {
-            Snackbar.make(view, "Preencha o campo Título.", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(view,
+                    "Preencha o campo Título.",
+                    Snackbar.LENGTH_SHORT).show();
             return false;
         }
 
         // Validação da categoria
         if (categoria.isEmpty()) {
-            Snackbar.make(view, "Selecione uma Categoria.", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(view,
+                    "Selecione uma Categoria.",
+                    Snackbar.LENGTH_SHORT).show();
             return false;
         }
 
         // Validação da data
         if (data.isEmpty()) {
-            Snackbar.make(view, "Informe uma Data.", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(view,
+                    "Informe uma Data.",
+                    Snackbar.LENGTH_SHORT).show();
             return false;
         }
 
         // Validação do valor
         if (valorInvalido) {
-            Snackbar.make(view, "Informe um Valor válido.", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(view,
+                    "Informe um Valor válido.",
+                    Snackbar.LENGTH_SHORT).show();
             return false;
         }
 
         // Se algum modo estiver ativo, garantir que os dados foram definidos
         if (modoFixoAtivo && frequencia == null) {
-            Snackbar.make(view, "Selecione uma frequência para a despesa fixa.", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(view,
+                    "Selecione uma frequência para a despesa fixa.",
+                    Snackbar.LENGTH_SHORT).show();
             return false;
         }
 
         // Se modo parcelado ativo, garantir que número de parcelas foi definido
         if (modoParceladoAtivo && quantParcelas == null) {
-            Snackbar.make(view, "Informe o número de parcelas.", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(view,
+                    "Informe o número de parcelas.",
+                    Snackbar.LENGTH_SHORT).show();
             return false;
         }
 
@@ -535,7 +565,9 @@ public class DespesasActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         // Apresenta o sucesso na snackBar
-                        Snackbar.make(view, "Receita adicionada com sucesso!", Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(view,
+                                "Receita adicionada com sucesso!",
+                                Snackbar.LENGTH_LONG).show();
                     } else {
                         // Erro de rede, timeout ou parsing de data irá cair abaixo
                         FirebaseErrorHandler.handleTaskFailure(this, task.getException(), "salvar despesa");
