@@ -34,6 +34,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -112,6 +113,7 @@ public class ReceitasActivity extends AppCompatActivity {
         buttonParcelado.setStateListAnimator(null);
         buttonParcelado.setSoundEffectsEnabled(false);
 
+        /* Verifica se não está conectado a internet */
         if (!NetworkUtils.isNetworkAvailable(this)) {
             // Avisa o usuário usando Snackbar
             Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content),
@@ -121,7 +123,7 @@ public class ReceitasActivity extends AppCompatActivity {
             // Define a cor do texto do botão de ação
             snackbar.setActionTextColor(getColor(R.color.colorPrimaryDarkDespesa));
 
-            // Botão fecha finaliza a activity
+            // E mostra botão FECHAR que finaliza a activity
             snackbar.setAction("FECHAR", v -> {
                 finish();
             }).show();
@@ -137,7 +139,7 @@ public class ReceitasActivity extends AppCompatActivity {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }
 
-        // Impede mover o cursor manualmente, mas ainda permite digitar normalmente
+        // Impede mover o cursor manualmente na hora de digitar o valor, mas ainda permite digitar normalmente
         editTextValor.setOnTouchListener((view, event) -> {
             int length = editTextValor.getText().length();
             editTextValor.setSelection(length);
@@ -160,7 +162,10 @@ public class ReceitasActivity extends AppCompatActivity {
         // Inicializa o campo com R$ 0,00
         digitacaoContinua("0");
 
-        // TextWatcher que implementa o comportamento "digitar centavos e empurrar"
+        /* TextWatchers */
+
+        /* TextWatcher que implementa a máscara do valor, onde vai se digitando os centavos e eles vão empurrando para as
+        outras casas */
         editTextValor.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -206,10 +211,77 @@ public class ReceitasActivity extends AppCompatActivity {
             }
         });
 
+        // TextWatcher que implementa a máscara para digitar a data
+        // variáveis de controle do TextWatcher
+        final boolean[] isUpdating = {false};
+        final String maskPattern = "##/##/####"; // Máscara de data (dd/MM/yyyy)
+
+        editTextData.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Nenhuma ação necessária antes da mudança
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Nenhuma ação necessária durante a digitação
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (isUpdating[0]) return;
+                // Torna o isUpdating verdadeiro
+                isUpdating[0] = true;
+
+                // Remove qualquer caractere que não seja número
+                String digits = s.toString().replaceAll("[^\\d]", "");
+
+                // Limita a quantidade máxima de dígitos (8 no formato ddMMyyyy)
+                if (digits.length() > 8) {
+                    digits = digits.substring(0, 8);
+                }
+
+                // Aplica a máscara "##/##/####"
+                StringBuilder formatted = new StringBuilder();
+                int digitIndex = 0;
+                for (int i = 0; i < maskPattern.length(); i++) {
+                    char maskChar = maskPattern.charAt(i);
+                    if (maskChar == '#') {
+                        if (digitIndex < digits.length()) {
+                            formatted.append(digits.charAt(digitIndex));
+                            digitIndex++;
+                        } else {
+                            break; // Sai se não houver mais dígitos
+                        }
+                    } else {
+                        if (digitIndex < digits.length()) {
+                            formatted.append(maskChar);
+                        } else {
+                            break; // O break serve para evitar adicionar barras extras no final
+                        }
+                    }
+                }
+
+                // Atualiza o texto do EditText
+                String newText = formatted.toString();
+                editTextData.removeTextChangedListener(this);
+                editTextData.setText(newText);
+                editTextData.setSelection(newText.length()); // Coloca o cursor no fim
+                editTextData.addTextChangedListener(this);
+
+                // Torna o isUpdating falso novamente
+                isUpdating[0] = false;
+            }
+        });
+
         /* OnClickListeners */
 
         // Clique no FAB do calendário -> abre seletor de data
         fabCalendario.setOnClickListener(view -> {
+            // Limpa o campo de texto de data
+            editTextData.setText(null);
+
             // Obtém data atual para inicializar o DatePickerDialog
             Calendar cal = Calendar.getInstance();
 
@@ -464,7 +536,7 @@ public class ReceitasActivity extends AppCompatActivity {
             return false;
         }
 
-        // Validação da data
+        // Validação da data, text se está vazia
         if (data.isEmpty()) {
             Snackbar.make(view,
                     "Informe uma Data.",
@@ -472,10 +544,18 @@ public class ReceitasActivity extends AppCompatActivity {
             return false;
         }
 
+        // Validação da data, verifica se é válida
+        if (!ehDataValida(data)) {
+            Snackbar.make(view,
+                    "A data informada é inválida!",
+                    Snackbar.LENGTH_SHORT).show();
+            return false;
+        }
+
         // Validação do valor
         if (valorInvalido) {
             Snackbar.make(view,
-                    "Informe um Valor válido.",
+                    "O valor informado é inválido!",
                     Snackbar.LENGTH_SHORT).show();
             return false;
         }
@@ -604,5 +684,29 @@ public class ReceitasActivity extends AppCompatActivity {
 
         // Coloca o foco no primeiro campo
         editTextTitulo.requestFocus();
+    }
+
+    private boolean ehDataValida(String dateStr) {
+        if (dateStr == null || dateStr.length() != 10) {
+            return false;
+        }
+
+        // 1. Define o formato e o Locale
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+        // 2. CRUCIAL: setLenient(false)
+        // Isso garante que o SimpleDateFormat NÃO aceite datas "flexíveis"
+        // como 30/02/2025 (que ele converteria para 02/03/2025 por padrão).
+        // Ele forçará a verificação estrita do calendário.
+        sdf.setLenient(false);
+
+        try {
+            // Tenta fazer o parse (conversão de String para Date)
+            sdf.parse(dateStr);
+            return true; // Se não lançar exceção, a data é válida
+        } catch (ParseException e) {
+            // Se lançar ParseException, significa que a data não é válida (ex: dia 32, mês 13 ou 30/02)
+            return false;
+        }
     }
 }

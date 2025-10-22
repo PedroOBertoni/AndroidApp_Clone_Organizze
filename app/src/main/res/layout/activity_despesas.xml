@@ -130,7 +130,6 @@
             android:id="@+id/editTextDataDespesa"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:enabled="false"
             android:fontFamily="@font/inter"
             android:inputType="date"
             android:textAlignment="center"
