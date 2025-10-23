@@ -1,0 +1,15 @@
+# Gradle e builds
+/.gradle/
+/build/
+/app/build/
+**/build/
+
+# Arquivos locais e sensíveis
+local.properties
+**/local.properties
+secrets.properties
+**/secrets.properties
+
+# Configurações do Android Studio
+.idea/
+*.iml

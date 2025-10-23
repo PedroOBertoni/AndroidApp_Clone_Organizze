@@ -5,19 +5,17 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.aula.finansee.R;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class RedefinirSenhaActivity extends AppCompatActivity {
 
     // Componentes do layout activity
+    private TextInputLayout inputSenha, inputConfirmarSenha;
     private EditText editNovaSenha, editConfirmarSenha;
     private Button buttonSalvarSenha;
 
@@ -27,23 +25,42 @@ public class RedefinirSenhaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_redefinir_senha);
 
-        // Recupera os componentes da interface pelo ID
-        editNovaSenha = findViewById(R.id.editNovaSenha);
-        editConfirmarSenha = findViewById(R.id.editConfirmarSenha);
+        // Recupera os TextInputLayouts
+        inputSenha = findViewById(R.id.inputSenha);
+        inputConfirmarSenha = findViewById(R.id.inputConfirmarSenha);
+
+        // Recupera os EditTexts internos
+        editNovaSenha = inputSenha.getEditText();
+        editConfirmarSenha = inputConfirmarSenha.getEditText();
+
+        // Recupera o botão
         buttonSalvarSenha = findViewById(R.id.buttonSalvarSenha);
 
-        //
+        // Recupera o email passado pela intent
         String email = getIntent().getStringExtra("email");
 
-        // Ao clicar no votão salvar senha
+        // Ao clicar no botão salvar senha
         buttonSalvarSenha.setOnClickListener(v -> {
-            // recupera o texto
+            // Recupera o texto dos EditTexts
             String novaSenha = editNovaSenha.getText().toString().trim();
             String confirmarSenha = editConfirmarSenha.getText().toString().trim();
 
-            if (novaSenha.isEmpty() || confirmarSenha.isEmpty()) {
+            // Validação
+            if (novaSenha.isEmpty()) {
                 Snackbar.make(findViewById(android.R.id.content),
-                        "Preencha todos os campos", Snackbar.LENGTH_LONG).show();
+                        "Preencha a senha!", Snackbar.LENGTH_LONG).show();
+                return;
+            }
+
+            if (novaSenha.length() < 6) {
+                Snackbar.make(findViewById(android.R.id.content),
+                        "A senha deve conter ao menos 6 dígitos!", Snackbar.LENGTH_LONG).show();
+                return;
+            }
+
+            if (confirmarSenha.isEmpty()) {
+                Snackbar.make(findViewById(android.R.id.content),
+                        "Confirme a senha!", Snackbar.LENGTH_LONG).show();
                 return;
             }
 
@@ -53,6 +70,7 @@ public class RedefinirSenhaActivity extends AppCompatActivity {
                 return;
             }
 
+            // Redefinir senha via Firebase
             FirebaseAuth autenticacao = FirebaseAuth.getInstance();
             autenticacao.sendPasswordResetEmail(email)
                     .addOnCompleteListener(task -> {

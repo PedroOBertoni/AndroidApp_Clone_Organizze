@@ -14,7 +14,41 @@ android {
         versionCode 1
         versionName "1.0"
 
+        // Lê as credenciais do arquivo local.properties (não versionado)
+        def emailSender = ""
+        def emailPassword = ""
+
+        def localProps = new Properties()
+        def localFile = rootProject.file("local.properties")
+
+        if (localFile.canRead()) {
+            localProps.load(localFile.newDataInputStream())
+            emailSender = localProps.getProperty("EMAIL_SENDER", "")
+            emailPassword = localProps.getProperty("EMAIL_APP_PASSWORD", "")
+        }
+
+        if (!emailSender || !emailPassword) {
+            println("⚠️  Aviso: credenciais de e-mail não encontradas em local.properties.")
+        }
+
+        // Insere as credenciais no BuildConfig (acessíveis via BuildConfig.EMAIL_SENDER)
+        buildConfigField "String", "EMAIL_SENDER", "\"${emailSender}\""
+        buildConfigField "String", "EMAIL_APP_PASSWORD", "\"${emailPassword}\""
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    packagingOptions {
+        resources {
+            excludes += [
+                    "META-INF/NOTICE.md",
+                    "META-INF/LICENSE.md",
+                    "META-INF/NOTICE.txt",
+                    "META-INF/LICENSE.txt",
+                    "META-INF/LICENSE",
+                    "META-INF/NOTICE"
+            ]
+        }
     }
 
     buildTypes {
@@ -33,6 +67,7 @@ android {
         targetCompatibility JavaVersion.VERSION_11
     }
     buildFeatures {
+        buildConfig true
         viewBinding true
     }
 }
@@ -73,6 +108,10 @@ dependencies {
 
     // Módulo que traz o suporte ao Java 8 Date and Time API para Android
     implementation 'com.jakewharton.threetenabp:threetenabp:1.4.4'
+
+    // Módulo para enviar email
+    implementation 'com.sun.mail:android-mail:1.6.7'
+    implementation 'com.sun.mail:android-activation:1.6.7'
 }
 
 configurations.all {

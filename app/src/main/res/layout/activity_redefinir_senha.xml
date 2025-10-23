@@ -65,12 +65,12 @@
         android:textColor="@color/textPrimary"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/layoutEmailLogin"
-        app:layout_constraintStart_toStartOf="@+id/layoutEmailLogin"
+        app:layout_constraintBottom_toTopOf="@+id/inputSenha"
+        app:layout_constraintStart_toStartOf="@+id/inputSenha"
         app:layout_constraintTop_toBottomOf="@id/textDescription" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/layoutEmailLogin"
+        android:id="@+id/inputSenha"
         android:layout_width="0dp"
         android:layout_height="55dp"
         android:layout_marginStart="24dp"
@@ -104,12 +104,12 @@
         android:textColor="@color/textPrimary"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/editConfirmarSenha"
-        app:layout_constraintStart_toStartOf="@+id/editConfirmarSenha"
-        app:layout_constraintTop_toBottomOf="@id/layoutEmailLogin" />
+        app:layout_constraintBottom_toTopOf="@+id/inputConfirmarSenha"
+        app:layout_constraintStart_toStartOf="@+id/inputConfirmarSenha"
+        app:layout_constraintTop_toBottomOf="@id/inputSenha" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/editConfirmarSenha"
+        android:id="@+id/inputConfirmarSenha"
         android:layout_width="0dp"
         android:layout_height="55dp"
         android:layout_marginStart="24dp"
@@ -122,7 +122,7 @@
         app:layout_constraintTop_toBottomOf="@id/textView20">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editSenhaLogin"
+            android:id="@+id/editConfirmarSenha"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
@@ -145,6 +145,6 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editConfirmarSenha" />
+        app:layout_constraintTop_toBottomOf="@+id/inputConfirmarSenha" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

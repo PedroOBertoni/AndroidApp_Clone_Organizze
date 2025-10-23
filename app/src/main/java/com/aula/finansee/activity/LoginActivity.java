@@ -2,7 +2,6 @@ package com.aula.finansee.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.InputType;
@@ -22,6 +21,7 @@ import androidx.core.content.ContextCompat;
 
 import com.aula.finansee.R;
 import com.aula.finansee.config.ConfigFirebase;
+import com.aula.finansee.utils.EmailSender;
 import com.aula.finansee.utils.FirebaseErrorHandler;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -48,6 +48,10 @@ public class LoginActivity extends AppCompatActivity {
 
     // codigo para a redefinição de senha
     private String codigoAtual = "";
+    private long codigoExpiracaoMillis = 0L; // timestamp em milissegundos
+    private static final long RELOAD_COOLDOWN_MS = 30_000L; // 30 segundos de cooldown para reenviar
+    private long ultimoEnvioMillis = 0L;
+
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -62,11 +66,11 @@ public class LoginActivity extends AppCompatActivity {
 
         // EditText
         campoEmail = findViewById(R.id.editNovaSenha);
-        campoSenha = findViewById(R.id.editSenhaLogin);
+        campoSenha = findViewById(R.id.editConfirmarSenha);
 
         // TextInputLayout
-        layoutEmail = findViewById(R.id.layoutEmailLogin);
-        layoutSenha = findViewById(R.id.editConfirmarSenha);
+        layoutEmail = findViewById(R.id.inputSenha);
+        layoutSenha = findViewById(R.id.inputConfirmarSenha);
 
         // Button
         buttonEntra = findViewById(R.id.buttonEntra);
@@ -222,25 +226,18 @@ public class LoginActivity extends AppCompatActivity {
         );
         builder.setTitle("Redefinir senha");
 
-        // EditText padrão do Android
+        // EditText simples com borda/fundo conforme você já usa
         EditText inputEmail = new EditText(this);
         inputEmail.setHint("Digite seu e-mail");
-        inputEmail.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        inputEmail.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         inputEmail.setPadding(32, 24, 32, 24);
 
-        // Borda arredondada simples e fundo do tema
         GradientDrawable border = new GradientDrawable();
         border.setCornerRadius(16);
-        border.setStroke(
-                2,
-                ContextCompat.getColor(this, R.color.textGray) // borda cinza
-        );
-        border.setColor(
-                ContextCompat.getColor(this, R.color.colorBackgroundDialog) // fundo do seu tema
-        );
+        border.setStroke(2, ContextCompat.getColor(this, R.color.textGray));
+        border.setColor(ContextCompat.getColor(this, R.color.colorBackgroundDialog));
         inputEmail.setBackground(border);
 
-        // Container com margens laterais
         LinearLayout container = new LinearLayout(this);
         container.setOrientation(LinearLayout.VERTICAL);
         int margin = (int) TypedValue.applyDimension(
@@ -266,62 +263,71 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            codigoAtual = gerarCodigo6Digitos();
+            // escolha de expiração: 3 ou 5 minutos — aqui escolhi 3 por padrão
+            int minutosExpiracao = 3; // <-- altere para 5 se preferir
 
-            String assunto = "Redefinição de senha FinanSee";
-            String corpo = "Olá!\n\nSeu código para redefinir a senha é: " + codigoAtual +
-                    "\n\nNão compartilhe este código com ninguém.";
+            // gera e marca expiração + atualiza last-send
+            gerarENotarCodigoComExpiracao(minutosExpiracao);
 
-            enviarEmailRedefinicao(email, codigoAtual, assunto, corpo);
+            // monta corpo do email (seu método EmailSender usa apenas email+codigo; eu recomendo passar corpo/assunto lá)
+            // aqui chamamos seu método que envia o email em background
+            enviarEmailRedefinicaoPersonalizado(email, codigoAtual);
         });
 
         builder.setNegativeButton("CANCELAR", (dialog, which) -> dialog.dismiss());
         builder.show();
     }
 
+    private void enviarEmailRedefinicaoPersonalizado(String email, String codigo) {
+        new Thread(() -> {
+            try {
+                // Define assunto e corpo do email com HTML (negrito e cores opcionais)
+                String assunto = "Redefinição de senha - FinanSee";
+                String corpo = "<html>" +
+                        "<body style='font-family: sans-serif;'>" +
+                        "<h2 style='color:#008cff;'>Olá!</h2>" +
+                        "<p>Seu código para redefinir a senha é:</p>" +
+                        "<h1 style='color:#008cff;'><b>" + codigo + "</b></h1>" +
+                        "<p>Este código expira em <b>5 minutos</b>.</p>" +
+                        "<p>Equipe <b>FinanSee</b></p>" +
+                        "</body></html>";
 
-    private void enviarEmailRedefinicao(String email, String codigo, String assunto, String corpo) {
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        // Firebase Auth envia apenas link padrão
-        auth.sendPasswordResetEmail(email)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Snackbar.make(findViewById(android.R.id.content),
-                                "Email de redefinição enviado!", Snackbar.LENGTH_LONG).show();
-                        // Abre diálogo para inserir código
-                        exibirDialogCodigo(email);
-                        // Aqui você também pode chamar função para enviar email próprio com corpo personalizado
-                        // enviarEmailSMTP(email, assunto, corpo);
-                    } else {
-                        Snackbar.make(findViewById(android.R.id.content),
-                                "Não foi possível enviar o email! Verifique o endereço", Snackbar.LENGTH_LONG).show();
-                    }
+                // Envia o email (agora o método é estático)
+                EmailSender.enviarEmail(email, assunto, corpo);
+
+                // Como o envio ocorre em thread separada, podemos assumir sucesso se não lançar exceção
+                runOnUiThread(() -> {
+                    Snackbar.make(findViewById(android.R.id.content),
+                            "Email enviado com sucesso!",
+                            Snackbar.LENGTH_LONG).show();
+                    exibirDialogCodigo(email);
                 });
+
+            } catch (Exception e) {
+                runOnUiThread(() -> Snackbar.make(findViewById(android.R.id.content),
+                        "Falha ao enviar o email!",
+                        Snackbar.LENGTH_LONG).show());
+                e.printStackTrace();
+            }
+        }).start();
     }
 
-    private void exibirDialogCodigo(String email) {
+
+    private void exibirDialogCodigo(final String email) {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
                 new ContextThemeWrapper(this, R.style.RoundedAlertDialogTheme)
         );
         builder.setTitle("Digite o código enviado ao seu e-mail");
 
         EditText inputCodigo = new EditText(this);
-        inputCodigo.setInputType(InputType.TYPE_CLASS_NUMBER);
-        inputCodigo.setTextColor(Color.WHITE);
-        inputCodigo.setHintTextColor(Color.LTGRAY);
         inputCodigo.setHint("Código de 6 dígitos");
+        inputCodigo.setInputType(InputType.TYPE_CLASS_NUMBER);
         inputCodigo.setPadding(32, 24, 32, 24);
 
         GradientDrawable border = new GradientDrawable();
-        border.setColor(Color.parseColor("#202020"));
         border.setCornerRadius(16);
-        border.setStroke(
-                2,
-                ContextCompat.getColor(this, R.color.textGray) // borda cinza
-        );
-        border.setColor(
-                ContextCompat.getColor(this, R.color.colorBackgroundDialog) // fundo do seu tema
-        );
+        border.setStroke(2, ContextCompat.getColor(this, R.color.textGray));
+        border.setColor(ContextCompat.getColor(this, R.color.colorBackgroundDialog));
         inputCodigo.setBackground(border);
 
         LinearLayout container = new LinearLayout(this);
@@ -334,10 +340,17 @@ public class LoginActivity extends AppCompatActivity {
 
         builder.setView(container);
 
-        // Confirmar
         builder.setPositiveButton("CONFIRMAR", (dialog, which) -> {
             String codigoDigitado = inputCodigo.getText().toString().trim();
-            if (codigoDigitado.equals(codigoAtual)) {
+
+            // checa expiração
+            if (System.currentTimeMillis() > codigoExpiracaoMillis) {
+                Snackbar.make(findViewById(android.R.id.content),
+                        "Código expirado. Solicite um novo.", Snackbar.LENGTH_LONG).show();
+                return;
+            }
+
+            if (isCodigoValido(codigoDigitado)) {
                 // Código correto → abre activity para redefinir senha
                 Intent intent = new Intent(this, RedefinirSenhaActivity.class);
                 intent.putExtra("email", email);
@@ -348,26 +361,57 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        // Cancelar
         builder.setNegativeButton("CANCELAR", (dialog, which) -> dialog.dismiss());
 
-        // Reenviar código
+        // Reenviar código com cooldown
         builder.setNeutralButton("REENVIAR CÓDIGO", (dialog, which) -> {
-            codigoAtual = gerarCodigo6Digitos();
-            String assunto = "Redefinição de senha FinanSee";
-            String corpo = "Olá!\n\nSeu novo código para redefinir a senha é: " + codigoAtual +
-                    "\n\nNão compartilhe este código com ninguém.";
-            enviarEmailRedefinicao(email, codigoAtual, assunto, corpo);
+            long now = System.currentTimeMillis();
+            if (now - ultimoEnvioMillis < RELOAD_COOLDOWN_MS) {
+                long waitSec = (RELOAD_COOLDOWN_MS - (now - ultimoEnvioMillis)) / 1000;
+                Snackbar.make(findViewById(android.R.id.content),
+                        "Aguarde " + waitSec + "s antes de reenviar.", Snackbar.LENGTH_LONG).show();
+                return;
+            }
+
+            // gera novo código e atualiza expiração (mesmo tempo que foi usado no envio inicial)
+            int minutosExpiracao = 3; // mantenha mesmo valor usado antes (ou armazene a preferência)
+            gerarENotarCodigoComExpiracao(minutosExpiracao);
+
+            // envia novamente
+            enviarEmailRedefinicaoPersonalizado(email, codigoAtual);
+
+            Snackbar.make(findViewById(android.R.id.content),
+                    "Código reenviado.", Snackbar.LENGTH_LONG).show();
         });
 
         builder.show();
     }
+
+    /* Código de Verificação para resetar senha */
 
     // Método que gera um código aleatório de 6 digitos para resetar a senha
     private String gerarCodigo6Digitos() {
         int codigo = 100000 + new Random().nextInt(900000);
         return String.valueOf(codigo);
     }
+
+    private void gerarENotarCodigoComExpiracao(int minutosExpiracao) {
+        codigoAtual = gerarCodigo6Digitos();
+        codigoExpiracaoMillis = System.currentTimeMillis() + minutosExpiracao * 60_000L;
+        ultimoEnvioMillis = System.currentTimeMillis();
+    }
+
+    // Método que valida se código é valido
+    private boolean isCodigoValido(String codigoDigitado) {
+        if (codigoAtual == null || codigoAtual.isEmpty()) return false;
+        if (codigoDigitado == null) return false;
+        long now = System.currentTimeMillis();
+        if (now > codigoExpiracaoMillis) {
+            return false; // expirou
+        }
+        return codigoAtual.equals(codigoDigitado);
+    }
+
 
     // Redireciona para as páginas Termos de Uso
     public void redirectTermosDeUso(View view) {
