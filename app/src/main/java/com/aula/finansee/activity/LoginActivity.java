@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -13,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.aula.finansee.R;
 import com.aula.finansee.config.ConfigFirebase;
-import com.aula.finansee.model.Usuario;
 import com.aula.finansee.utils.FirebaseErrorHandler;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -61,6 +61,20 @@ public class LoginActivity extends AppCompatActivity {
 
             // Valida os campos antes de enviar
             validaPreenchimentoDosCampos(textoEmail, textoSenha);
+        });
+
+        /* Redirecionamento para outras páginas */
+        TextView linkTermosDeUso = findViewById(R.id.linkTermosDeUso);
+        TextView linkCadastro = findViewById(R.id.linkCadastro);
+
+        linkTermosDeUso.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, TermosDeUsoActivity.class);
+            startActivity(intent);
+        });
+
+        linkCadastro.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, CadastroActivity.class);
+            startActivity(intent);
         });
     }
 
@@ -180,7 +194,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // Redireciona para as páginas Termos de Uso
     public void redirectTermosDeUso(View view) {
-        startActivity(new Intent(this, CadastroActivity.class));
+        startActivity(new Intent(this, TermosDeUsoActivity.class));
         finish();
     }
 

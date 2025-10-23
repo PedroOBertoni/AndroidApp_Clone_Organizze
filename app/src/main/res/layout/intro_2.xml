@@ -97,14 +97,14 @@
         android:text="Já tem uma conta?"
         android:textColor="@color/textGray"
         android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/textEntrar"
+        app:layout_constraintEnd_toStartOf="@+id/linkLogin"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonCadastro" />
 
     <TextView
-        android:id="@+id/textEntrar"
+        android:id="@+id/linkLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="3dp"

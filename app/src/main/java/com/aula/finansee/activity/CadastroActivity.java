@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -61,6 +62,20 @@ public class CadastroActivity extends AppCompatActivity {
 
             // Chama o método de validação do preenchimento dos campos
             validaPreenchimentoDosCampos(textoNome, textoEmail, textoSenha);
+        });
+
+        /* Redirecionamento para outras páginas */
+        TextView linkTermosDeUso = findViewById(R.id.linkTermosDeUso);
+        TextView linkLogin = findViewById(R.id.linkLogin);
+
+        linkTermosDeUso.setOnClickListener(v -> {
+            Intent intent = new Intent(CadastroActivity.this, TermosDeUsoActivity.class);
+            startActivity(intent);
+        });
+
+        linkLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(CadastroActivity.this, LoginActivity.class);
+            startActivity(intent);
         });
     }
 
@@ -207,7 +222,7 @@ public class CadastroActivity extends AppCompatActivity {
 
     // Redireciona para a página Termos de Uso
     public void redirectTermosDeUso(View view){
-        startActivity(new Intent(this, CadastroActivity.class));
+        startActivity(new Intent(this, TermosDeUsoActivity.class));
         finish();
     }
 
