@@ -205,8 +205,7 @@
         android:id="@+id/linkCadastro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:clickable="true"
         android:focusable="true"
@@ -217,24 +216,24 @@
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/textView7"
-        app:layout_constraintTop_toBottomOf="@+id/linkTermosDeUso" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
     <TextView
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
         android:fontFamily="@font/inter"
         android:text="Ainda não tem uma conta?"
         android:textAlignment="center"
         android:textColor="@color/textGray"
         android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/linkCadastro"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/linkCadastro" />
+        app:layout_constraintTop_toBottomOf="@+id/linkTermosDeUso" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
