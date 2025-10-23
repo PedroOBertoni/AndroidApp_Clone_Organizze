@@ -83,7 +83,7 @@
         app:layout_constraintTop_toBottomOf="@id/textEmail">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editEmailLogin"
+            android:id="@+id/editNovaSenha"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
@@ -103,19 +103,19 @@
         android:textColor="@color/textPrimary"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/layoutSenhaLogin"
-        app:layout_constraintStart_toStartOf="@+id/layoutSenhaLogin"
+        app:layout_constraintBottom_toTopOf="@+id/editConfirmarSenha"
+        app:layout_constraintStart_toStartOf="@+id/editConfirmarSenha"
         app:layout_constraintTop_toBottomOf="@id/layoutEmailLogin" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/layoutSenhaLogin"
+        android:id="@+id/editConfirmarSenha"
         android:layout_width="0dp"
         android:layout_height="55dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         app:endIconMode="password_toggle"
         app:hintEnabled="false"
-        app:layout_constraintBottom_toTopOf="@+id/textView21"
+        app:layout_constraintBottom_toTopOf="@+id/resetaSenha"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView20">
@@ -131,10 +131,10 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:id="@+id/textView21"
+        android:id="@+id/resetaSenha"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
         android:fontFamily="@font/inter_bold"
         android:text="Esqueci minha senha"
@@ -142,8 +142,8 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/buttonEntra"
-        app:layout_constraintStart_toStartOf="@+id/layoutSenhaLogin"
-        app:layout_constraintTop_toBottomOf="@id/layoutSenhaLogin" />
+        app:layout_constraintStart_toStartOf="@+id/editConfirmarSenha"
+        app:layout_constraintTop_toBottomOf="@id/editConfirmarSenha" />
 
     <Button
         android:id="@+id/buttonEntra"
@@ -159,7 +159,7 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView21" />
+        app:layout_constraintTop_toBottomOf="@id/resetaSenha" />
 
     <TextView
         android:id="@+id/textView25"

@@ -15,6 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Finansee">
         <activity
+            android:name=".activity.RedefinirSenhaActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.TermosDeUsoActivity"
             android:exported="false" />
         <activity
