@@ -2,13 +2,22 @@ package com.aula.finansee.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -33,6 +42,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
@@ -52,6 +62,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Locale;
 
 public class PrincipalActivity extends AppCompatActivity {
@@ -552,6 +563,185 @@ public class PrincipalActivity extends AppCompatActivity {
         // Formata total de despesas e receitas
         textTotalDespesas.setText("- R$ " + df.format(totalDespesas));
         textTotalReceitas.setText("+ R$ " + df.format(totalReceitas));
+    }
+
+    // Método que exibe o alertDialog para editar ou excluir uma movimentação
+    @SuppressLint("ResourceAsColor")
+    public void exibirDialogEditarOuExcluir(Movimentacao movimentacao, int position) {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
+                new ContextThemeWrapper(this, R.style.RoundedAlertDialogTheme)
+        );
+        builder.setTitle("Editar movimentação");
+
+        // container vertical
+        LinearLayout container = new LinearLayout(this);
+        container.setOrientation(LinearLayout.VERTICAL);
+        int marginDp = 16;
+        int marginPx = dpToPx(marginDp, this);
+        container.setPadding(marginPx, marginPx / 2, marginPx, marginPx / 2);
+
+        // cria campos com o helper (nota: passamos 'this' como Context)
+        EditText inputTitulo = criarEditText(this, "Título", InputType.TYPE_CLASS_TEXT, movimentacao.getTitulo(), marginDp);
+        EditText inputCategoria = criarEditText(this, "Categoria", InputType.TYPE_CLASS_TEXT, movimentacao.getCategoria(), marginDp);
+        EditText inputValor = criarEditText(this, "Valor (R$)", InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL,
+                String.valueOf(movimentacao.getValor()), marginDp);
+        EditText inputData = criarEditText(this, "Data (dd/MM/yyyy)", InputType.TYPE_CLASS_DATETIME, movimentacao.getData(), marginDp);
+
+        container.addView(inputTitulo);
+        container.addView(inputCategoria);
+        container.addView(inputValor);
+        container.addView(inputData);
+
+        builder.setView(container);
+
+        // SALVAR
+        builder.setPositiveButton("SALVAR", (dialog, which) -> {
+            String novoTitulo = inputTitulo.getText().toString().trim();
+            String novaCategoria = inputCategoria.getText().toString().trim();
+            String valorStr = inputValor.getText().toString().trim();
+            String novaData = inputData.getText().toString().trim();
+
+            if (novoTitulo.isEmpty() || novaCategoria.isEmpty() || valorStr.isEmpty() || novaData.isEmpty()) {
+                Snackbar.make(findViewById(android.R.id.content),
+                        "Preencha todos os campos!", Snackbar.LENGTH_LONG).show();
+                return;
+            }
+
+            double novoValor;
+            try {
+                novoValor = Double.parseDouble(valorStr.replace(",", "."));
+            } catch (NumberFormatException e) {
+                Snackbar.make(findViewById(android.R.id.content),
+                        "Valor inválido!", Snackbar.LENGTH_LONG).show();
+                return;
+            }
+
+            // atualiza objeto local
+            movimentacao.setTitulo(novoTitulo);
+            movimentacao.setCategoria(novaCategoria);
+            movimentacao.setValor(novoValor);
+            movimentacao.setData(novaData);
+
+            // atualiza no firebase (usa uid e mes-ano)
+            try {
+                SimpleDateFormat sdfEntrada = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                SimpleDateFormat sdfMesAno = new SimpleDateFormat("MM-yyyy", Locale.getDefault());
+                Date dataObj = sdfEntrada.parse(novaData);
+                String mesAno = sdfMesAno.format(dataObj);
+
+                String uid = autenticacao.getCurrentUser().getUid(); // usa sua variável já instanciada
+                DatabaseReference ref = databaseReference
+                        .child("movimentacoes")
+                        .child(uid)
+                        .child(mesAno)
+                        .child(movimentacao.getId());
+
+                ref.setValue(movimentacao).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Snackbar.make(findViewById(android.R.id.content),
+                                "Movimentação atualizada com sucesso!", Snackbar.LENGTH_LONG).show();
+                        // Notifica adapter — ajuste para o seu adapter real se necessário
+                        if (recyclerMovimentos != null && recyclerMovimentos.getAdapter() != null) {
+                            recyclerMovimentos.getAdapter().notifyItemChanged(position);
+                        }
+                    } else {
+                        Snackbar.make(findViewById(android.R.id.content),
+                                "Erro ao atualizar movimentação!", Snackbar.LENGTH_LONG).show();
+                    }
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Snackbar.make(findViewById(android.R.id.content),
+                        "Erro ao processar a data. Use dd/MM/yyyy", Snackbar.LENGTH_LONG).show();
+            }
+        });
+
+        // EXCLUIR com confirmação
+        builder.setNeutralButton("EXCLUIR", (dialog, which) -> {
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Confirmar exclusão")
+                    .setMessage("Deseja realmente excluir esta movimentação?")
+                    .setPositiveButton("SIM", (d, w) -> {
+                        try {
+                            SimpleDateFormat sdfEntrada = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                            SimpleDateFormat sdfMesAno = new SimpleDateFormat("MM-yyyy", Locale.getDefault());
+                            Date dataObj = sdfEntrada.parse(movimentacao.getData());
+                            String mesAno = sdfMesAno.format(dataObj);
+
+                            String uid = autenticacao.getCurrentUser().getUid();
+                            DatabaseReference ref = databaseReference
+                                    .child("movimentacoes")
+                                    .child(uid)
+                                    .child(mesAno)
+                                    .child(movimentacao.getId());
+
+                            ref.removeValue().addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    Snackbar.make(findViewById(android.R.id.content),
+                                            "Movimentação excluída com sucesso!", Snackbar.LENGTH_LONG).show();
+                                    // Atualiza lista local e adapter
+                                    if (movimentacoes != null) {
+                                        movimentacoes.remove(position);
+                                    }
+                                    if (recyclerMovimentos != null && recyclerMovimentos.getAdapter() != null) {
+                                        recyclerMovimentos.getAdapter().notifyItemRemoved(position);
+                                    }
+                                } else {
+                                    Snackbar.make(findViewById(android.R.id.content),
+                                            "Erro ao excluir movimentação!", Snackbar.LENGTH_LONG).show();
+                                }
+                            });
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Snackbar.make(findViewById(android.R.id.content),
+                                    "Erro ao excluir: data inválida.", Snackbar.LENGTH_LONG).show();
+                        }
+                    })
+                    .setNegativeButton("CANCELAR", null)
+                    .show();
+        });
+
+        // CANCELAR
+        builder.setNegativeButton("CANCELAR", (dialog, which) -> dialog.dismiss());
+
+        builder.show();
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private EditText criarEditText(Context ctx, String hint, int inputType, String valorInicial, int marginDp) {
+        EditText edit = new EditText(ctx);
+        edit.setHint(hint);
+        edit.setInputType(inputType);
+        if (valorInicial != null) edit.setText(valorInicial);
+        // padding internal
+        edit.setPadding(dpToPx(16, ctx), dpToPx(12, ctx), dpToPx(16, ctx), dpToPx(12, ctx));
+
+        // cria borda arredondada igual ao seu estilo
+        GradientDrawable border = new GradientDrawable();
+        border.setCornerRadius(dpToPx(8, ctx));
+        border.setStroke(dpToPx(1, ctx), ContextCompat.getColor(ctx, R.color.textGray));
+        border.setColor(ContextCompat.getColor(ctx, R.color.colorBackgroundDialog));
+        edit.setBackground(border);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(0, dpToPx(marginDp / 2, ctx), 0, dpToPx(marginDp / 2, ctx));
+        edit.setLayoutParams(params);
+
+        // opcional: texto e hint color
+        edit.setHintTextColor(ContextCompat.getColor(ctx, R.color.textGray));
+        edit.setTextColor(ContextCompat.getColor(ctx, R.color.textPrimary));
+
+        return edit;
+    }
+
+    // utilitário para converter dp -> px
+    private int dpToPx(int dp, Context ctx) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, ctx.getResources().getDisplayMetrics());
     }
 
     // Método que altera a cor do cabeçalho do saldo conforme o valor do saldo

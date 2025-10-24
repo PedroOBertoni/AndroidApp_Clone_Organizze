@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aula.finansee.R;
+import com.aula.finansee.activity.PrincipalActivity;
 import com.aula.finansee.model.Movimentacao;
 import com.aula.finansee.model.Recorrencia;
 
@@ -49,50 +50,46 @@ public class AdapterMovimentacao extends RecyclerView.Adapter<AdapterMovimentaca
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        // Instanciando um objeto movimentação com base em sua posição
+        // Instancia um objeto movimentação com base na posição
         Movimentacao movimentacao = movimentacoes.get(position);
 
-        /* Adicionando valores da classe Movimentacao nos elementos do item da recyclerView */
+        /* Exibição dos Dados */
 
-        // Título — sempre usa a cor textPrimary do tema
+        // Título
         holder.titulo.setText(movimentacao.getTitulo());
         holder.titulo.setTextColor(ContextCompat.getColor(context, R.color.textPrimary));
 
         // Categoria
         holder.categoria.setText(movimentacao.getCategoria());
 
-        // Data formatada usando ThreeTenABP (dd/MM/yyyy)
+        // Data formatada (usando ThreeTenABP)
         try {
             LocalDate data = LocalDate.parse(movimentacao.getData(), DateTimeFormatter.ISO_LOCAL_DATE);
             String dataFormatada = data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             holder.data.setText(dataFormatada);
         } catch (DateTimeParseException e) {
-            // fallback caso a data esteja em formato incorreto
             holder.data.setText(movimentacao.getData());
         }
 
-        // Valor formatado para padrão brasileiro (R$ 1.234,56)
+        // Valor formatado (padrão BR)
         NumberFormat formatoBR = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
         holder.valor.setText(formatoBR.format(movimentacao.getValor()));
 
-        // Define cor e prefixo de acordo com o tipo
+        // Tipo (Receita ou Despesa)
         if (movimentacao.getTipo().equalsIgnoreCase("D")) {
-            // Despesa
             holder.valor.setTextColor(ContextCompat.getColor(context, R.color.colorPrimaryDespesa));
             holder.prefixo.setText("-");
             holder.prefixo.setTextColor(ContextCompat.getColor(context, R.color.colorPrimaryDespesa));
         } else if (movimentacao.getTipo().equalsIgnoreCase("R")) {
-            // Receita
             holder.valor.setTextColor(ContextCompat.getColor(context, R.color.colorPrimaryReceita));
             holder.prefixo.setText("+");
             holder.prefixo.setTextColor(ContextCompat.getColor(context, R.color.colorPrimaryReceita));
         } else {
-            // Tipo indefinido — fallback
             holder.valor.setTextColor(ContextCompat.getColor(context, R.color.textPrimary));
             holder.prefixo.setText("");
         }
 
-        // Recorrência (parcelada ou fixa)
+        // Recorrência
         Recorrencia rec = movimentacao.getRecorrencia();
         if (rec != null && rec.getTipo() != null) {
             if ("parcelada".equalsIgnoreCase(rec.getTipo())) {
@@ -113,8 +110,16 @@ public class AdapterMovimentacao extends RecyclerView.Adapter<AdapterMovimentaca
         } else {
             holder.textQuantParcelas.setVisibility(View.GONE);
         }
-    }
 
+        /* onClickListener */
+
+        holder.itemView.setOnClickListener(v -> {
+            if (context instanceof PrincipalActivity) {
+                ((PrincipalActivity) context).exibirDialogEditarOuExcluir(movimentacao, holder.getAdapterPosition());
+            }
+        });
+
+    }
 
     @Override
     public int getItemCount() {

@@ -82,7 +82,7 @@ public class LoginActivity extends AppCompatActivity {
             String textoSenha = campoSenha.getText().toString().trim();
 
             // Valida os campos antes de enviar
-            validaPreenchimentoDosCampos(textoEmail, textoSenha);
+            validaCampos(textoEmail, textoSenha);
         });
 
         resetaSenha.setOnClickListener(v -> {
@@ -105,7 +105,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void validaPreenchimentoDosCampos(String email, String senha) {
+    public void validaCampos(String email, String senha) {
 
         // Limpa erros anteriores
         layoutEmail.setError(null);

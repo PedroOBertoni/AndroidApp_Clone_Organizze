@@ -523,7 +523,7 @@ public class ReceitasActivity extends AppCompatActivity {
         // Validação do título
         if (titulo.isEmpty()) {
             Snackbar.make(view,
-                    "Preencha o campo Título.",
+                    "Preencha o campo Título!",
                     Snackbar.LENGTH_SHORT).show();
             return false;
         }
@@ -531,7 +531,7 @@ public class ReceitasActivity extends AppCompatActivity {
         // Validação da categoria
         if (categoria.isEmpty()) {
             Snackbar.make(view,
-                    "Selecione uma Categoria.",
+                    "Selecione uma Categoria!",
                     Snackbar.LENGTH_SHORT).show();
             return false;
         }
@@ -539,7 +539,7 @@ public class ReceitasActivity extends AppCompatActivity {
         // Validação da data, text se está vazia
         if (data.isEmpty()) {
             Snackbar.make(view,
-                    "Informe uma Data.",
+                    "Informe uma Data!",
                     Snackbar.LENGTH_SHORT).show();
             return false;
         }
@@ -563,7 +563,7 @@ public class ReceitasActivity extends AppCompatActivity {
         // Se algum modo estiver ativo, garantir que os dados foram definidos
         if (modoFixoAtivo && frequencia == null) {
             Snackbar.make(view,
-                    "Selecione uma frequência para a receita fixa.",
+                    "Selecione uma frequência para a receita fixa!",
                     Snackbar.LENGTH_SHORT).show();
             return false;
         }
@@ -571,7 +571,7 @@ public class ReceitasActivity extends AppCompatActivity {
         // Se modo parcelado ativo, garantir que número de parcelas foi definido
         if (modoParceladoAtivo && quantParcelas == null) {
             Snackbar.make(view,
-                    "Informe o número de parcelas.",
+                    "Informe o número de parcelas!",
                     Snackbar.LENGTH_SHORT).show();
             return false;
         }

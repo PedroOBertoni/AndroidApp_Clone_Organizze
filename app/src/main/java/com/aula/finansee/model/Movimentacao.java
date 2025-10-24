@@ -56,8 +56,8 @@ public class Movimentacao {
             String idMov = mesRef.push().getKey();
             this.id = idMov;
 
-            // Salva a movimentação E RETORNA A TASK
-            return mesRef.child(idMov).setValue(this); // <-- MUDANÇA AQUI: Retorna a Task
+            // Salva a movimentação e retorna a Task
+            return mesRef.child(idMov).setValue(this);
 
         } catch (Exception e) {
             // Trata erro de parsing de data
@@ -65,7 +65,7 @@ public class Movimentacao {
             Log.e("Movimentacao", "Erro ao salvar movimentação: data inválida (" + this.data + ")");
 
             // Em caso de falha de parsing, retorne uma Task falha para a Activity tratar
-            return Tasks.forException(e); // Retorna a Task falha
+            return Tasks.forException(e);
         }
     }
 
