@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.View;
@@ -32,6 +33,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Random;
 
@@ -78,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
         // Listener do botão de login
         buttonEntra.setOnClickListener(v -> {
             // Captura os textos no momento do clique
-            String textoEmail = campoEmail.getText().toString().trim();
+            String textoEmail = campoEmail.getText().toString().toLowerCase().trim();
             String textoSenha = campoSenha.getText().toString().trim();
 
             // Valida os campos antes de enviar
@@ -278,40 +284,73 @@ public class LoginActivity extends AppCompatActivity {
         builder.show();
     }
 
-    private void enviarEmailRedefinicaoPersonalizado(String email, String codigo) {
-        new Thread(() -> {
-            try {
-                // Define assunto e corpo do email com HTML (negrito e cores opcionais)
-                String assunto = "Redefinição de senha - FinanSee";
-                String corpo = "<html>" +
-                        "<body style='font-family: sans-serif;'>" +
-                        "<h2 style='color:#008cff;'>Olá!</h2>" +
-                        "<p>Seu código para redefinir a senha é:</p>" +
-                        "<h1 style='color:#008cff;'><b>" + codigo + "</b></h1>" +
-                        "<p>Este código expira em <b>5 minutos</b>.</p>" +
-                        "<p>Equipe <b>FinanSee</b></p>" +
-                        "</body></html>";
+    private void enviarEmailRedefinicaoPersonalizado(final String email, final String codigo) {
+        // 1) Referência ao nó 'usuarios' no Realtime Database
+        //    Assumo que 'databaseReference' é o DatabaseReference raiz já instanciado na Activity.
+        DatabaseReference usuariosRef = FirebaseDatabase.getInstance()
+                .getReference()
+                .child("usuarios");
 
-                // Envia o email (agora o método é estático)
-                EmailSender.enviarEmail(email, assunto, corpo);
+        // 2) Faz uma query para verificar se existe algum registro com campo "email" == email
+        usuariosRef.orderByChild("email").equalTo(email)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        // Se snapshot.exists() == true, pelo menos um usuário com esse e-mail foi encontrado
+                        if (snapshot.exists()) {
+                            // ✅ Usuário encontrado — envia o e-mail em background
+                            new Thread(() -> {
+                                try {
+                                    // Monta assunto e corpo HTML do e-mail (código em negrito)
+                                    String assunto = "Redefinição de senha - Finansee";
+                                    String corpo = "<html>" +
+                                            "<body style='font-family: sans-serif; color:#333;'>" +
+                                            "<h2 style='color:#008cff;'>Olá!</h2>" +
+                                            "<p>Você solicitou a redefinição de senha para sua conta Finansee.</p>" +
+                                            "<p>Use o código abaixo para continuar:</p>" +
+                                            "<p style='font-size:24px; font-weight:bold; color:#008cff; margin:12px 0;'>" + codigo + "</p>" +
+                                            "<p><small>Este código expira em <b>3 minutos</b>.</small></p>" +
+                                            "<hr/>" +
+                                            "<p style='font-size:12px;color:#888;'>Se você não solicitou, ignore este e-mail.</p>" +
+                                            "<p style='font-size:12px;color:#888;'>Equipe Finansee</p>" +
+                                            "</body></html>";
 
-                // Como o envio ocorre em thread separada, podemos assumir sucesso se não lançar exceção
-                runOnUiThread(() -> {
-                    Snackbar.make(findViewById(android.R.id.content),
-                            "Email enviado com sucesso!",
-                            Snackbar.LENGTH_LONG).show();
-                    exibirDialogCodigo(email);
+                                    // Chama seu EmailSender (assumo método estático enviarEmail)
+                                    EmailSender.enviarEmail(email, assunto, corpo);
+
+                                    // Se chegou aqui sem exceção, considere o envio efetuado -> feedback na UI
+                                    runOnUiThread(() -> {
+                                        Snackbar.make(findViewById(android.R.id.content),
+                                                "Email enviado com sucesso!",
+                                                Snackbar.LENGTH_LONG).show();
+                                        exibirDialogCodigo(email); // abre diálogo para digitar código
+                                    });
+
+                                } catch (Exception e) {
+                                    // Em caso de erro no envio, mostra snackbar com mensagem de falha
+                                    e.printStackTrace();
+                                    runOnUiThread(() -> Snackbar.make(findViewById(android.R.id.content),
+                                            "Falha ao enviar o email!", Snackbar.LENGTH_LONG).show());
+                                }
+                            }).start();
+
+                        } else {
+                            // ❌ Nenhum usuário encontrado com esse e-mail no nó "usuarios"
+                            Snackbar.make(findViewById(android.R.id.content),
+                                    "Nenhuma conta encontrada com esse e-mail!", Snackbar.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        // Erro ao acessar o banco (permissões, rede, etc.)
+                        String msg = "Erro ao verificar e-mail: " + error.getMessage();
+                        Log.e("RecuperacaoSenha", msg);
+                        Snackbar.make(findViewById(android.R.id.content),
+                                "Erro ao verificar o e-mail. Tente novamente.", Snackbar.LENGTH_LONG).show();
+                    }
                 });
-
-            } catch (Exception e) {
-                runOnUiThread(() -> Snackbar.make(findViewById(android.R.id.content),
-                        "Falha ao enviar o email!",
-                        Snackbar.LENGTH_LONG).show());
-                e.printStackTrace();
-            }
-        }).start();
     }
-
 
     private void exibirDialogCodigo(final String email) {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(

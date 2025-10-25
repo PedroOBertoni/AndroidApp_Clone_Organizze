@@ -162,7 +162,7 @@ public class CadastroActivity extends AppCompatActivity {
 
         // Definindo seu nome e email
         usuario.setNome(nome);
-        usuario.setEmail(email);
+        usuario.setEmail(email.toLowerCase().trim());
 
         // Cadastrando usuário com e-mail e senha no Firebase
         autenticacao = ConfigFirebase.getFirebaseAutenticacao();
