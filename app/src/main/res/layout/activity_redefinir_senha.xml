@@ -88,6 +88,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
+            android:textColor="@color/textGray"
             android:hint="Digite a nova senha"
             android:inputType="text|textPassword"
             android:textSize="14sp" />
@@ -126,6 +127,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
+            android:textColor="@color/textGray"
             android:hint="Confirme a nova senha"
             android:inputType="text|textPassword"
             android:textSize="14sp" />

@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -29,6 +31,12 @@ public class CadastroActivity extends AppCompatActivity {
     private TextInputLayout layoutNome, layoutEmail, layoutSenha;
     private Button buttonCadastra;
 
+    // componentes da interface do RequisitosContainer
+    LinearLayout layoutRequisitosSenha;
+    ImageView imageArrowRequisitos;
+    View headerRequisitosContainer;
+    boolean requisitosExpanded = false;
+
     // objeto para autenticação do Firebase
     private FirebaseAuth autenticacao;
     private Usuario usuario;
@@ -41,6 +49,11 @@ public class CadastroActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cadastro);
 
         // Recuperar componentes da interface pelo ID
+        // Elementos do RequisitosContainer
+        layoutRequisitosSenha = findViewById(R.id.layoutRequisitosSenha);
+        imageArrowRequisitos = findViewById(R.id.imageArrowRequisitos);
+        headerRequisitosContainer = findViewById(R.id.headerRequisitosContainer);
+
         // EditText
         campoNome = findViewById(R.id.editNomeCadastro);
         campoEmail = findViewById(R.id.editEmailCadastro);
@@ -54,6 +67,17 @@ public class CadastroActivity extends AppCompatActivity {
         // Button
         buttonCadastra = findViewById(R.id.buttonCadastra);
 
+        /* onClickListenners */
+
+        // Texto de requisitos de senha expansível
+        headerRequisitosContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleRequisitos();
+            }
+        });
+
+        // Botão de cadastro
         buttonCadastra.setOnClickListener(v -> {
             // Captura os textos no momento do clique
             String textoNome = campoNome.getText().toString().trim();
@@ -61,7 +85,7 @@ public class CadastroActivity extends AppCompatActivity {
             String textoSenha = campoSenha.getText().toString().trim();
 
             // Chama o método de validação do preenchimento dos campos
-            validaPreenchimentoDosCampos(textoNome, textoEmail, textoSenha);
+            validaCampos(textoNome, textoEmail, textoSenha);
         });
 
         /* Redirecionamento para outras páginas */
@@ -79,7 +103,28 @@ public class CadastroActivity extends AppCompatActivity {
         });
     }
 
-    public void validaPreenchimentoDosCampos(String nome, String email, String senha) {
+    // Método para abrir/fechar os requisitos de senha
+    private void toggleRequisitos() {
+        if (requisitosExpanded) {
+            layoutRequisitosSenha.animate()
+                    .alpha(0f)
+                    .setDuration(180)
+                    .withEndAction(() -> {
+                        layoutRequisitosSenha.setVisibility(View.GONE);
+                        layoutRequisitosSenha.setAlpha(1f);
+                    }).start();
+            imageArrowRequisitos.animate().rotation(0f).setDuration(180).start();
+        } else {
+            layoutRequisitosSenha.setAlpha(0f);
+            layoutRequisitosSenha.setVisibility(View.VISIBLE);
+            layoutRequisitosSenha.animate().alpha(1f).setDuration(180).start();
+            imageArrowRequisitos.animate().rotation(180f).setDuration(180).start();
+        }
+        requisitosExpanded = !requisitosExpanded;
+    }
+
+    // Valida os campos de nome, email e senha
+    public void validaCampos(String nome, String email, String senha) {
 
         // Limpa erros anteriores
         layoutNome.setError(null);
@@ -131,17 +176,14 @@ public class CadastroActivity extends AppCompatActivity {
             // e define válido como falso
             valido = false;
 
-        } else if (senha.length() < 6) {
-            // Validação de senha com no mínimo 6 caracteres
-            excecao = "A senha deve ter no mínimo 6 caracteres!";
+        } else if (!senha.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*+=?_.#-]).{8,}$")) {
+            excecao = "A senha deve ter ao menos 8 caracteres, com letra maiúscula, minúscula, número e símbolo!";
             layoutSenha.setError(excecao);
 
-            // Mostra erro geral com Snackbar
             Snackbar.make(findViewById(android.R.id.content),
                     excecao,
                     Snackbar.LENGTH_LONG).show();
 
-            // e define válido como falso
             valido = false;
         }
 
@@ -150,6 +192,7 @@ public class CadastroActivity extends AppCompatActivity {
         }
     }
 
+    // Cadastra o usuário no Firebase
     public void cadastrarUsuario(String email, String senha, String nome) {
 
         // Primeiro verifica se o aparelho está conectado a uma rede ativa

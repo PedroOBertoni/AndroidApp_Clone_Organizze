@@ -238,12 +238,14 @@ public class LoginActivity extends AppCompatActivity {
         inputEmail.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         inputEmail.setPadding(32, 24, 32, 24);
 
+        // aplica borda arredondada personalizada
         GradientDrawable border = new GradientDrawable();
         border.setCornerRadius(16);
         border.setStroke(2, ContextCompat.getColor(this, R.color.textGray));
         border.setColor(ContextCompat.getColor(this, R.color.colorBackgroundDialog));
         inputEmail.setBackground(border);
 
+        // adiciona padding lateral ao container
         LinearLayout container = new LinearLayout(this);
         container.setOrientation(LinearLayout.VERTICAL);
         int margin = (int) TypedValue.applyDimension(
@@ -252,8 +254,10 @@ public class LoginActivity extends AppCompatActivity {
         container.setPadding(margin, 0, margin, 0);
         container.addView(inputEmail);
 
+        // configura o view do  alertDialog
         builder.setView(container);
 
+        // configura o botão positivo do alertDialog
         builder.setPositiveButton("ENVIAR", (dialog, which) -> {
             String email = inputEmail.getText().toString().trim();
 
@@ -269,8 +273,8 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            // escolha de expiração: 3 ou 5 minutos — aqui escolhi 3 por padrão
-            int minutosExpiracao = 3; // <-- altere para 5 se preferir
+            // É possível definir aqui a quantidade de minutos antes de expirar o código de redefinição
+            int minutosExpiracao = 3;
 
             // gera e marca expiração + atualiza last-send
             gerarENotarCodigoComExpiracao(minutosExpiracao);
@@ -280,28 +284,28 @@ public class LoginActivity extends AppCompatActivity {
             enviarEmailRedefinicaoPersonalizado(email, codigoAtual);
         });
 
+        // configura o botão negativo do alertDialog
         builder.setNegativeButton("CANCELAR", (dialog, which) -> dialog.dismiss());
         builder.show();
     }
 
     private void enviarEmailRedefinicaoPersonalizado(final String email, final String codigo) {
-        // 1) Referência ao nó 'usuarios' no Realtime Database
-        //    Assumo que 'databaseReference' é o DatabaseReference raiz já instanciado na Activity.
+        // Referência ao nó 'usuarios' no Realtime Database
         DatabaseReference usuariosRef = FirebaseDatabase.getInstance()
                 .getReference()
                 .child("usuarios");
 
-        // 2) Faz uma query para verificar se existe algum registro com campo "email" == email
+        // Query para verificar se existe algum registro com campo email igual ao informado pelo usuário
         usuariosRef.orderByChild("email").equalTo(email)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        // Se snapshot.exists() == true, pelo menos um usuário com esse e-mail foi encontrado
+                        /* Se snapshot.exists() == true, pelo menos um usuário com esse email foi
+                            encontrado e então será enviado o email */
                         if (snapshot.exists()) {
-                            // ✅ Usuário encontrado — envia o e-mail em background
                             new Thread(() -> {
                                 try {
-                                    // Monta assunto e corpo HTML do e-mail (código em negrito)
+                                    // Monta assunto e corpo HTML do e-mail
                                     String assunto = "Redefinição de senha - Finansee";
                                     String corpo = "<html>" +
                                             "<body style='font-family: sans-serif; color:#333;'>" +
@@ -315,10 +319,10 @@ public class LoginActivity extends AppCompatActivity {
                                             "<p style='font-size:12px;color:#888;'>Equipe Finansee</p>" +
                                             "</body></html>";
 
-                                    // Chama seu EmailSender (assumo método estático enviarEmail)
+                                    // Chama o EmailSender para enviar o e-mail
                                     EmailSender.enviarEmail(email, assunto, corpo);
 
-                                    // Se chegou aqui sem exceção, considere o envio efetuado -> feedback na UI
+                                    // Se chegou aqui sem exceção, considera o envio efetuado
                                     runOnUiThread(() -> {
                                         Snackbar.make(findViewById(android.R.id.content),
                                                 "Email enviado com sucesso!",
@@ -335,7 +339,7 @@ public class LoginActivity extends AppCompatActivity {
                             }).start();
 
                         } else {
-                            // ❌ Nenhum usuário encontrado com esse e-mail no nó "usuarios"
+                            // Erro para caso não encontre nenhum usuário com esse email no nó "usuarios"
                             Snackbar.make(findViewById(android.R.id.content),
                                     "Nenhuma conta encontrada com esse e-mail!", Snackbar.LENGTH_LONG).show();
                         }

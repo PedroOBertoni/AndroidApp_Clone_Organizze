@@ -52,11 +52,47 @@ public class RedefinirSenhaActivity extends AppCompatActivity {
                 return;
             }
 
-            if (novaSenha.length() < 6) {
+            /*
+            if (novaSenha.isEmpty()) {
+                // Validação de campo de senha vazio
+                excecao = "Preencha a senha!";
+                inputSenha.setError(excecao);
+
+                // Mostra erro geral com Snackbar
                 Snackbar.make(findViewById(android.R.id.content),
-                        "A senha deve conter ao menos 6 dígitos!", Snackbar.LENGTH_LONG).show();
-                return;
-            }
+                        excecao,
+                        Snackbar.LENGTH_LONG).show();
+
+                // e define válido como falso
+                valido = false;
+
+            } else {
+                // Validação de senha com critérios de segurança mais fortes
+                // Regex exige:
+                // - Pelo menos 1 letra minúscula
+                // - Pelo menos 1 letra maiúscula
+                // - Pelo menos 1 número
+                // - Pelo menos 1 caractere especial
+                // - Mínimo de 8 caracteres
+                String regexSenhaForte = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$";
+
+                if (!senha.matches(regexSenhaForte)) {
+                    excecao = "A senha deve conter ao menos:\n" +
+                            "- Uma letra maiúscula\n" +
+                            "- Uma letra minúscula\n" +
+                            "- Um número\n" +
+                            "- Um símbolo (@, $, !, %, *, ?, &)";
+                    layoutSenha.setError(excecao);
+
+                    // Mostra erro geral com Snackbar
+                    Snackbar.make(findViewById(android.R.id.content),
+                            excecao,
+                            Snackbar.LENGTH_LONG).show();
+
+                    // Define como inválido
+                    valido = false;
+                }
+            } */
 
             if (confirmarSenha.isEmpty()) {
                 Snackbar.make(findViewById(android.R.id.content),
