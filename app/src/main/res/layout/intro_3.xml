@@ -25,10 +25,11 @@
 
     <ImageView
         android:id="@+id/image2"
-        android:layout_width="0dp"
+        android:layout_width="250dp"
         android:layout_height="320dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/headerContainer"
@@ -72,8 +73,8 @@
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="30dp"
         android:layout_marginEnd="24dp"
+        android:layout_marginBottom="60dp"
         android:background="@drawable/button_background"
         android:fontFamily="@font/inter_bold"
         android:onClick="redirectCadastrar"
@@ -84,16 +85,16 @@
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textDescription" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/linkLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="3dp"
-        android:fontFamily="@font/inter"
+        android:fontFamily="@font/inter_bold"
         android:onClick="redirectEntrar"
         android:text="Fazer login"
         android:textColor="@color/colorPrimaryDark"
