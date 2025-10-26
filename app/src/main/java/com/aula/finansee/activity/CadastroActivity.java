@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -23,7 +22,6 @@ import com.aula.finansee.model.Usuario;
 import com.aula.finansee.utils.FirebaseErrorHandler;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
@@ -32,25 +30,24 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 
 public class CadastroActivity extends AppCompatActivity {
 
-    // componentes da interface
-    private EditText campoNome, campoEmail, campoSenha;
-    private TextInputLayout layoutNome, layoutEmail, layoutSenha;
-    private Button buttonCadastra;
-
-    // componentes da interface do ForcaSenha (progressBar e texto que exibem a força da senha)
-    private TextInputEditText editSenha;
+    // Componentes da interface do ForcaSenha (progressBar e texto que exibem a força da senha)
     private LinearProgressIndicator progressBar;
     private TextView textForca;
 
-    // componentes da interface do RequisitosContainer
+    // Componentes da interface do RequisitosContainer
     LinearLayout layoutRequisitosSenha;
     ImageView imageArrowRequisitos;
     View headerRequisitosContainer;
     boolean requisitosExpanded = false;
 
-    // objeto para autenticação do Firebase
+    // Objeto para autenticação do Firebase
     private FirebaseAuth autenticacao;
     private Usuario usuario;
+
+    // Componentes da interface
+    private EditText editNome, editEmail, editSenha;
+    private TextInputLayout inputNome, inputEmail, inputSenha;
+    private Button buttonCadastra;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -59,10 +56,9 @@ public class CadastroActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_cadastro);
 
-        // Recuperar componentes da interface pelo ID
+        /* Recuperando componentes da interface pelo ID */
 
         // Elementos do layout Força de Senha (progressBar e texto que mudam conforme a senha é digitada)
-        editSenha = findViewById(R.id.editSenhaCadastro);
         progressBar = findViewById(R.id.progressBarForcaSenha);
         textForca = findViewById(R.id.textForcaSenha);
 
@@ -72,14 +68,14 @@ public class CadastroActivity extends AppCompatActivity {
         headerRequisitosContainer = findViewById(R.id.headerRequisitosContainer);
 
         // EditText
-        campoNome = findViewById(R.id.editNomeCadastro);
-        campoEmail = findViewById(R.id.editEmailCadastro);
-        campoSenha = findViewById(R.id.editSenhaCadastro);
+        editNome = findViewById(R.id.editNomeCadastro);
+        editEmail = findViewById(R.id.editEmailCadastro);
+        editSenha = findViewById(R.id.editSenhaCadastro);
 
         // TextInputLayout
-        layoutNome = findViewById(R.id.layoutNomeCadastro);
-        layoutEmail = findViewById(R.id.layoutEmailCadastro);
-        layoutSenha = findViewById(R.id.layoutSenhaCadastro);
+        inputNome = findViewById(R.id.layoutNomeCadastro);
+        inputEmail = findViewById(R.id.layoutEmailCadastro);
+        inputSenha = findViewById(R.id.layoutSenhaCadastro);
 
         // Button
         buttonCadastra = findViewById(R.id.buttonCadastra);
@@ -156,9 +152,9 @@ public class CadastroActivity extends AppCompatActivity {
         // Botão de cadastro
         buttonCadastra.setOnClickListener(v -> {
             // Captura os textos no momento do clique
-            String textoNome = campoNome.getText().toString().trim();
-            String textoEmail = campoEmail.getText().toString().trim();
-            String textoSenha = campoSenha.getText().toString().trim();
+            String textoNome = editNome.getText().toString().trim();
+            String textoEmail = editEmail.getText().toString().trim();
+            String textoSenha = editSenha.getText().toString().trim();
 
             // Chama o método de validação do preenchimento dos campos
             validaCampos(textoNome, textoEmail, textoSenha);
@@ -216,9 +212,9 @@ public class CadastroActivity extends AppCompatActivity {
     public void validaCampos(String nome, String email, String senha) {
 
         // Limpa erros anteriores
-        layoutNome.setError(null);
-        layoutEmail.setError(null);
-        layoutSenha.setError(null);
+        inputNome.setError(null);
+        inputEmail.setError(null);
+        inputSenha.setError(null);
 
         // Variáveis para controle de validação e exceção
         boolean valido = true;
@@ -227,7 +223,7 @@ public class CadastroActivity extends AppCompatActivity {
         if (nome.isEmpty()) {
             // Validação de campo de nome vazio
             excecao = "Preencha o nome!";
-            layoutNome.setError(excecao);
+            inputNome.setError(excecao);
 
             // Mostra erro geral com Snackbar
             Snackbar.make(findViewById(android.R.id.content),
@@ -241,7 +237,7 @@ public class CadastroActivity extends AppCompatActivity {
         if (email.isEmpty()) {
             // Validação de campo de e-mail vazio
             excecao = "Preencha o e-mail!";
-            layoutEmail.setError(excecao);
+            inputEmail.setError(excecao);
 
             // Mostra erro geral com Snackbar
             Snackbar.make(findViewById(android.R.id.content),
@@ -255,7 +251,7 @@ public class CadastroActivity extends AppCompatActivity {
         if (senha.isEmpty()) {
             // Validação de campo de senha vazio
             excecao = "Preencha a senha!";
-            layoutSenha.setError(excecao);
+            inputSenha.setError(excecao);
 
             // Mostra erro geral com Snackbar
             Snackbar.make(findViewById(android.R.id.content),
@@ -267,7 +263,7 @@ public class CadastroActivity extends AppCompatActivity {
 
         } else if (!senha.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*+=?_.#-]).{8,}$")) {
             excecao = "A senha deve ter ao menos 8 caracteres, com letra maiúscula, minúscula, número e símbolo!";
-            layoutSenha.setError(excecao);
+            inputSenha.setError(excecao);
 
             Snackbar.make(findViewById(android.R.id.content),
                     excecao,
@@ -325,17 +321,17 @@ public class CadastroActivity extends AppCompatActivity {
                         } catch (FirebaseAuthWeakPasswordException e) {
                             // Senha fraca
                             excecao = "Digite uma senha mais forte!";
-                            layoutSenha.setError(excecao);
+                            inputSenha.setError(excecao);
 
                         } catch (FirebaseAuthInvalidCredentialsException e) {
                             // E-mail inválido
                             excecao = "Por favor, digite um e-mail válido!";
-                            layoutEmail.setError(excecao);
+                            inputEmail.setError(excecao);
 
                         } catch (FirebaseAuthUserCollisionException e) {
                             // E-mail já cadastrado
                             excecao = "Esta conta já foi cadastrada!";
-                            layoutEmail.setError(excecao);
+                            inputEmail.setError(excecao);
 
                         } catch (Exception e) {
                             // Erro geral

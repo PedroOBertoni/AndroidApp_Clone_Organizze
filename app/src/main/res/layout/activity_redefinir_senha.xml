@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/headerBackground"
     android:paddingTop="20dp"
-    tools:context=".activity.LoginActivity">
+    tools:context=".activity.RedefinirSenhaActivity">
 
     <FrameLayout
         android:id="@+id/headerContainer"
@@ -25,128 +25,264 @@
             android:src="@drawable/imagem_logo" />
     </FrameLayout>
 
-    <TextView
-        android:id="@+id/textTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/inter_bold"
-        android:text="Resetar Senha"
-        android:textAlignment="center"
-        android:textColor="@color/textPrimary"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/headerContainer" />
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollPrincipalRedefinirSenha"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/headerContainer"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <TextView
-        android:id="@+id/textDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:fontFamily="@font/inter"
-        android:text="Defina uma nova senha abaixo\npara a sua conta"
-        android:textAlignment="center"
-        android:textColor="@color/textGray"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textTitle" />
-
-    <TextView
-        android:id="@+id/textEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="2dp"
-        android:fontFamily="@font/inter"
-        android:text="Nova Senha"
-        android:textColor="@color/textPrimary"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/inputSenha"
-        app:layout_constraintStart_toStartOf="@+id/inputSenha"
-        app:layout_constraintTop_toBottomOf="@id/textDescription" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/inputSenha"
-        android:layout_width="0dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="5dp"
-        app:endIconMode="password_toggle"
-        app:hintEnabled="false"
-        app:layout_constraintBottom_toTopOf="@+id/textView20"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textEmail">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editNovaSenha"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/inter"
-            android:textColor="@color/textGray"
-            android:hint="Digite a nova senha"
-            android:inputType="text|textPassword"
-            android:textSize="14sp" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:paddingBottom="40dp">
 
-    <TextView
-        android:id="@+id/textView20"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="2dp"
-        android:fontFamily="@font/inter"
-        android:text="Confirmar Senha"
-        android:textColor="@color/textPrimary"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/inputConfirmarSenha"
-        app:layout_constraintStart_toStartOf="@+id/inputConfirmarSenha"
-        app:layout_constraintTop_toBottomOf="@id/inputSenha" />
+            <TextView
+                android:id="@+id/textTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="Resetar Senha"
+                android:textAlignment="center"
+                android:textColor="@color/textPrimary"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/inputConfirmarSenha"
-        android:layout_width="0dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        app:endIconMode="password_toggle"
-        app:hintEnabled="false"
-        app:layout_constraintBottom_toTopOf="@+id/buttonSalvarSenha"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView20">
+            <TextView
+                android:id="@+id/textDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/inter"
+                android:text="Defina uma nova senha abaixo\npara a sua conta"
+                android:textAlignment="center"
+                android:textColor="@color/textGray"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textTitle" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editConfirmarSenha"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/inter"
-            android:textColor="@color/textGray"
-            android:hint="Confirme a nova senha"
-            android:inputType="text|textPassword"
-            android:textSize="14sp" />
-    </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                android:id="@+id/textEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="2dp"
+                android:fontFamily="@font/inter"
+                android:text="Nova Senha"
+                android:textColor="@color/textPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/inputSenha"
+                app:layout_constraintStart_toStartOf="@+id/inputSenha"
+                app:layout_constraintTop_toBottomOf="@id/textDescription" />
 
-    <Button
-        android:id="@+id/buttonSalvarSenha"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/button_background"
-        android:fontFamily="@font/inter_bold"
-        android:text="Salvar nova senha"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputConfirmarSenha" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputSenha"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="5dp"
+                app:endIconMode="password_toggle"
+                app:hintEnabled="false"
+                app:layout_constraintBottom_toTopOf="@+id/textView20"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textEmail">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editNovaSenha"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter"
+                    android:textColor="@color/textGray"
+                    android:hint="Digite a nova senha"
+                    android:inputType="text|textPassword"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/textView20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="2dp"
+                android:fontFamily="@font/inter"
+                android:text="Confirmar Senha"
+                android:textColor="@color/textPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/inputConfirmarSenha"
+                app:layout_constraintStart_toStartOf="@+id/inputConfirmarSenha"
+                app:layout_constraintTop_toBottomOf="@id/inputSenha" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputConfirmarSenha"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                app:endIconMode="password_toggle"
+                app:hintEnabled="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView20">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editConfirmarSenha"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter"
+                    android:textColor="@color/textGray"
+                    android:hint="Confirme a nova senha"
+                    android:inputType="text|textPassword"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutSenhaForca"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="28dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginTop="8dp"
+                android:gravity="left|center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/inputConfirmarSenha">
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/progressBarForcaSenha"
+                    android:layout_width="240dp"
+                    android:layout_height="8dp"
+                    android:max="100"
+                    android:progress="0"
+                    app:indicatorColor="@color/textGray"
+                    app:trackColor="@color/textGray" />
+
+                <TextView
+                    android:id="@+id/textForcaSenha"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="@font/inter_bold"
+                    android:textColor="@color/textGray"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/headerRequisitosContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="24dp"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layoutSenhaForca">
+
+                <TextView
+                    android:id="@+id/textSenhaRequisitosTitulo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="Requisitos de senha"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:id="@+id/imageArrowRequisitos"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="4dp"
+                    android:contentDescription="Abrir requisitos"
+                    android:src="@drawable/ic_arrow_down_24dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutRequisitosSenha"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="48dp"
+                android:paddingEnd="48dp"
+                android:paddingTop="8dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@+id/headerRequisitosContainer"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="• Oito ou mais caracteres"
+                    android:textColor="@color/textGray"
+                    android:textSize="13sp"
+                    android:fontFamily="@font/inter" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="• Uma letra maiúscula"
+                    android:textColor="@color/textGray"
+                    android:textSize="13sp"
+                    android:fontFamily="@font/inter" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="• Uma letra minúscula"
+                    android:textColor="@color/textGray"
+                    android:textSize="13sp"
+                    android:fontFamily="@font/inter" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="• Um número"
+                    android:textColor="@color/textGray"
+                    android:textSize="13sp"
+                    android:fontFamily="@font/inter" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="• Um símbolo (@, $, !, %, *, ?, &amp;, #, . )"
+                    android:textColor="@color/textGray"
+                    android:textSize="13sp"
+                    android:fontFamily="@font/inter" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/buttonSalvarSenha"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="24dp"
+                android:background="@drawable/button_background"
+                android:fontFamily="@font/inter_bold"
+                android:text="Salvar nova senha"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layoutRequisitosSenha" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
