@@ -63,29 +63,32 @@ import java.util.Locale;
 
 public class PrincipalActivity extends AppCompatActivity {
 
-    // Componentes
+    // Componentes da interface
     private LinearLayout layoutHeaderSaldo;
     private TextView textSaldo, textTotalDespesas, textTotalReceitas;
     private RecyclerView recyclerMovimentos;
 
+    // FAB personalizado e com sub-botões (SpeedDial)
+    private SpeedDialView speedDialView;
+    private MaterialToolbar toolbar;
+
     // Adapter
     private AdapterMovimentacao adapterMovimentacao;
     private ArrayList<Movimentacao> movimentacoes = new ArrayList<>();
+
+    // Listeners
+    private ValueEventListener valueEventListenerUsuario;
+    private ValueEventListener valueEventListenerMovimentacoes;
 
     // Firebase
     private DatabaseReference databaseReference;
     private FirebaseAuth autenticacao;
     private DatabaseReference usuarioRef;
 
-    // Listeners
-    private ValueEventListener valueEventListenerUsuario;
-    private ValueEventListener valueEventListenerMovimentacoes;
-
+    /* Variáveis auxiliares para calculo de saldo e mês/ano selecionado para exibição
+        das movimentações */
     private double saldoUsuario = 0.0;
     private String mesAnoSelecionado;
-
-    private SpeedDialView speedDialView;
-    private MaterialToolbar toolbar;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -133,17 +136,30 @@ public class PrincipalActivity extends AppCompatActivity {
                         .create()
         );
 
+        // Configura listener para os botões do SpeedDial
         speedDialView.setOnActionSelectedListener(actionItem -> {
+            // Verifica qual botão foi clicado
             int id = actionItem.getId();
+
+            // Abre a activity correspondente de acordo com o botão clicado
             if (id == R.id.fab_despesa) {
+                // Abre a activity de Despesas
                 startActivity(new Intent(PrincipalActivity.this, DespesasActivity.class));
+
+                // E fecha o SpeedDial para quando voltar a PrincipalActivity
                 speedDialView.close();
                 return true;
+
             } else if (id == R.id.fab_receita) {
+                // Abre a activity de Despesas
                 startActivity(new Intent(PrincipalActivity.this, ReceitasActivity.class));
+
+                // E fecha o SpeedDial para quando voltar a PrincipalActivity
                 speedDialView.close();
                 return true;
             }
+
+            // Se for selecionado um botão inválido, apenas fecha o SpeedDial
             return false;
         });
 
@@ -151,8 +167,10 @@ public class PrincipalActivity extends AppCompatActivity {
         Collections.sort(movimentacoes, new Comparator<Movimentacao>() {
             @Override
             public int compare(Movimentacao m1, Movimentacao m2) {
+                // Transforma os valores em absoluto, ignorando o sinal (positivo ou negativo)
                 double valor1 = Math.abs(m1.getValor());
                 double valor2 = Math.abs(m2.getValor());
+
                 // ordem decrescente
                 return Double.compare(valor2, valor1);
             }
@@ -227,14 +245,19 @@ public class PrincipalActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
+        // Remove os listeners para evitar vazamento de memória
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
+
+            // Pega o id do usuário logado atualmente
             String idUsuario = auth.getCurrentUser().getUid();
 
+            // Remove listener de movimentações
             if (usuarioRef != null && valueEventListenerUsuario != null) {
                 usuarioRef.removeEventListener(valueEventListenerUsuario);
             }
         } else {
+            // Se o usuário não está logado, não há listeners para remover
             Log.w("PrincipalActivity", "onStop: usuário não está logado, listener não será removido.");
         }
     }
@@ -297,6 +320,7 @@ public class PrincipalActivity extends AppCompatActivity {
 
             });
         } catch (Exception e) {
+            // Apresenta erro inesperado no Log
             Log.e("FIREBASE", "Erro inesperado ao configurar listener de usuário", e);
         }
     }
@@ -552,8 +576,10 @@ public class PrincipalActivity extends AppCompatActivity {
         if(saldo < 0){
             saldo *= -1; // Inverte o sinal pois ele será adicionado antes do R$
             textSaldo.setText("- R$ " + df.format(saldo));
+
         } else{
             textSaldo.setText("R$ " + df.format(saldo));
+
         }
 
         // Formata total de despesas e receitas
@@ -564,51 +590,65 @@ public class PrincipalActivity extends AppCompatActivity {
     // Método que exibe o alertDialog para editar ou excluir uma movimentação
     @SuppressLint("ResourceAsColor")
     public void exibirDialogEditarOuExcluir(Movimentacao movimentacao, int position) {
+        // Cria o builder do AlertDialog com tema personalizado
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
                 new ContextThemeWrapper(this, R.style.RoundedAlertDialogTheme)
         );
         builder.setTitle("Editar movimentação");
 
-        // container vertical
+        // Cria um container LinearLayout para os campos
         LinearLayout container = new LinearLayout(this);
         container.setOrientation(LinearLayout.VERTICAL);
         int marginDp = 16;
         int marginPx = dpToPx(marginDp, this);
         container.setPadding(marginPx, marginPx / 2, marginPx, marginPx / 2);
 
-        // cria campos com o helper (nota: passamos 'this' como Context)
+        // Cria os EditTexts para os campos como Título, Categoria, Valor e Data
         EditText inputTitulo = criarEditText(this, "Título", InputType.TYPE_CLASS_TEXT, movimentacao.getTitulo(), marginDp);
         EditText inputCategoria = criarEditText(this, "Categoria", InputType.TYPE_CLASS_TEXT, movimentacao.getCategoria(), marginDp);
         EditText inputValor = criarEditText(this, "Valor (R$)", InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL,
                 String.valueOf(movimentacao.getValor()), marginDp);
         EditText inputData = criarEditText(this, "Data (dd/MM/yyyy)", InputType.TYPE_CLASS_DATETIME, movimentacao.getData(), marginDp);
 
+        // Adiciona os EditTexts ao container
         container.addView(inputTitulo);
         container.addView(inputCategoria);
         container.addView(inputValor);
         container.addView(inputData);
 
+        // Define o container como a view do AlertDialog
         builder.setView(container);
 
-        // SALVAR
+        // Configura o botão positivo para SALVAR
         builder.setPositiveButton("SALVAR", (dialog, which) -> {
+
+            // Recupera os valores dos campos em forma de String e sem espaços
             String novoTitulo = inputTitulo.getText().toString().trim();
             String novaCategoria = inputCategoria.getText().toString().trim();
             String valorStr = inputValor.getText().toString().trim();
             String novaData = inputData.getText().toString().trim();
 
+            // Valida os campos
             if (novoTitulo.isEmpty() || novaCategoria.isEmpty() || valorStr.isEmpty() || novaData.isEmpty()) {
                 Snackbar.make(findViewById(android.R.id.content),
-                        "Preencha todos os campos!", Snackbar.LENGTH_LONG).show();
+                        "Preencha todos os campos!",
+                        Snackbar.LENGTH_LONG).show();
                 return;
             }
 
+            // Valida o valor
             double novoValor;
+
+            // Tenta converter o valor para double, substituindo vírgulas por pontos
             try {
                 novoValor = Double.parseDouble(valorStr.replace(",", "."));
+
             } catch (NumberFormatException e) {
+
+                // Se der algum erro na conversão mostra na snackBar o usuário
                 Snackbar.make(findViewById(android.R.id.content),
-                        "Valor inválido!", Snackbar.LENGTH_LONG).show();
+                        "Valor inválido!",
+                        Snackbar.LENGTH_LONG).show();
                 return;
             }
 
@@ -618,13 +658,17 @@ public class PrincipalActivity extends AppCompatActivity {
             movimentacao.setValor(novoValor);
             movimentacao.setData(novaData);
 
-            // atualiza no firebase (usa uid e mes-ano)
+            // Tenta atualizar os dados no Firebase
             try {
+                // Formata a data para obter o mês e ano
                 SimpleDateFormat sdfEntrada = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                 SimpleDateFormat sdfMesAno = new SimpleDateFormat("MM-yyyy", Locale.getDefault());
+
+                // Converte a nova data para Date
                 Date dataObj = sdfEntrada.parse(novaData);
                 String mesAno = sdfMesAno.format(dataObj);
 
+                // Recupera o UID do usuário logado
                 String uid = autenticacao.getCurrentUser().getUid(); // usa sua variável já instanciada
                 DatabaseReference ref = databaseReference
                         .child("movimentacoes")
@@ -632,39 +676,61 @@ public class PrincipalActivity extends AppCompatActivity {
                         .child(mesAno)
                         .child(movimentacao.getId());
 
+                // Atualiza os dados no Firebase
                 ref.setValue(movimentacao).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+
+                        // caso a task dê certo, mostra mensagem de sucesso por meio da snackBar
                         Snackbar.make(findViewById(android.R.id.content),
-                                "Movimentação atualizada com sucesso!", Snackbar.LENGTH_LONG).show();
+                                "Movimentação atualizada com sucesso!",
+                                Snackbar.LENGTH_LONG).show();
+
                         // Notifica adapter — ajuste para o seu adapter real se necessário
                         if (recyclerMovimentos != null && recyclerMovimentos.getAdapter() != null) {
                             recyclerMovimentos.getAdapter().notifyItemChanged(position);
                         }
+
                     } else {
+
+                        /* Se der algum erro na hora de atualizar os dados mostra na snackBar
+                            para o usuário */
                         Snackbar.make(findViewById(android.R.id.content),
-                                "Erro ao atualizar movimentação!", Snackbar.LENGTH_LONG).show();
+                                "Erro ao atualizar movimentação!",
+                                Snackbar.LENGTH_LONG).show();
                     }
                 });
 
             } catch (Exception e) {
                 e.printStackTrace();
+
+                /* Se der algum erro na hora de recuperar os dados para depois alterar mostra
+                     na snackBarpara o usuário */
                 Snackbar.make(findViewById(android.R.id.content),
-                        "Erro ao processar a data. Use dd/MM/yyyy", Snackbar.LENGTH_LONG).show();
+                        "Erro ao processar a data. Use dd/MM/yyyy",
+                        Snackbar.LENGTH_LONG).show();
             }
         });
 
-        // EXCLUIR com confirmação
+        // Configura o botão negativo para EXCLUIR, mas com confirmação
         builder.setNeutralButton("EXCLUIR", (dialog, which) -> {
+
+            // Cria um outro alertDialog para confirmação da exclusão
             new MaterialAlertDialogBuilder(this)
                     .setTitle("Confirmar exclusão")
                     .setMessage("Deseja realmente excluir esta movimentação?")
                     .setPositiveButton("SIM", (d, w) -> {
+
+                        // No botão positivo tenta excluir a movimentação
                         try {
+                            // Formata a data para obter o mês e ano
                             SimpleDateFormat sdfEntrada = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                             SimpleDateFormat sdfMesAno = new SimpleDateFormat("MM-yyyy", Locale.getDefault());
+
+                            // Converte a data para Date
                             Date dataObj = sdfEntrada.parse(movimentacao.getData());
                             String mesAno = sdfMesAno.format(dataObj);
 
+                            // Recupera o UID do usuário logado
                             String uid = autenticacao.getCurrentUser().getUid();
                             DatabaseReference ref = databaseReference
                                     .child("movimentacoes")
@@ -672,72 +738,53 @@ public class PrincipalActivity extends AppCompatActivity {
                                     .child(mesAno)
                                     .child(movimentacao.getId());
 
+                            // Remove o valor do Firebase
                             ref.removeValue().addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
+
+                                    // Se der certo, mostra mensagem de sucesso por meio da snackBar
                                     Snackbar.make(findViewById(android.R.id.content),
-                                            "Movimentação excluída com sucesso!", Snackbar.LENGTH_LONG).show();
+                                            "Movimentação excluída com sucesso!",
+                                            Snackbar.LENGTH_LONG).show();
+
                                     // Atualiza lista local e adapter
                                     if (movimentacoes != null) {
                                         movimentacoes.remove(position);
                                     }
+
+                                    // Notifica o adapter sobre a remoção
                                     if (recyclerMovimentos != null && recyclerMovimentos.getAdapter() != null) {
                                         recyclerMovimentos.getAdapter().notifyItemRemoved(position);
                                     }
                                 } else {
+
+                                    /* Se der algum erro na hora de excluir a movimentação, mostra
+                                        a mensagem por meio da snackBar */
                                     Snackbar.make(findViewById(android.R.id.content),
-                                            "Erro ao excluir movimentação!", Snackbar.LENGTH_LONG).show();
+                                            "Erro ao excluir movimentação!",
+                                            Snackbar.LENGTH_LONG).show();
                                 }
                             });
 
                         } catch (Exception e) {
                             e.printStackTrace();
+
+                            /* Se der algum erro na hora de recuperar a movimentação para depois
+                                excluir, mostra a mensagem por meio da snackBar */
                             Snackbar.make(findViewById(android.R.id.content),
-                                    "Erro ao excluir: data inválida.", Snackbar.LENGTH_LONG).show();
+                                    "Erro ao excluir: data inválida.",
+                                    Snackbar.LENGTH_LONG).show();
                         }
-                    })
+                    }) // Configura botão negativo da confirmação para CANCELAR a operação
                     .setNegativeButton("CANCELAR", null)
                     .show();
         });
 
-        // CANCELAR
+        // Configura botão negativo para CANCELAR a operação
         builder.setNegativeButton("CANCELAR", (dialog, which) -> dialog.dismiss());
 
+        // Exibe o AlertDialog
         builder.show();
-    }
-
-    @SuppressLint("UseCompatLoadingForDrawables")
-    private EditText criarEditText(Context ctx, String hint, int inputType, String valorInicial, int marginDp) {
-        EditText edit = new EditText(ctx);
-        edit.setHint(hint);
-        edit.setInputType(inputType);
-        if (valorInicial != null) edit.setText(valorInicial);
-        // padding internal
-        edit.setPadding(dpToPx(16, ctx), dpToPx(12, ctx), dpToPx(16, ctx), dpToPx(12, ctx));
-
-        // cria borda arredondada igual ao seu estilo
-        GradientDrawable border = new GradientDrawable();
-        border.setCornerRadius(dpToPx(8, ctx));
-        border.setStroke(dpToPx(1, ctx), ContextCompat.getColor(ctx, R.color.textGray));
-        border.setColor(ContextCompat.getColor(ctx, R.color.colorBackgroundDialog));
-        edit.setBackground(border);
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        params.setMargins(0, dpToPx(marginDp / 2, ctx), 0, dpToPx(marginDp / 2, ctx));
-        edit.setLayoutParams(params);
-
-        // opcional: texto e hint color
-        edit.setHintTextColor(ContextCompat.getColor(ctx, R.color.textGray));
-        edit.setTextColor(ContextCompat.getColor(ctx, R.color.textPrimary));
-
-        return edit;
-    }
-
-    // utilitário para converter dp -> px
-    private int dpToPx(int dp, Context ctx) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, ctx.getResources().getDisplayMetrics());
     }
 
     // Método que altera a cor do cabeçalho do saldo conforme o valor do saldo
@@ -760,6 +807,49 @@ public class PrincipalActivity extends AppCompatActivity {
         // Altera cor da status bar conforme saldo
         Window window = getWindow();
         window.setStatusBarColor(cor);
+    }
+
+    // Método auxiliar para criar EditTexts personalizados
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private EditText criarEditText(Context ctx, String hint, int inputType, String valorInicial, int marginDp) {
+
+        // Cria o EditText e define propriedades básicas (hint e inputType)
+        EditText edit = new EditText(ctx);
+        edit.setHint(hint);
+        edit.setInputType(inputType);
+
+        // Define valor inicial se fornecido
+        if (valorInicial != null) edit.setText(valorInicial);
+
+        // Define padding interno
+        edit.setPadding(dpToPx(16, ctx), dpToPx(12, ctx), dpToPx(16, ctx), dpToPx(12, ctx));
+
+        // Cria borda arredondada igual ao seu estilo
+        GradientDrawable border = new GradientDrawable();
+        border.setCornerRadius(dpToPx(8, ctx));
+        border.setStroke(dpToPx(1, ctx), ContextCompat.getColor(ctx, R.color.textGray));
+        border.setColor(ContextCompat.getColor(ctx, R.color.colorBackgroundDialog));
+        edit.setBackground(border);
+
+        // Define layout params com margens
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(0, dpToPx(marginDp / 2, ctx), 0, dpToPx(marginDp / 2, ctx));
+        edit.setLayoutParams(params);
+
+        // Define cor do texto e hint
+        edit.setHintTextColor(ContextCompat.getColor(ctx, R.color.textGray));
+        edit.setTextColor(ContextCompat.getColor(ctx, R.color.textPrimary));
+
+        // Retorna o EditText personalizado
+        return edit;
+    }
+
+    // Método auxiliar para converter dp em pixels
+    private int dpToPx(int dp, Context ctx) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, ctx.getResources().getDisplayMetrics());
     }
 
     /* Menu Toolbar */

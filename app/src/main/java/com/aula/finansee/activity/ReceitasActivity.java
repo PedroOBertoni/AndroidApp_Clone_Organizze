@@ -78,14 +78,18 @@ public class ReceitasActivity extends AppCompatActivity {
         corTextoInativo = ContextCompat.getColor(this, R.color.textPrimary);
         corTextoAtivo = ContextCompat.getColor(this, R.color.colorAccentReceita);
 
-        // Vincula os elementos do layout
+        /* Recuperando componentes da interface pelo ID */
+
+        // EditText
         editTextTitulo = findViewById(R.id.editTextTituloReceita);
         editTextDescricao = findViewById(R.id.editTextDescricaoReceita);
         editTextCategoria = findViewById(R.id.editTextCategoriaReceita);
         editTextData = findViewById(R.id.editTextDataReceita);
+        editTextValor = findViewById(R.id.editTextValorReceita);
+
+        // Floating Action Buttons
         fabCalendario = findViewById(R.id.fabCalendarioReceita);
         fabConfirmar = findViewById(R.id.floatingActionButtonConfirmarReceita);
-        editTextValor = findViewById(R.id.editTextValorReceita);
 
         // Modos Fixo e Parcelado
         buttonFixo = findViewById(R.id.buttonFixoReceita);

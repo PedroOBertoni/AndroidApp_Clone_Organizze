@@ -38,6 +38,9 @@ public class RedefinirSenhaActivity extends AppCompatActivity {
     private EditText editNovaSenha, editConfirmarSenha;
     private Button buttonSalvarSenha;
 
+    // objeto para autenticação do Firebase
+    private FirebaseAuth autenticacao;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +50,6 @@ public class RedefinirSenhaActivity extends AppCompatActivity {
         /* Recuperando componentes da interface pelo ID */
 
         // Elementos do layout Força de Senha (progressBar e texto que mudam conforme a senha é digitada)
-        editNovaSenha = findViewById(R.id.editNovaSenha);
         progressBar = findViewById(R.id.progressBarForcaSenha);
         textForca = findViewById(R.id.textForcaSenha);
 
@@ -61,14 +63,16 @@ public class RedefinirSenhaActivity extends AppCompatActivity {
         inputConfirmarSenha = findViewById(R.id.inputConfirmarSenha);
 
         // EditText
-        editNovaSenha = inputSenha.getEditText();
-        editConfirmarSenha = inputConfirmarSenha.getEditText();
+        editNovaSenha = findViewById(R.id.editNovaSenha);
+        editConfirmarSenha = findViewById(R.id.editConfirmarSenha);
 
         // Button
         buttonSalvarSenha = findViewById(R.id.buttonSalvarSenha);
 
         // Recupera o email passado pela intent
         String email = getIntent().getStringExtra("email");
+
+        /* textChangedListener */
 
         /* Aplica a mudança de cor, texto ao lado e progresso da LinearProgressIndicator conforme
             o usuário digita */
@@ -78,47 +82,55 @@ public class RedefinirSenhaActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Captura a senha digitada
                 String senha = s.toString();
+
+                // Calcula o score com base força da senha (quantos requisitos da senha foram atendidos)
                 int score = calcularForcaSenha(senha);
 
+                /* Instancia variáveis para progresso, texto e cor que serão definidos com base na
+                    força da senha */
                 int progress;
                 String texto;
                 int corResId;
 
-                if (score < 1) {
+                // Verifica o score e aplica os valores para as variaveis de acordo com o score
+                if (score < 1) { // Se não foi digitado nada o texto permanece cinza e vazio
                     progress = 0;
                     texto = "";
                     corResId = R.color.textGray;
 
-                } else if (score == 1) {
-                    progress = 10;
+                } else if (score == 1) { // Se tiver 1 de score (1 requisito atendido)
+                    progress = 10; // Preenche 10% da progressBar, texto "Muito Fraca" e cor vermelho
                     texto = "Muito Fraca";
                     corResId = R.color.error;
 
-                } else if (score == 2) {
-                    progress = 30;
+                } else if (score == 2) { // Se tiver 2 de score (2 requisitos atendidos)
+                    progress = 30; // Preenche 30% da progressBar, texto "Fraca" e cor vermelho
                     texto = "Fraca";
                     corResId = R.color.error;
 
-                } else if (score == 3) {
-                    progress = 50;
+                } else if (score == 3) { // Se tiver 3 de score (3 requisitos atendidos)
+                    progress = 50; // Preenche 50% da progressBar, texto "Médio" e cor amarelo alaranjado
                     texto = "Médio";
                     corResId = R.color.warning;
 
-                } else if (score == 4) {
-                    progress = 80;
+                } else if (score == 4) { // Se tiver 4 de score (4 requisitos atendidos)
+                    progress = 80; // Preenche 80% da progressBar, texto "Forte" e cor verde claro
                     texto = "Forte";
                     corResId = R.color.colorAccentReceita;
 
-                } else {
-                    progress = 100;
+                } else { // Se tiver mais de 4 de score (5 (todos) requisitos atendido)
+                    progress = 100; // Preenche 100% da progressBar, texto "Muito forte" e cor verde escuro
                     texto = "Muito forte";
                     corResId = R.color.colorPrimaryDarkReceita;
                 }
 
-                // Atualiza com animação suave
+                // Atualiza a progressBar com animação suave
                 progressBar.setProgress(progress, true);
                 progressBar.setIndicatorColor(ContextCompat.getColor(RedefinirSenhaActivity.this, corResId));
+
+                // E tambem o texto ao lado dela
                 textForca.setText(texto);
                 textForca.setTextColor(ContextCompat.getColor(RedefinirSenhaActivity.this, corResId));
             }
@@ -144,79 +156,28 @@ public class RedefinirSenhaActivity extends AppCompatActivity {
             String confirmarSenha = editConfirmarSenha.getText().toString().trim();
 
             // Validação
-            if (novaSenha.isEmpty()) {
-                Snackbar.make(findViewById(android.R.id.content),
-                        "Preencha a senha!", Snackbar.LENGTH_LONG).show();
-                return;
+            if (validarCampos()) {
+                // Redefinir senha via Firebase
+                FirebaseAuth autenticacao = FirebaseAuth.getInstance();
+                autenticacao.sendPasswordResetEmail(email)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                // Se der certo a task, apresenta mensagem de sucesso por meio da snackBar
+                                Snackbar.make(findViewById(android.R.id.content),
+                                        "Senha redefinida! Verifique seu email.",
+                                        Snackbar.LENGTH_LONG).show();
+
+                                // E depois finaliza a activity
+                                finish();
+
+                            } else {
+                                // Se der errado a task, apresenta mensagem de erro por meio da snackBar
+                                Snackbar.make(findViewById(android.R.id.content),
+                                        "Não foi possível redefinir a senha.",
+                                        Snackbar.LENGTH_LONG).show();
+                            }
+                        });
             }
-
-            /*
-            if (novaSenha.isEmpty()) {
-                // Validação de campo de senha vazio
-                excecao = "Preencha a senha!";
-                inputSenha.setError(excecao);
-
-                // Mostra erro geral com Snackbar
-                Snackbar.make(findViewById(android.R.id.content),
-                        excecao,
-                        Snackbar.LENGTH_LONG).show();
-
-                // e define válido como falso
-                valido = false;
-
-            } else {
-                // Validação de senha com critérios de segurança mais fortes
-                // Regex exige:
-                // - Pelo menos 1 letra minúscula
-                // - Pelo menos 1 letra maiúscula
-                // - Pelo menos 1 número
-                // - Pelo menos 1 caractere especial
-                // - Mínimo de 8 caracteres
-                String regexSenhaForte = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$";
-
-                if (!senha.matches(regexSenhaForte)) {
-                    excecao = "A senha deve conter ao menos:\n" +
-                            "- Uma letra maiúscula\n" +
-                            "- Uma letra minúscula\n" +
-                            "- Um número\n" +
-                            "- Um símbolo (@, $, !, %, *, ?, &)";
-                    layoutSenha.setError(excecao);
-
-                    // Mostra erro geral com Snackbar
-                    Snackbar.make(findViewById(android.R.id.content),
-                            excecao,
-                            Snackbar.LENGTH_LONG).show();
-
-                    // Define como inválido
-                    valido = false;
-                }
-            } */
-
-            if (confirmarSenha.isEmpty()) {
-                Snackbar.make(findViewById(android.R.id.content),
-                        "Confirme a senha!", Snackbar.LENGTH_LONG).show();
-                return;
-            }
-
-            if (!novaSenha.equals(confirmarSenha)) {
-                Snackbar.make(findViewById(android.R.id.content),
-                        "As senhas não conferem", Snackbar.LENGTH_LONG).show();
-                return;
-            }
-
-            // Redefinir senha via Firebase
-            FirebaseAuth autenticacao = FirebaseAuth.getInstance();
-            autenticacao.sendPasswordResetEmail(email)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Snackbar.make(findViewById(android.R.id.content),
-                                    "Senha redefinida! Verifique seu email.", Snackbar.LENGTH_LONG).show();
-                            finish();
-                        } else {
-                            Snackbar.make(findViewById(android.R.id.content),
-                                    "Não foi possível redefinir a senha.", Snackbar.LENGTH_LONG).show();
-                        }
-                    });
         });
     }
 
@@ -252,4 +213,60 @@ public class RedefinirSenhaActivity extends AppCompatActivity {
         }
         requisitosExpanded = !requisitosExpanded;
     }
+
+    private boolean validarCampos() {
+        boolean valido = true;
+        String excecao = null;
+
+        String novaSenha = editNovaSenha.getText().toString().trim();
+        String confirmarSenha = editConfirmarSenha.getText().toString().trim();
+
+        // Validação campo vazio
+        if (novaSenha.isEmpty()) {
+            excecao = "Preencha a senha!";
+            inputSenha.setError(excecao);
+            Snackbar.make(findViewById(android.R.id.content),
+                    excecao,
+                    Snackbar.LENGTH_LONG).show();
+            valido = false;
+        }
+
+        // Regex de senha forte
+        String regexSenhaForte = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#.])[A-Za-z\\d@$!%*?&#.]{8,}$";
+
+        if (!novaSenha.matches(regexSenhaForte)) {
+            excecao = "A senha deve conter ao menos:\n" +
+                    "- Uma letra maiúscula\n" +
+                    "- Uma letra minúscula\n" +
+                    "- Um número\n" +
+                    "- Um símbolo (@, $, !, %, *, ?, &, # ou .)\n" +
+                    "- Mínimo de 8 caracteres";
+            inputSenha.setError(excecao);
+
+            Snackbar.make(findViewById(android.R.id.content),
+                    excecao,
+                    Snackbar.LENGTH_LONG).show();
+
+            valido = false;
+        }
+
+        // Confirmação de senha
+        if (confirmarSenha.isEmpty()) {
+            Snackbar.make(findViewById(android.R.id.content),
+                    "Confirme a senha!", Snackbar.LENGTH_LONG).show();
+
+            valido = false;
+        }
+
+        if (!novaSenha.equals(confirmarSenha)) {
+            Snackbar.make(findViewById(android.R.id.content),
+                    "As senhas não conferem",
+                    Snackbar.LENGTH_LONG).show();
+
+            valido = false;
+        }
+
+        return valido;
+    }
+
 }

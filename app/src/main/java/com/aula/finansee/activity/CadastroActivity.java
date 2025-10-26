@@ -40,14 +40,14 @@ public class CadastroActivity extends AppCompatActivity {
     View headerRequisitosContainer;
     boolean requisitosExpanded = false;
 
-    // Objeto para autenticação do Firebase
-    private FirebaseAuth autenticacao;
-    private Usuario usuario;
-
     // Componentes da interface
     private EditText editNome, editEmail, editSenha;
     private TextInputLayout inputNome, inputEmail, inputSenha;
     private Button buttonCadastra;
+
+    // Objeto para autenticação do Firebase
+    private FirebaseAuth autenticacao;
+    private Usuario usuario;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -161,14 +161,17 @@ public class CadastroActivity extends AppCompatActivity {
         });
 
         /* Redirecionamento para outras páginas */
+
         TextView linkTermosDeUso = findViewById(R.id.linkTermosDeUso);
         TextView linkLogin = findViewById(R.id.linkLogin);
 
+        // Redireciona para a tela de Termos de Uso
         linkTermosDeUso.setOnClickListener(v -> {
             Intent intent = new Intent(CadastroActivity.this, TermosDeUsoActivity.class);
             startActivity(intent);
         });
 
+        // Redireciona para a tela de Login
         linkLogin.setOnClickListener(v -> {
             Intent intent = new Intent(CadastroActivity.this, LoginActivity.class);
             startActivity(intent);

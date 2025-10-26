@@ -43,16 +43,17 @@ import java.util.Random;
 
 public class LoginActivity extends AppCompatActivity {
 
-    // componentes da interface
+    // Componentes da interface
     private TextView resetaSenha;
     private EditText campoEmail, campoSenha;
     private TextInputLayout layoutEmail, layoutSenha;
     private Button buttonEntra;
 
-    // objeto para autenticação do Firebase
+    // Objeto para autenticação do Firebase
     private FirebaseAuth autenticacao;
 
-    // codigo para a redefinição de senha
+    // Código para a redefinição de senha
+    private final int minutosExpiracao = 3; // código expira em 3 minutos
     private String codigoAtual = "";
     private long codigoExpiracaoMillis = 0L; // timestamp em milissegundos
     private static final long RELOAD_COOLDOWN_MS = 30_000L; // 30 segundos de cooldown para reenviar
@@ -66,7 +67,8 @@ public class LoginActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
-        // Recupera os componentes da interface pelo ID
+        /* Recupera os componentes da interface pelo ID */
+
         // TextView
         resetaSenha = findViewById(R.id.resetaSenha);
 
@@ -80,6 +82,8 @@ public class LoginActivity extends AppCompatActivity {
 
         // Button
         buttonEntra = findViewById(R.id.buttonEntra);
+
+        /* onClickListenners */
 
         // Listener do botão de login
         buttonEntra.setOnClickListener(v -> {
@@ -97,14 +101,17 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         /* Redirecionamento para outras páginas */
+
         TextView linkTermosDeUso = findViewById(R.id.linkTermosDeUso);
         TextView linkCadastro = findViewById(R.id.linkCadastro);
 
+        // Redireciona para a tela de Termos de Uso
         linkTermosDeUso.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, TermosDeUsoActivity.class);
             startActivity(intent);
         });
 
+        // Redireciona para a tela de Cadastro
         linkCadastro.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, CadastroActivity.class);
             startActivity(intent);
@@ -187,7 +194,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
 
                 if (task.isSuccessful()) {
-
                     // Login bem-sucedido: redireciona para a tela principal
                     abrirTelaPrincipal();
 
@@ -263,18 +269,17 @@ public class LoginActivity extends AppCompatActivity {
 
             if (email.isEmpty()) {
                 Snackbar.make(findViewById(android.R.id.content),
-                        "Informe o email!", Snackbar.LENGTH_LONG).show();
+                        "Informe o email!",
+                        Snackbar.LENGTH_LONG).show();
                 return;
             }
 
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 Snackbar.make(findViewById(android.R.id.content),
-                        "Digite um e-mail válido!", Snackbar.LENGTH_LONG).show();
+                        "Digite um e-mail válido!",
+                        Snackbar.LENGTH_LONG).show();
                 return;
             }
-
-            // É possível definir aqui a quantidade de minutos antes de expirar o código de redefinição
-            int minutosExpiracao = 3;
 
             // gera e marca expiração + atualiza last-send
             gerarENotarCodigoComExpiracao(minutosExpiracao);
@@ -300,7 +305,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        /* Se snapshot.exists() == true, pelo menos um usuário com esse email foi
+                        /* Se snapshot.exists() for true, pelo menos um usuário com esse email foi
                             encontrado e então será enviado o email */
                         if (snapshot.exists()) {
                             new Thread(() -> {
@@ -327,12 +332,14 @@ public class LoginActivity extends AppCompatActivity {
                                         Snackbar.make(findViewById(android.R.id.content),
                                                 "Email enviado com sucesso!",
                                                 Snackbar.LENGTH_LONG).show();
+
                                         exibirDialogCodigo(email); // abre diálogo para digitar código
                                     });
 
                                 } catch (Exception e) {
                                     // Em caso de erro no envio, mostra snackbar com mensagem de falha
                                     e.printStackTrace();
+
                                     runOnUiThread(() -> Snackbar.make(findViewById(android.R.id.content),
                                             "Falha ao enviar o email!", Snackbar.LENGTH_LONG).show());
                                 }
@@ -341,38 +348,48 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             // Erro para caso não encontre nenhum usuário com esse email no nó "usuarios"
                             Snackbar.make(findViewById(android.R.id.content),
-                                    "Nenhuma conta encontrada com esse e-mail!", Snackbar.LENGTH_LONG).show();
+                                    "Nenhuma conta encontrada com esse e-mail!",
+                                    Snackbar.LENGTH_LONG).show();
                         }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        // Erro ao acessar o banco (permissões, rede, etc.)
+                        // Para caso ocorra erro ao acessar o Firebase database
                         String msg = "Erro ao verificar e-mail: " + error.getMessage();
+
+                        // Apresenta o erro no log
                         Log.e("RecuperacaoSenha", msg);
+
+                        // E em uma snackBar para o usuário
                         Snackbar.make(findViewById(android.R.id.content),
-                                "Erro ao verificar o e-mail. Tente novamente.", Snackbar.LENGTH_LONG).show();
+                                "Erro ao verificar o e-mail. Tente novamente.",
+                                Snackbar.LENGTH_LONG).show();
                     }
                 });
     }
 
     private void exibirDialogCodigo(final String email) {
+        // Diálogo para o usuário digitar o código recebido por e-mail
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
                 new ContextThemeWrapper(this, R.style.RoundedAlertDialogTheme)
         );
         builder.setTitle("Digite o código enviado ao seu e-mail");
 
+        // Instanciando um EditText simples, com inputType numérico e hint
         EditText inputCodigo = new EditText(this);
         inputCodigo.setHint("Código de 6 dígitos");
         inputCodigo.setInputType(InputType.TYPE_CLASS_NUMBER);
         inputCodigo.setPadding(32, 24, 32, 24);
 
+        // Cria e aplica borda arredondada personalizada ao EditText
         GradientDrawable border = new GradientDrawable();
         border.setCornerRadius(16);
         border.setStroke(2, ContextCompat.getColor(this, R.color.textGray));
         border.setColor(ContextCompat.getColor(this, R.color.colorBackgroundDialog));
         inputCodigo.setBackground(border);
 
+        // adiciona padding lateral ao container
         LinearLayout container = new LinearLayout(this);
         container.setOrientation(LinearLayout.VERTICAL);
         int margin = (int) TypedValue.applyDimension(
@@ -381,52 +398,72 @@ public class LoginActivity extends AppCompatActivity {
         container.setPadding(margin, 0, margin, 0);
         container.addView(inputCodigo);
 
+        // configura o view do  alertDialog
         builder.setView(container);
 
+        // configura o botão positivo do alertDialog
         builder.setPositiveButton("CONFIRMAR", (dialog, which) -> {
             String codigoDigitado = inputCodigo.getText().toString().trim();
 
-            // checa expiração
+            // verifica se o código foi expirado
             if (System.currentTimeMillis() > codigoExpiracaoMillis) {
+
+                // Caso esteja expirado é informado ao usuário por uma snackBar
                 Snackbar.make(findViewById(android.R.id.content),
                         "Código expirado. Solicite um novo.", Snackbar.LENGTH_LONG).show();
                 return;
             }
 
+            // verifica se o código digitado está correto
             if (isCodigoValido(codigoDigitado)) {
-                // Código correto → abre activity para redefinir senha
+
+                // Se o código estiver correto are a activity RedefinirSenhaActivity
                 Intent intent = new Intent(this, RedefinirSenhaActivity.class);
                 intent.putExtra("email", email);
                 startActivity(intent);
+
             } else {
+                // Caso esteja incorreto é informado ao usuário por uma snackBar
                 Snackbar.make(findViewById(android.R.id.content),
-                        "Código incorreto!", Snackbar.LENGTH_LONG).show();
+                        "Código incorreto!",
+                        Snackbar.LENGTH_LONG).show();
             }
         });
 
+        // configura o botão negativo do alertDialog
         builder.setNegativeButton("CANCELAR", (dialog, which) -> dialog.dismiss());
 
         // Reenviar código com cooldown
         builder.setNeutralButton("REENVIAR CÓDIGO", (dialog, which) -> {
+
+            // Verifica cooldown de reenvio
             long now = System.currentTimeMillis();
+
+            // se ainda estiver no cooldown, avisa o usuário e retorna
             if (now - ultimoEnvioMillis < RELOAD_COOLDOWN_MS) {
+
+                // avisa o usuário do tempo restante
                 long waitSec = (RELOAD_COOLDOWN_MS - (now - ultimoEnvioMillis)) / 1000;
+
+                // mostra snackbar com tempo restante
                 Snackbar.make(findViewById(android.R.id.content),
                         "Aguarde " + waitSec + "s antes de reenviar.", Snackbar.LENGTH_LONG).show();
                 return;
             }
 
             // gera novo código e atualiza expiração (mesmo tempo que foi usado no envio inicial)
-            int minutosExpiracao = 3; // mantenha mesmo valor usado antes (ou armazene a preferência)
+            int minutosExpiracao = 3; // matenm o mesmo valor usado antes
             gerarENotarCodigoComExpiracao(minutosExpiracao);
 
             // envia novamente
             enviarEmailRedefinicaoPersonalizado(email, codigoAtual);
 
+            // avisa o usuário que o código foi reenviado
             Snackbar.make(findViewById(android.R.id.content),
                     "Código reenviado.", Snackbar.LENGTH_LONG).show();
         });
 
+        // mostra o alertDialog
         builder.show();
     }
 

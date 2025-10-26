@@ -78,14 +78,18 @@ public class DespesasActivity extends AppCompatActivity {
         corTextoInativo = ContextCompat.getColor(this, R.color.textPrimary);
         corTextoAtivo = ContextCompat.getColor(this, R.color.colorAccentDespesa);
 
-        // Vincula os elementos do layout
+        /* Recuperando componentes da interface pelo ID */
+
+        // EditText
         editTextTitulo = findViewById(R.id.editTextTituloDespesa);
         editTextDescricao = findViewById(R.id.editTextDescricaoDespesa);
         editTextCategoria = findViewById(R.id.editTextCategoriaDespesa);
         editTextData = findViewById(R.id.editTextDataDespesa);
+        editTextValor = findViewById(R.id.editTextValorDespesa);
+
+        // Floating Action Buttons
         fabCalendario = findViewById(R.id.fabCalendarioDespesa);
         fabConfirmar = findViewById(R.id.floatingActionButtonConfirmarDespesa);
-        editTextValor = findViewById(R.id.editTextValorDespesa);
 
         // Modos Fixo e Parcelado
         buttonFixo = findViewById(R.id.buttonFixoDespesa);
