@@ -3,21 +3,27 @@ package com.aula.finansee.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.aula.finansee.R;
 import com.aula.finansee.config.ConfigFirebase;
 import com.aula.finansee.model.Usuario;
 import com.aula.finansee.utils.FirebaseErrorHandler;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
@@ -30,6 +36,11 @@ public class CadastroActivity extends AppCompatActivity {
     private EditText campoNome, campoEmail, campoSenha;
     private TextInputLayout layoutNome, layoutEmail, layoutSenha;
     private Button buttonCadastra;
+
+    // componentes da interface do ForcaSenha (progressBar e texto que exibem a força da senha)
+    private TextInputEditText editSenha;
+    private LinearProgressIndicator progressBar;
+    private TextView textForca;
 
     // componentes da interface do RequisitosContainer
     LinearLayout layoutRequisitosSenha;
@@ -49,7 +60,13 @@ public class CadastroActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cadastro);
 
         // Recuperar componentes da interface pelo ID
-        // Elementos do RequisitosContainer
+
+        // Elementos do layout Força de Senha (progressBar e texto que mudam conforme a senha é digitada)
+        editSenha = findViewById(R.id.editSenhaCadastro);
+        progressBar = findViewById(R.id.progressBarForcaSenha);
+        textForca = findViewById(R.id.textForcaSenha);
+
+        // Elementos do RequisitosContainer (lista de requisitos para a senha)
         layoutRequisitosSenha = findViewById(R.id.layoutRequisitosSenha);
         imageArrowRequisitos = findViewById(R.id.imageArrowRequisitos);
         headerRequisitosContainer = findViewById(R.id.headerRequisitosContainer);
@@ -66,6 +83,65 @@ public class CadastroActivity extends AppCompatActivity {
 
         // Button
         buttonCadastra = findViewById(R.id.buttonCadastra);
+
+        /* textChangedListeners */
+
+        /* Aplica a mudança de cor, texto ao lado e progresso da LinearProgressIndicator conforme
+            o usuário digita */
+        editSenha.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String senha = s.toString();
+                int score = calcularForcaSenha(senha);
+
+                int progress;
+                String texto;
+                int corResId;
+
+                if (score < 1) {
+                    progress = 0;
+                    texto = "";
+                    corResId = R.color.textGray;
+
+                } else if (score == 1) {
+                    progress = 10;
+                    texto = "Muito Fraca";
+                    corResId = R.color.error;
+
+                } else if (score == 2) {
+                    progress = 30;
+                    texto = "Fraca";
+                    corResId = R.color.error;
+
+                } else if (score == 3) {
+                    progress = 50;
+                    texto = "Médio";
+                    corResId = R.color.warning;
+
+                } else if (score == 4) {
+                    progress = 80;
+                    texto = "Forte";
+                    corResId = R.color.colorAccentReceita;
+
+                } else {
+                    progress = 100;
+                    texto = "Muito forte";
+                    corResId = R.color.colorPrimaryDarkReceita;
+                }
+
+                // Atualiza com animação suave
+                progressBar.setProgress(progress, true);
+                progressBar.setIndicatorColor(ContextCompat.getColor(CadastroActivity.this, corResId));
+                textForca.setText(texto);
+                textForca.setTextColor(ContextCompat.getColor(CadastroActivity.this, corResId));
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
 
         /* onClickListenners */
 
@@ -101,6 +177,19 @@ public class CadastroActivity extends AppCompatActivity {
             Intent intent = new Intent(CadastroActivity.this, LoginActivity.class);
             startActivity(intent);
         });
+    }
+
+    // Método que calcula a força da senha
+    private int calcularForcaSenha(String senha) {
+        int score = 0;
+
+        if (senha.length() >= 8) score++;
+        if (senha.matches(".*[A-Z].*")) score++;
+        if (senha.matches(".*[a-z].*")) score++;
+        if (senha.matches(".*[0-9].*")) score++;
+        if (senha.matches(".*[!@#$%^&*()_+\\-={}\\[\\]|:;\"'<>,.?/~`].*")) score++;
+
+        return score;
     }
 
     // Método para abrir/fechar os requisitos de senha

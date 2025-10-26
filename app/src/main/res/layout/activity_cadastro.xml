@@ -1,50 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/scrollPrincipalCadastro"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
     android:background="@color/headerBackground"
     android:paddingTop="20dp"
     tools:context=".activity.CadastroActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <FrameLayout
+        android:id="@+id/headerContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="40dp">
+        android:layout_height="60dp"
+        android:background="@color/headerBackground"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <FrameLayout
-            android:id="@+id/headerContainer"
+        <ImageView
+            android:id="@+id/imageLogo"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@color/headerBackground"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="match_parent"
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitCenter"
+            android:src="@drawable/imagem_logo" />
+    </FrameLayout>
 
-            <ImageView
-                android:id="@+id/imageLogo"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/app_name"
-                android:scaleType="fitCenter"
-                android:src="@drawable/imagem_logo" />
-        </FrameLayout>
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollPrincipalCadastro"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/headerContainer"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/inter_bold"
-            android:text="Crie sua conta"
-            android:textColor="@color/textPrimary"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@+id/headerContainer"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:paddingBottom="40dp">
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="Crie sua conta"
+                android:textColor="@color/textPrimary"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/textView12"
@@ -120,7 +126,6 @@
             android:layout_marginEnd="24dp"
             android:layout_marginTop="4dp"
             app:boxBackgroundMode="outline"
-            app:endIconMode="password_toggle"
             app:hintEnabled="false"
             app:layout_constraintTop_toBottomOf="@+id/textView10"
             app:layout_constraintStart_toStartOf="parent"
@@ -151,6 +156,37 @@
             app:layout_constraintTop_toBottomOf="@+id/layoutEmailCadastro"
             app:layout_constraintStart_toStartOf="parent" />
 
+            <LinearLayout
+                android:id="@+id/layoutSenhaForca"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="28dp"
+                android:layout_marginEnd="24dp"
+                android:gravity="left|center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layoutSenhaCadastro">
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/progressBarForcaSenha"
+                    android:layout_width="240dp"
+                    android:layout_height="8dp"
+                    android:max="100"
+                    android:progress="0"
+                    app:indicatorColor="@color/textGray"
+                    app:trackColor="@color/textGray" />
+
+                <TextView
+                    android:id="@+id/textForcaSenha"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="@font/inter_bold"
+                    android:textColor="@color/textGray"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutSenhaCadastro"
             android:layout_width="0dp"
@@ -174,42 +210,44 @@
                 android:inputType="textPassword"
                 android:textColor="@color/textGray"
                 android:textSize="14sp" />
+
         </com.google.android.material.textfield.TextInputLayout>
 
-        <LinearLayout
-            android:id="@+id/headerRequisitosContainer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingStart="32dp"
-            android:paddingEnd="32dp"
-            android:gravity="center_vertical"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?selectableItemBackground"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/layoutSenhaCadastro"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
 
-            <TextView
-                android:id="@+id/textSenhaRequisitosTitulo"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/headerRequisitosContainer"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/inter_bold"
-                android:text="Requisitos de senha"
-                android:textAlignment="viewStart"
-                android:textColor="@color/textPrimary"
-                android:textSize="14sp" />
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="24dp"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layoutSenhaForca">
 
-            <ImageView
-                android:id="@+id/imageArrowRequisitos"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="4dp"
-                android:src="@drawable/ic_arrow_down_24dp"
-                android:contentDescription="Abrir requisitos" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/textSenhaRequisitosTitulo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="Requisitos de senha"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:id="@+id/imageArrowRequisitos"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="4dp"
+                    android:contentDescription="Abrir requisitos"
+                    android:src="@drawable/ic_arrow_down_24dp" />
+            </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layoutRequisitosSenha"
@@ -223,6 +261,14 @@
             app:layout_constraintTop_toBottomOf="@+id/headerRequisitosContainer"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="• Oito ou mais caracteres"
+                android:textColor="@color/textGray"
+                android:textSize="13sp"
+                android:fontFamily="@font/inter" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -344,5 +390,7 @@
             app:layout_constraintStart_toEndOf="@+id/textView7"
             app:layout_constraintEnd_toEndOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

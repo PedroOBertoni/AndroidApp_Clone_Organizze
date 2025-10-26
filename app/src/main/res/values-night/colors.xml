@@ -8,6 +8,7 @@
     <color name="textGray">#8A8A8A</color>
 
     <color name="error">#DC3545</color>
+    <color name="warning">#FFCC00</color>
 
     <color name="colorPrimaryReceita">#28A745</color>
     <color name="colorPrimaryDarkReceita">#218838</color>
