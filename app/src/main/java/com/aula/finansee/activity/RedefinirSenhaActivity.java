@@ -1,6 +1,7 @@
 package com.aula.finansee.activity;
 
 import android.annotation.SuppressLint;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,6 +21,14 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import org.json.JSONObject;
+
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 public class RedefinirSenhaActivity extends AppCompatActivity {
 
@@ -47,6 +56,10 @@ public class RedefinirSenhaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_redefinir_senha);
 
+        // Recupera o token ou parâmetro do link
+        Uri data = getIntent().getData();
+        String token = data != null ? data.getQueryParameter("token") : null;
+
         /* Recuperando componentes da interface pelo ID */
 
         // Elementos do layout Força de Senha (progressBar e texto que mudam conforme a senha é digitada)
@@ -58,19 +71,20 @@ public class RedefinirSenhaActivity extends AppCompatActivity {
         imageArrowRequisitos = findViewById(R.id.imageArrowRequisitos);
         headerRequisitosContainer = findViewById(R.id.headerRequisitosContainer);
 
-        // TextInputLayout
-        inputSenha = findViewById(R.id.inputSenha);
-        inputConfirmarSenha = findViewById(R.id.inputConfirmarSenha);
-
         // EditText
         editNovaSenha = findViewById(R.id.editNovaSenha);
         editConfirmarSenha = findViewById(R.id.editConfirmarSenha);
 
+        // TextInputLayout
+        inputSenha = findViewById(R.id.inputSenha);
+        inputConfirmarSenha = findViewById(R.id.inputConfirmarSenha);
+
+        // Aplica a função que limpa erro ao focar
+        limparErroAoFocar(inputSenha, editNovaSenha);
+        limparErroAoFocar(inputConfirmarSenha, editConfirmarSenha);
+
         // Button
         buttonSalvarSenha = findViewById(R.id.buttonSalvarSenha);
-
-        // Recupera o email passado pela intent
-        String email = getIntent().getStringExtra("email");
 
         /* textChangedListener */
 
@@ -151,73 +165,155 @@ public class RedefinirSenhaActivity extends AppCompatActivity {
 
         // Ao clicar no botão salvar senha
         buttonSalvarSenha.setOnClickListener(v -> {
-            // Recupera o texto dos EditTexts
             String novaSenha = editNovaSenha.getText().toString().trim();
             String confirmarSenha = editConfirmarSenha.getText().toString().trim();
 
-            // Validação
-            if (validarCampos()) {
-                // Redefinir senha via Firebase
-                FirebaseAuth autenticacao = FirebaseAuth.getInstance();
-                autenticacao.sendPasswordResetEmail(email)
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                // Se der certo a task, apresenta mensagem de sucesso por meio da snackBar
-                                Snackbar.make(findViewById(android.R.id.content),
-                                        "Senha redefinida! Verifique seu email.",
-                                        Snackbar.LENGTH_LONG).show();
+            if (novaSenha.isEmpty() || confirmarSenha.isEmpty()) {
+                Snackbar.make(findViewById(android.R.id.content),
+                        "Preencha todos os campos",
+                        Snackbar.LENGTH_LONG).show();
+                return;
+            }
 
-                                // E depois finaliza a activity
-                                finish();
+            if (!novaSenha.equals(confirmarSenha)) {
+                Snackbar.make(findViewById(android.R.id.content),
+                        "As senhas não conferem",
+                        Snackbar.LENGTH_LONG).show();
+                return;
+            }
 
-                            } else {
-                                // Se der errado a task, apresenta mensagem de erro por meio da snackBar
-                                Snackbar.make(findViewById(android.R.id.content),
-                                        "Não foi possível redefinir a senha.",
-                                        Snackbar.LENGTH_LONG).show();
-                            }
-                        });
+            // Envia requisição ao backend para atualizar a senha
+            new Thread(() -> {
+                try {
+                    JSONObject body = new JSONObject();
+                    body.put("token", token);
+                    body.put("novaSenha", novaSenha);
+
+                    URL url = new URL("https://finansee-backend.onrender.com/api/reset-password");
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setRequestMethod("POST");
+                    conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                    conn.setDoOutput(true);
+
+                    OutputStream os = conn.getOutputStream();
+                    os.write(body.toString().getBytes(StandardCharsets.UTF_8));
+                    os.close();
+
+                    int responseCode = conn.getResponseCode();
+                    conn.disconnect();
+
+                    runOnUiThread(() -> {
+                        if (responseCode == 200) {
+                            Snackbar.make(findViewById(android.R.id.content),
+                                    "Senha redefinida com sucesso!",
+                                    Snackbar.LENGTH_LONG).show();
+                            finish();
+                        } else {
+                            Snackbar.make(findViewById(android.R.id.content),
+                                    "Falha ao redefinir senha.",
+                                    Snackbar.LENGTH_LONG).show();
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(() -> Snackbar.make(findViewById(android.R.id.content),
+                            "Erro ao redefinir senha.",
+                            Snackbar.LENGTH_LONG).show());
+                }
+            }).start();
+        });
+    }
+
+    // Método que limpa erros ao clicar no TextInputLayout do campo com o erro
+    private void limparErroAoFocar(TextInputLayout layout, EditText editText) {
+        // Se focar no campo, remove o erro
+        editText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                // Remove o erro
+                layout.setError(null);
+                layout.setErrorEnabled(false);
+
+                // Reforça o ícone de vizualizar senha (olho), caso o campo seja de senha
+                if (layout.getEndIconMode() == TextInputLayout.END_ICON_PASSWORD_TOGGLE) {
+                    layout.setEndIconMode(TextInputLayout.END_ICON_PASSWORD_TOGGLE);
+                }
+            }
+        });
+
+        // Se o usuário clicar no campo (mesmo sem foco ainda)
+        editText.setOnClickListener(v -> {
+            // Remove o erro
+            layout.setError(null);
+            layout.setErrorEnabled(false);
+
+            // E também reforça o ícone de vizualizar senha (olho), caso o campo seja de senha
+            if (layout.getEndIconMode() == TextInputLayout.END_ICON_PASSWORD_TOGGLE) {
+                layout.setEndIconMode(TextInputLayout.END_ICON_PASSWORD_TOGGLE);
             }
         });
     }
 
     // Método que calcula a força da senha
     private int calcularForcaSenha(String senha) {
+        // Score inicia zerado
         int score = 0;
 
+        // Depois verifica cada requisito e incrementa o score
         if (senha.length() >= 8) score++;
         if (senha.matches(".*[A-Z].*")) score++;
         if (senha.matches(".*[a-z].*")) score++;
         if (senha.matches(".*[0-9].*")) score++;
         if (senha.matches(".*[!@#$%^&*()_+\\-={}\\[\\]|:;\"'<>,.?/~`].*")) score++;
 
+        // Retorna o score final
         return score;
     }
 
     // Método para abrir/fechar os requisitos de senha
     private void toggleRequisitos() {
+        // Verifica o estado atual e aplica a animação de abrir/fechar
         if (requisitosExpanded) {
+
+            // Fechar requisitos (aplica animação de fade out)
             layoutRequisitosSenha.animate()
                     .alpha(0f)
                     .setDuration(180)
                     .withEndAction(() -> {
+
+                        // Após a animação, define a visibilidade como GONE
                         layoutRequisitosSenha.setVisibility(View.GONE);
                         layoutRequisitosSenha.setAlpha(1f);
                     }).start();
+
+            // Rotaciona a seta para cima
             imageArrowRequisitos.animate().rotation(0f).setDuration(180).start();
         } else {
+            // Abre requisitos (define a visibilidade como VISIBLE)
             layoutRequisitosSenha.setAlpha(0f);
             layoutRequisitosSenha.setVisibility(View.VISIBLE);
+
+            // Aplica animação de fade in
             layoutRequisitosSenha.animate().alpha(1f).setDuration(180).start();
+
+            // Rotaciona a seta para baixo
             imageArrowRequisitos.animate().rotation(180f).setDuration(180).start();
         }
+
+        // Alterna o estado de expansão
         requisitosExpanded = !requisitosExpanded;
     }
 
     private boolean validarCampos() {
+
+        // Limpa erros anteriores
+        inputSenha.setError(null);
+        inputConfirmarSenha.setError(null);
+
+        // cria variáveis de controle
         boolean valido = true;
         String excecao = null;
 
+        // Recupera os valores dos campos
         String novaSenha = editNovaSenha.getText().toString().trim();
         String confirmarSenha = editConfirmarSenha.getText().toString().trim();
 

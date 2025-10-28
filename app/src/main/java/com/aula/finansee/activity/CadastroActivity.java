@@ -77,6 +77,11 @@ public class CadastroActivity extends AppCompatActivity {
         inputEmail = findViewById(R.id.layoutEmailCadastro);
         inputSenha = findViewById(R.id.layoutSenhaCadastro);
 
+        // Aplica a função que limpa erro ao focar
+        limparErroAoFocar(inputNome, editNome);
+        limparErroAoFocar(inputEmail, editEmail);
+        limparErroAoFocar(inputSenha, editSenha);
+
         // Button
         buttonCadastra = findViewById(R.id.buttonCadastra);
 
@@ -178,36 +183,82 @@ public class CadastroActivity extends AppCompatActivity {
         });
     }
 
+    // Método que limpa erros ao clicar no TextInputLayout do campo com o erro
+    private void limparErroAoFocar(TextInputLayout layout, EditText editText) {
+        // Se focar no campo, remove o erro
+        editText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                // Remove o erro
+                layout.setError(null);
+                layout.setErrorEnabled(false);
+
+                // Reforça o ícone de vizualizar senha (olho), caso o campo seja de senha
+                if (layout.getEndIconMode() == TextInputLayout.END_ICON_PASSWORD_TOGGLE) {
+                    layout.setEndIconMode(TextInputLayout.END_ICON_PASSWORD_TOGGLE);
+                }
+            }
+        });
+
+        // Se o usuário clicar no campo (mesmo sem foco ainda)
+        editText.setOnClickListener(v -> {
+            // Remove o erro
+            layout.setError(null);
+            layout.setErrorEnabled(false);
+
+            // E também reforça o ícone de vizualizar senha (olho), caso o campo seja de senha
+            if (layout.getEndIconMode() == TextInputLayout.END_ICON_PASSWORD_TOGGLE) {
+                layout.setEndIconMode(TextInputLayout.END_ICON_PASSWORD_TOGGLE);
+            }
+        });
+    }
+
     // Método que calcula a força da senha
     private int calcularForcaSenha(String senha) {
+        // Score inicia zerado
         int score = 0;
 
+        // Depois verifica cada requisito e incrementa o score
         if (senha.length() >= 8) score++;
         if (senha.matches(".*[A-Z].*")) score++;
         if (senha.matches(".*[a-z].*")) score++;
         if (senha.matches(".*[0-9].*")) score++;
         if (senha.matches(".*[!@#$%^&*()_+\\-={}\\[\\]|:;\"'<>,.?/~`].*")) score++;
 
+        // Retorna o score final
         return score;
     }
 
     // Método para abrir/fechar os requisitos de senha
     private void toggleRequisitos() {
+        // Verifica o estado atual e aplica a animação de abrir/fechar
         if (requisitosExpanded) {
+
+            // Fechar requisitos (aplica animação de fade out)
             layoutRequisitosSenha.animate()
                     .alpha(0f)
                     .setDuration(180)
                     .withEndAction(() -> {
+
+                        // Após a animação, define a visibilidade como GONE
                         layoutRequisitosSenha.setVisibility(View.GONE);
                         layoutRequisitosSenha.setAlpha(1f);
                     }).start();
+
+            // Rotaciona a seta para cima
             imageArrowRequisitos.animate().rotation(0f).setDuration(180).start();
         } else {
+            // Abre requisitos (define a visibilidade como VISIBLE)
             layoutRequisitosSenha.setAlpha(0f);
             layoutRequisitosSenha.setVisibility(View.VISIBLE);
+
+            // Aplica animação de fade in
             layoutRequisitosSenha.animate().alpha(1f).setDuration(180).start();
+
+            // Rotaciona a seta para baixo
             imageArrowRequisitos.animate().rotation(180f).setDuration(180).start();
         }
+
+        // Alterna o estado de expansão
         requisitosExpanded = !requisitosExpanded;
     }
 
@@ -349,17 +400,5 @@ public class CadastroActivity extends AppCompatActivity {
                                 Snackbar.LENGTH_LONG).show();
                     }
                 });
-    }
-
-    // Redireciona para a página Termos de Uso
-    public void redirectTermosDeUso(View view){
-        startActivity(new Intent(this, TermosDeUsoActivity.class));
-        finish();
-    }
-
-    // Redireciona para a tela de Login
-    public void redirectEntrar(View view){
-        startActivity(new Intent(this, LoginActivity.class));
-        finish();
     }
 }

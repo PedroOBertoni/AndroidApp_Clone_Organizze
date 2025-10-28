@@ -5,10 +5,8 @@ import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -22,7 +20,6 @@ import androidx.core.content.ContextCompat;
 
 import com.aula.finansee.R;
 import com.aula.finansee.config.ConfigFirebase;
-import com.aula.finansee.utils.EmailSender;
 import com.aula.finansee.utils.FirebaseErrorHandler;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -39,14 +36,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Random;
+import org.json.JSONObject;
+
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 public class LoginActivity extends AppCompatActivity {
 
     // Componentes da interface
     private TextView resetaSenha;
-    private EditText campoEmail, campoSenha;
-    private TextInputLayout layoutEmail, layoutSenha;
+    private EditText editEmail, editSenha;
+    private TextInputLayout inputEmail, inputSenha;
     private Button buttonEntra;
 
     // Objeto para autenticação do Firebase
@@ -73,12 +75,16 @@ public class LoginActivity extends AppCompatActivity {
         resetaSenha = findViewById(R.id.resetaSenha);
 
         // EditText
-        campoEmail = findViewById(R.id.editNovaSenha);
-        campoSenha = findViewById(R.id.editConfirmarSenha);
+        editEmail = findViewById(R.id.editNovaSenha);
+        editSenha = findViewById(R.id.editConfirmarSenha);
 
         // TextInputLayout
-        layoutEmail = findViewById(R.id.inputSenha);
-        layoutSenha = findViewById(R.id.inputConfirmarSenha);
+        inputEmail = findViewById(R.id.inputSenha);
+        inputSenha = findViewById(R.id.inputConfirmarSenha);
+
+        // Aplica a função que limpa erro ao focar
+        limparErroAoFocar(inputEmail, editEmail);
+        limparErroAoFocar(inputSenha, editSenha);
 
         // Button
         buttonEntra = findViewById(R.id.buttonEntra);
@@ -88,8 +94,8 @@ public class LoginActivity extends AppCompatActivity {
         // Listener do botão de login
         buttonEntra.setOnClickListener(v -> {
             // Captura os textos no momento do clique
-            String textoEmail = campoEmail.getText().toString().toLowerCase().trim();
-            String textoSenha = campoSenha.getText().toString().trim();
+            String textoEmail = editEmail.getText().toString().toLowerCase().trim();
+            String textoSenha = editSenha.getText().toString().trim();
 
             // Valida os campos antes de enviar
             validaCampos(textoEmail, textoSenha);
@@ -118,11 +124,41 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    // Método que limpa erros ao clicar no TextInputLayout do campo com o erro
+    private void limparErroAoFocar(TextInputLayout layout, EditText editText) {
+        // Se focar no campo, remove o erro
+        editText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                // Remove o erro
+                layout.setError(null);
+                layout.setErrorEnabled(false);
+
+                // Reforça o ícone de vizualizar senha (olho), caso o campo seja de senha
+                if (layout.getEndIconMode() == TextInputLayout.END_ICON_PASSWORD_TOGGLE) {
+                    layout.setEndIconMode(TextInputLayout.END_ICON_PASSWORD_TOGGLE);
+                }
+            }
+        });
+
+        // Se o usuário clicar no campo (mesmo sem foco ainda)
+        editText.setOnClickListener(v -> {
+            // Remove o erro
+            layout.setError(null);
+            layout.setErrorEnabled(false);
+
+            // E também reforça o ícone de vizualizar senha (olho), caso o campo seja de senha
+            if (layout.getEndIconMode() == TextInputLayout.END_ICON_PASSWORD_TOGGLE) {
+                layout.setEndIconMode(TextInputLayout.END_ICON_PASSWORD_TOGGLE);
+            }
+        });
+    }
+
+    // Método que valida os campos de email e senha
     public void validaCampos(String email, String senha) {
 
         // Limpa erros anteriores
-        layoutEmail.setError(null);
-        layoutSenha.setError(null);
+        inputEmail.setError(null);
+        inputSenha.setError(null);
 
         // Variáveis para controle de validação e exceção
         boolean valido = true;
@@ -131,7 +167,7 @@ public class LoginActivity extends AppCompatActivity {
         if (email.isEmpty()) {
             // Validação de campo de e-mail vazio
             excecao = "Preencha o e-mail!";
-            layoutEmail.setError(excecao);
+            inputEmail.setError(excecao);
 
             // Mostra erro geral com Snackbar
             Snackbar.make(findViewById(android.R.id.content),
@@ -145,7 +181,7 @@ public class LoginActivity extends AppCompatActivity {
         if (senha.isEmpty()) {
             // Validação de campo de senha vazio
             excecao = "Preencha a senha!";
-            layoutSenha.setError(excecao);
+            inputSenha.setError(excecao);
 
             // Mostra erro geral com Snackbar
             Snackbar.make(findViewById(android.R.id.content),
@@ -158,7 +194,7 @@ public class LoginActivity extends AppCompatActivity {
         } else if (senha.length() < 6) {
             // Validação de senha com no mínimo 6 caracteres
             excecao = "A senha deve ter no mínimo 6 caracteres!";
-            layoutSenha.setError(excecao);
+            inputSenha.setError(excecao);
 
             // Mostra erro geral com Snackbar
             Snackbar.make(findViewById(android.R.id.content),
@@ -175,6 +211,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    // Método que valida o login do usuário com Firebase Authentication
     public void validarLoginUsuario(String email, String senha) {
 
         // Primeiro verifica se o aparelho está conectado a uma rede ativa
@@ -209,12 +246,12 @@ public class LoginActivity extends AppCompatActivity {
                     } catch (FirebaseAuthInvalidUserException e) {
                         // Usuário não cadastrado
                         excecao = "Usuário digitado não está cadastrado!";
-                        layoutEmail.setError(excecao);
+                        inputEmail.setError(excecao);
 
                     } catch (FirebaseAuthInvalidCredentialsException e) {
                         // E-mail e/ou senha inválidos
                         excecao = "E-mail e/ou senha não correspondem a um usuário cadastrado!";
-                        layoutSenha.setError(excecao);
+                        inputSenha.setError(excecao);
 
                     } catch (Exception e) {
                         // Erro genérico
@@ -231,6 +268,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    // Método que exibe o diálogo para redefinir a senha
     @SuppressLint("ResourceAsColor")
     private void exibirDialogRedefinirSenha() {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
@@ -281,12 +319,9 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            // gera e marca expiração + atualiza last-send
-            gerarENotarCodigoComExpiracao(minutosExpiracao);
-
             // monta corpo do email (seu método EmailSender usa apenas email+codigo; eu recomendo passar corpo/assunto lá)
             // aqui chamamos seu método que envia o email em background
-            enviarEmailRedefinicaoPersonalizado(email, codigoAtual);
+            solicitarRedefinicaoSenha(email);
         });
 
         // configura o botão negativo do alertDialog
@@ -294,59 +329,72 @@ public class LoginActivity extends AppCompatActivity {
         builder.show();
     }
 
-    private void enviarEmailRedefinicaoPersonalizado(final String email, final String codigo) {
-        // Referência ao nó 'usuarios' no Realtime Database
+    // Método que envia o email de redefinição de senha personalizado
+    private void solicitarRedefinicaoSenha(final String email) {
+        if (email.isEmpty()) {
+            Snackbar.make(findViewById(android.R.id.content),
+                    "Informe o email!",
+                    Snackbar.LENGTH_LONG).show();
+            return;
+        }
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Snackbar.make(findViewById(android.R.id.content),
+                    "Digite um e-mail válido!",
+                    Snackbar.LENGTH_LONG).show();
+            return;
+        }
+
+        // Verifica se existe usuário com esse email no Firebase
         DatabaseReference usuariosRef = FirebaseDatabase.getInstance()
                 .getReference()
                 .child("usuarios");
 
-        // Query para verificar se existe algum registro com campo email igual ao informado pelo usuário
         usuariosRef.orderByChild("email").equalTo(email)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        /* Se snapshot.exists() for true, pelo menos um usuário com esse email foi
-                            encontrado e então será enviado o email */
                         if (snapshot.exists()) {
+                            // Usuário existe: envia requisição para o backend
                             new Thread(() -> {
                                 try {
-                                    // Monta assunto e corpo HTML do e-mail
-                                    String assunto = "Redefinição de senha - Finansee";
-                                    String corpo = "<html>" +
-                                            "<body style='font-family: sans-serif; color:#333;'>" +
-                                            "<h2 style='color:#008cff;'>Olá!</h2>" +
-                                            "<p>Você solicitou a redefinição de senha para sua conta Finansee.</p>" +
-                                            "<p>Use o código abaixo para continuar:</p>" +
-                                            "<p style='font-size:24px; font-weight:bold; color:#008cff; margin:12px 0;'>" + codigo + "</p>" +
-                                            "<p><small>Este código expira em <b>3 minutos</b>.</small></p>" +
-                                            "<hr/>" +
-                                            "<p style='font-size:12px;color:#888;'>Se você não solicitou, ignore este e-mail.</p>" +
-                                            "<p style='font-size:12px;color:#888;'>Equipe Finansee</p>" +
-                                            "</body></html>";
+                                    // Monta JSON com email
+                                    JSONObject body = new JSONObject();
+                                    body.put("email", email);
 
-                                    // Chama o EmailSender para enviar o e-mail
-                                    EmailSender.enviarEmail(email, assunto, corpo);
+                                    // Faz requisição HTTP POST para o backend
+                                    URL url = new URL("https://finansee-backend.onrender.com/api/enviar-reset");
+                                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                                    conn.setRequestMethod("POST");
+                                    conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                                    conn.setDoOutput(true);
 
-                                    // Se chegou aqui sem exceção, considera o envio efetuado
+                                    OutputStream os = conn.getOutputStream();
+                                    os.write(body.toString().getBytes(StandardCharsets.UTF_8));
+                                    os.close();
+
+                                    int responseCode = conn.getResponseCode();
+                                    conn.disconnect();
+
                                     runOnUiThread(() -> {
-                                        Snackbar.make(findViewById(android.R.id.content),
-                                                "Email enviado com sucesso!",
-                                                Snackbar.LENGTH_LONG).show();
-
-                                        exibirDialogCodigo(email); // abre diálogo para digitar código
+                                        if (responseCode == 200) {
+                                            Snackbar.make(findViewById(android.R.id.content),
+                                                    "Link de redefinição enviado! Verifique seu email.",
+                                                    Snackbar.LENGTH_LONG).show();
+                                        } else {
+                                            Snackbar.make(findViewById(android.R.id.content),
+                                                    "Falha ao enviar link de redefinição.",
+                                                    Snackbar.LENGTH_LONG).show();
+                                        }
                                     });
-
                                 } catch (Exception e) {
-                                    // Em caso de erro no envio, mostra snackbar com mensagem de falha
                                     e.printStackTrace();
-
                                     runOnUiThread(() -> Snackbar.make(findViewById(android.R.id.content),
-                                            "Falha ao enviar o email!", Snackbar.LENGTH_LONG).show());
+                                            "Erro ao enviar link de redefinição.",
+                                            Snackbar.LENGTH_LONG).show());
                                 }
                             }).start();
-
                         } else {
-                            // Erro para caso não encontre nenhum usuário com esse email no nó "usuarios"
                             Snackbar.make(findViewById(android.R.id.content),
                                     "Nenhuma conta encontrada com esse e-mail!",
                                     Snackbar.LENGTH_LONG).show();
@@ -355,154 +403,11 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        // Para caso ocorra erro ao acessar o Firebase database
-                        String msg = "Erro ao verificar e-mail: " + error.getMessage();
-
-                        // Apresenta o erro no log
-                        Log.e("RecuperacaoSenha", msg);
-
-                        // E em uma snackBar para o usuário
                         Snackbar.make(findViewById(android.R.id.content),
                                 "Erro ao verificar o e-mail. Tente novamente.",
                                 Snackbar.LENGTH_LONG).show();
                     }
                 });
-    }
-
-    private void exibirDialogCodigo(final String email) {
-        // Diálogo para o usuário digitar o código recebido por e-mail
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
-                new ContextThemeWrapper(this, R.style.RoundedAlertDialogTheme)
-        );
-        builder.setTitle("Digite o código enviado ao seu e-mail");
-
-        // Instanciando um EditText simples, com inputType numérico e hint
-        EditText inputCodigo = new EditText(this);
-        inputCodigo.setHint("Código de 6 dígitos");
-        inputCodigo.setInputType(InputType.TYPE_CLASS_NUMBER);
-        inputCodigo.setPadding(32, 24, 32, 24);
-
-        // Cria e aplica borda arredondada personalizada ao EditText
-        GradientDrawable border = new GradientDrawable();
-        border.setCornerRadius(16);
-        border.setStroke(2, ContextCompat.getColor(this, R.color.textGray));
-        border.setColor(ContextCompat.getColor(this, R.color.colorBackgroundDialog));
-        inputCodigo.setBackground(border);
-
-        // adiciona padding lateral ao container
-        LinearLayout container = new LinearLayout(this);
-        container.setOrientation(LinearLayout.VERTICAL);
-        int margin = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics()
-        );
-        container.setPadding(margin, 0, margin, 0);
-        container.addView(inputCodigo);
-
-        // configura o view do  alertDialog
-        builder.setView(container);
-
-        // configura o botão positivo do alertDialog
-        builder.setPositiveButton("CONFIRMAR", (dialog, which) -> {
-            String codigoDigitado = inputCodigo.getText().toString().trim();
-
-            // verifica se o código foi expirado
-            if (System.currentTimeMillis() > codigoExpiracaoMillis) {
-
-                // Caso esteja expirado é informado ao usuário por uma snackBar
-                Snackbar.make(findViewById(android.R.id.content),
-                        "Código expirado. Solicite um novo.", Snackbar.LENGTH_LONG).show();
-                return;
-            }
-
-            // verifica se o código digitado está correto
-            if (isCodigoValido(codigoDigitado)) {
-
-                // Se o código estiver correto are a activity RedefinirSenhaActivity
-                Intent intent = new Intent(this, RedefinirSenhaActivity.class);
-                intent.putExtra("email", email);
-                startActivity(intent);
-
-            } else {
-                // Caso esteja incorreto é informado ao usuário por uma snackBar
-                Snackbar.make(findViewById(android.R.id.content),
-                        "Código incorreto!",
-                        Snackbar.LENGTH_LONG).show();
-            }
-        });
-
-        // configura o botão negativo do alertDialog
-        builder.setNegativeButton("CANCELAR", (dialog, which) -> dialog.dismiss());
-
-        // Reenviar código com cooldown
-        builder.setNeutralButton("REENVIAR CÓDIGO", (dialog, which) -> {
-
-            // Verifica cooldown de reenvio
-            long now = System.currentTimeMillis();
-
-            // se ainda estiver no cooldown, avisa o usuário e retorna
-            if (now - ultimoEnvioMillis < RELOAD_COOLDOWN_MS) {
-
-                // avisa o usuário do tempo restante
-                long waitSec = (RELOAD_COOLDOWN_MS - (now - ultimoEnvioMillis)) / 1000;
-
-                // mostra snackbar com tempo restante
-                Snackbar.make(findViewById(android.R.id.content),
-                        "Aguarde " + waitSec + "s antes de reenviar.", Snackbar.LENGTH_LONG).show();
-                return;
-            }
-
-            // gera novo código e atualiza expiração (mesmo tempo que foi usado no envio inicial)
-            int minutosExpiracao = 3; // matenm o mesmo valor usado antes
-            gerarENotarCodigoComExpiracao(minutosExpiracao);
-
-            // envia novamente
-            enviarEmailRedefinicaoPersonalizado(email, codigoAtual);
-
-            // avisa o usuário que o código foi reenviado
-            Snackbar.make(findViewById(android.R.id.content),
-                    "Código reenviado.", Snackbar.LENGTH_LONG).show();
-        });
-
-        // mostra o alertDialog
-        builder.show();
-    }
-
-    /* Código de Verificação para resetar senha */
-
-    // Método que gera um código aleatório de 6 digitos para resetar a senha
-    private String gerarCodigo6Digitos() {
-        int codigo = 100000 + new Random().nextInt(900000);
-        return String.valueOf(codigo);
-    }
-
-    private void gerarENotarCodigoComExpiracao(int minutosExpiracao) {
-        codigoAtual = gerarCodigo6Digitos();
-        codigoExpiracaoMillis = System.currentTimeMillis() + minutosExpiracao * 60_000L;
-        ultimoEnvioMillis = System.currentTimeMillis();
-    }
-
-    // Método que valida se código é valido
-    private boolean isCodigoValido(String codigoDigitado) {
-        if (codigoAtual == null || codigoAtual.isEmpty()) return false;
-        if (codigoDigitado == null) return false;
-        long now = System.currentTimeMillis();
-        if (now > codigoExpiracaoMillis) {
-            return false; // expirou
-        }
-        return codigoAtual.equals(codigoDigitado);
-    }
-
-
-    // Redireciona para as páginas Termos de Uso
-    public void redirectTermosDeUso(View view) {
-        startActivity(new Intent(this, TermosDeUsoActivity.class));
-        finish();
-    }
-
-    // Redireciona para tela de Cadastro
-    public void redirectCadastrar(View view) {
-        startActivity(new Intent(this, CadastroActivity.class));
-        finish();
     }
 
     // Redireciona para tela Principal após login bem-sucedido

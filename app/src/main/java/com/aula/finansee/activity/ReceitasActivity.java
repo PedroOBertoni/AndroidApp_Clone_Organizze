@@ -360,7 +360,7 @@ public class ReceitasActivity extends AppCompatActivity {
                         Snackbar.LENGTH_SHORT).show();
 
                 new android.os.Handler().postDelayed(() -> {
-                    finish(); // Fecha a activity após 2 segundos
+                    finish(); // Fecha a activity após 1,5 segundos
                 }, 1500); // 1500 milissegundos = 1,5 segundos
             }
         });
