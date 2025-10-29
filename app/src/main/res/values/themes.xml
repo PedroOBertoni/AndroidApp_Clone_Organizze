@@ -15,6 +15,15 @@
         <item name="materialAlertDialogTheme">@style/RoundedAlertDialogTheme</item>
     </style>
 
+    <style name="SplashTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@color/colorPrimary</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowBackground">@color/colorPrimary</item>
+    </style>
+
+    <style name="Theme.MyApp.Splash" parent="SplashTheme">
+
+    </style>
 
     <style name="despesaTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="windowActionBar">false</item>

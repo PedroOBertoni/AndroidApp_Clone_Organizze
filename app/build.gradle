@@ -112,6 +112,9 @@ dependencies {
     // Módulo para enviar email
     implementation 'com.sun.mail:android-mail:1.6.7'
     implementation 'com.sun.mail:android-activation:1.6.7'
+
+    // Módulo que trás compat helpers para a API da splash screen
+    implementation "androidx.core:core-splashscreen:1.0.1"
 }
 
 configurations.all {

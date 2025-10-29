@@ -79,7 +79,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\pedro\OneDrive\Desktop\logo.png" />
+                                                <entry key="imagePath" value="C:\Users\pedro\OneDrive\Desktop" />
                                                 <entry key="scalingPercent" value="60" />
                                               </map>
                                             </option>
@@ -114,6 +114,7 @@
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundColor" value="2196f3" />
+                                      <entry key="outputName" value="ic_launcher_blue" />
                                     </map>
                                   </option>
                                 </PersistentState>
