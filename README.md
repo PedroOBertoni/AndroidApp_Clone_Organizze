@@ -1,123 +1,153 @@
-# 📱 Clone do Organizze
+# 💸 FinanSee
 
-Este projeto é um **clone do app Organizze**, desenvolvido em **Java com Android Studio**, com o objetivo de praticar e consolidar conceitos de desenvolvimento mobile nativo para Android, utilizando **Firebase** como backend para autenticação e persistência de dados.
+O **FinanSee** é um aplicativo mobile de **gestão financeira pessoal**, desenvolvido de forma **100% original em Java com Android Studio**, com o objetivo de oferecer uma experiência moderna, intuitiva e prática para o controle de receitas, despesas e saldo mensal.
 
----
-
-## 🚀 Tecnologias Utilizadas
-
-- **Java** → Linguagem principal do projeto.  
-- **Android Studio** → IDE de desenvolvimento.  
-- **Gradle** → Gerenciador de dependências e build.  
-- **Firebase**  
-  - Autenticação de usuários  
-  - Realtime Database / Firestore (dependendo da implementação)  
-  - Google Services (integração com o app)  
+O projeto foi criado com foco em **performance, organização de código e boas práticas de desenvolvimento Android**, fazendo uso de **diversas bibliotecas** para aprimorar a experiência do usuário e a arquitetura do app.
 
 ---
 
-## ⚙️ Funcionalidades
+## 🚀 Sobre o projeto
 
-- Cadastro e login de usuários (Firebase Authentication)  
-- Controle de receitas e despesas  
-- Saldo atualizado em tempo real  
-- Armazenamento de dados financeiros no Firebase  
-- Interface inspirada no aplicativo **Organizze**  
+O **FinanSee** nasceu como um estudo de caso em desenvolvimento mobile, mas evoluiu para um **aplicativo autoral completo**, com design, funcionalidades e código totalmente reformulados.  
+Hoje, o app oferece recursos avançados de controle financeiro e uma interface refinada, adaptada para **modo escuro**, **animações fluidas** e **feedbacks visuais interativos**.
 
 ---
 
-## 📂 Estrutura do Projeto
+## ✨ Principais Funcionalidades
+
+- 📊 **Gerenciamento de transações** — registre receitas, despesas e veja o saldo atualizado em tempo real.  
+- 🧾 **Histórico detalhado** — acompanhe todas as movimentações financeiras com filtros por data, tipo e categoria.  
+- 👤 **Autenticação de usuários** — login e cadastro com Firebase Authentication.  
+- ☁️ **Sincronização em nuvem** — dados armazenados e recuperados com segurança usando o Firebase.  
+- 🕹️ **Interface intuitiva e moderna** — design limpo, responsivo e otimizado para o tema escuro.  
+- 🌀 **Tela de splash animada** — experiência visual aprimorada no início do app.  
+- 🧭 **Sistema de navegação fluido** — navegação entre telas otimizada com animações suaves.  
+- 🔒 **Validação e segurança de dados** — estrutura voltada à confiabilidade e consistência das informações.
+
+---
+
+## 🧠 Conceitos aplicados
+
+Durante o desenvolvimento do **FinanSee**, foram aplicados conceitos importantes de:
+- Estrutura e ciclo de vida de Activities e Fragments.  
+- Integração com serviços externos via Firebase.  
+- Persistência de dados e manipulação de estados.  
+- Boas práticas de UX/UI e Material Design.  
+- Organização de código seguindo padrões de arquitetura Android.  
+- Manipulação de animações e elementos visuais personalizados.
+
+---
+
+## ⚙️ Estrutura do Projeto
 
 ```
-Organizze/
-│── app/ # Código-fonte principal
-│ ├── java/ # Classes Java (Activities, Controllers, etc.)
-│ ├── res/ # Layouts XML, drawables e valores
-│ └── google-services.json
+FinanSee/
+│── app/
+│ ├── java/
+│ │ ├── com.aula.finansee/
+│ │ │ ├── activity/ # Activities principais (Login, Cadastro, Principal, etc.)
+│ │ │ ├── model/ # Classes de modelo (Transação, Usuário, etc.)
+│ │ │ ├── helper/ # Utilitários e classes auxiliares
+│ │ │ └── config/ # Configurações do Firebase e constantes
+│ │
+│ ├── res/
+│ │ ├── layout/ # Layouts XML
+│ │ ├── drawable/ # Ícones e backgrounds
+│ │ └── values/ # Cores, strings e estilos
+│ │
+│ └── google-services.json # Configuração do Firebase
 │
-├── build.gradle # Configuração do Gradle (projeto)
-├── settings.gradle # Configuração de módulos
-└── README.md # Este arquivo
+├── build.gradle # Configuração do Gradle (app)
+├── settings.gradle # Configuração do projeto
+└── README.md # Documentação do projeto
 ```
 
 ---
 
-## 📲 Como Rodar o Projeto
+## 📲 Como executar o projeto
 
-1. Clone o repositório:
-```bash
-    git clone https://github.com/seu-usuario/organizze-clone.git
+### 1. Clone o repositório:
+   ```bash
+   git clone https://github.com/seu-usuario/finansee.git
+   ```
+### 2. Abra o projeto no Android Studio.
+
+### 3. Configure o Firebase:
+
+  - Acesse o Firebase Console.
+  - Crie um novo projeto (ou use um existente).
+  - Registre o app Android com o mesmo Application ID definido em build.gradle.
+  - Baixe o arquivo google-services.json e coloque na pasta app/.
+  - Sincronize o Gradle (File > Sync Project with Gradle Files).
+
+### 4. Execute o app em um emulador ou dispositivo físico.
+
+---
+
+## 🎨 Design e Identidade Visual
+
+O FinanSee adota uma identidade visual moderna e minimalista, com:
+- Fundo escuro (tons de preto e cinza) para conforto visual e economia de energia.  
+- Destaques em azul ciano (#2196F3), reforçando o foco financeiro e tecnológico.  
+- Ícones e componentes seguindo o padrão Material Design 3 (MD3).
+- Animações suaves e coerentes com o estilo da aplicação.
+
+---
+
+## 🧭 Estrutura de Navegação
+O fluxo principal do FinanSee é estruturado para garantir uma navegação fluida e intuitiva:
+
+  ```ngix
+  Splash Screen → Login / Cadastro → Dashboard → Nova Transação → Histórico → Perfil / Configurações
+  ```
+
+Cada tela foi projetada com foco em clareza, simplicidade e feedback visual rápido.
+
+---
+
+## 📦 Dependências e bibliotecas
+
+O projeto utiliza diversas bibliotecas modernas para aprimorar a experiência e simplificar a implementação de recursos como animações, autenticação, persistência e interface.
+(Esta seção será detalhada posteriormente com a lista completa de dependências do build.gradle.)
+
+---
+
+## 📸 Screenshots (em breve)
+
+Imagens das principais telas do aplicativo serão adicionadas aqui:
+
+```
+docs/
+ ├── screenshot_login.png
+ ├── screenshot_dashboard.png
+ └── screenshot_historico.png
 ```
 
-2. Abra o projeto no **Android Studio**.
+## 🧩 Próximos Passos
 
-3. Configure o **Firebase** no projeto:
-   - Acesse o Firebase Console (https://console.firebase.google.com/).
-   - Crie um novo projeto (ou use um existente).
-   - Registre o app Android usando o **Application ID / package name** exato do seu projeto (o mesmo que está em `app/build.gradle` -> `namespace` ou `applicationId`).
-   - Baixe o arquivo `google-services.json` para o app correto.
-
-4. Coloque o `google-services.json` dentro da pasta `app/` do projeto (substitua o existente, se houver).
-
-5. Sincronize o Gradle: no Android Studio clique em **File > Sync Project with Gradle Files**.
-
-6. Rode o app em um emulador ou dispositivo físico.
+- 📈 Implementar gráficos de análise financeira.
+- 💾 Adicionar exportação de dados (CSV / PDF). 
+- 🔔 Implementar lembretes de pagamento.
+- 🌎 Sincronização multi-dispositivo e backup automático.
 
 ---
 
-## ⚙️ Dependências Utilizadas
+## 🤝 Contribuição
 
-- Firebase (Auth e Realtime Database / Firestore via Firebase BoM) — autenticação e persistência.  
-- AndroidX AppCompat, ConstraintLayout, Activity KTX — base do app Android.  
-- Material Components — componentes de UI seguindo Material Design.  
-- `com.heinrichreimersoftware.materialintro` — usado para o onboarding/slider. Import usado no código: `import com.heinrichreimersoftware.materialintro.app.IntroActivity;` (para estender `IntroActivity` e montar os slides).  
-- Outras bibliotecas utilitárias conforme `build.gradle` do projeto.
+Sinta-se à vontade para contribuir com o projeto:
 
----
-
-## 📝 Funcionalidades
-
-- Cadastro e login de usuários com Firebase Authentication.  
-- Registro, edição e remoção de transações (receitas e despesas).  
-- Cálculo e exibição do saldo atual.  
-- Histórico/listagem de transações.  
-- Tela(s) de onboarding com slider (implementadas usando `IntroActivity` / MaterialIntro).  
-- Interface inspirada no aplicativo Organizze para fins de estudo/portfólio.
+1.Faça um fork do repositório.
+2. Crie uma branch para sua feature:
+  ```bash
+  git checkout -b feature/nova-funcionalidade
+  ```
+3. Faça commits descritivos e objetivos.
+4. Push para a branch (`git push origin feature/nova-feature`)
+5. Envie um Pull Request com suas alterações.
 
 ---
 
-## 📸 Screenshots
+## 🪪 Licença
 
-Vou adicionar depois imagens do app em funcionamento na pasta `/docs` ou no próprio README usando Markdown:
-
-    ![Tela principal](docs/screenshot_main.png)
-
-_(Substituir o path pelas suas screenshots)_
-
----
-
-## 📌 Observações importantes
-
-- **Application ID / package name precisa bater** com o registro no Firebase. Se receber erro `No matching client found for package name '...'`, baixe o `google-services.json` correto ou ajuste o Application ID.  
-- Para o slider de onboarding, uso a dependência MaterialIntro e estendo `IntroActivity` no Activity de introdução. Exemplo de import:  
-  `import com.heinrichreimersoftware.materialintro.app.IntroActivity;`  
-- Se utilizar slides customizados com fragments, utilize `FragmentSlide.Builder().fragment(R.layout.seu_fragment)`; para slides simples `SimpleSlide.Builder()` costuma ser suficiente.
-
----
-
-## 🤝 Como contribuir
-
-1. Fork o repositório.  
-2. Crie uma branch com a sua feature: `feature/nome-da-feature`.  
-3. Faça commits pequenos e descritivos.  
-4. Abra um Pull Request descrevendo as mudanças.
-
----
-
-## 📝 Licença
-
-Projeto para fins educacionais e de portfólio. Não é afiliado ao aplicativo oficial Organizze. Use livremente para aprendizado.
-
----
-
-Sincronize o Gradle e rode o app em um emulador ou dispositivo físico.
+Este projeto é de autoria original e foi desenvolvido para fins de estudo e portfólio.
+Você pode utilizá-lo livremente para aprendizado, sem fins comerciais diretos.
