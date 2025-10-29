@@ -1,4 +1,4 @@
-# 💸 FinanSee
+# 💸 Finansee
 
 O **FinanSee** é um aplicativo mobile de **gestão financeira pessoal**, desenvolvido de forma **100% original em Java com Android Studio**, com o objetivo de oferecer uma experiência moderna, intuitiva e prática para o controle de receitas, despesas e saldo mensal.
 
