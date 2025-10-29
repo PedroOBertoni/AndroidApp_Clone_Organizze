@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/imageLogo3"
+            android:id="@+id/imageLogo2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
@@ -43,7 +43,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/inter_bold"
-        android:text="Visualize seu saldo e\ngastos facilmente"
+        android:text="Planeje e otimize seu\nfuturo financeiro"
         android:textAlignment="center"
         android:textColor="@color/textPrimary"
         android:textSize="28sp"
@@ -56,11 +56,11 @@
         android:id="@+id/textDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="32dp"
         android:fontFamily="@font/inter"
-        android:text="Acompanhe seu saldo mensal e total,\ndescubra para onde o dinheiro vai e\nfacilite o controle dos seus gastos."
+        android:text="Crie gráficos, analise categorias e receba estimativas de quanto poderá economizar por mês ou ano."
         android:textAlignment="center"
         android:textColor="@color/textGray"
         android:textSize="18sp"
@@ -90,21 +90,6 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/inter"
-        android:text="Já tem uma conta?"
-        android:textColor="@color/textGray"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/linkLogin"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonCadastro" />
-
-    <TextView
         android:id="@+id/linkLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -119,5 +104,20 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/textLogin"
         app:layout_constraintTop_toTopOf="@+id/textLogin" />
+
+    <TextView
+        android:id="@+id/textLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/inter"
+        android:text="Já tem uma conta?"
+        android:textColor="@color/textGray"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/linkLogin"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonCadastro" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
